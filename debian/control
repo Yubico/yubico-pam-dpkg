@@ -1,0 +1,24 @@
+Source: yubico-pam
+Maintainer: Fredrik Thulin <fredrik@yubico.com>
+Section: admin
+Priority: optional
+Build-Depends: debhelper (>= 7.0.50~),
+	       pkg-config,
+	       libykclient-dev (>= 2.4),
+	       libpam0g-dev,
+	       libldap2-dev,
+	       libykpers-1-dev (>= 1.5.2),
+	       libyubikey-dev
+Standards-Version: 3.9.1
+
+Package: libpam-yubikey
+Architecture: any
+Depends: libpam-runtime (>= 1.0.1-6~),
+	 libykclient3 (>= 2.4),
+	 libldap-2.4-2,
+	 libykpers-1-1 (>= 1.5.2),
+	 ${misc:Depends}
+Description: Yubikey PAM module
+ This is a packaging of the yubico-pam module. When installed, it will set
+ your system up to require the use of a YubiKey token in addition to your
+ existing authentication configuration (for example password authentication).

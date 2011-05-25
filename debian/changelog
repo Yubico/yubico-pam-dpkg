@@ -1,0 +1,83 @@
+yubico-pam (2.6-2~ppa2~natty1) natty; urgency=low
+
+  * Need pkg-config build-dep to find ykpers.
+
+ -- Fredrik Thulin <fredrik@yubico.com>  Wed, 25 May 2011 10:21:33 +0200
+
+yubico-pam (2.6-2~ppa1~natty1) natty; urgency=low
+
+  * Build using released tar-ball as source (to avoid requiring
+    dh-autoreconf - not available on Lucid).
+  * and move to 'yubico' PPA.
+
+ -- Fredrik Thulin <fredrik@yubico.com>  Tue, 24 May 2011 20:06:31 +0200
+
+yubico-pam (2.6release-1~ppa5~natty1) natty; urgency=low
+
+  * Try to fix build dependencys.
+
+ -- Fredrik Thulin <fredrik@yubico.com>  Fri, 15 Apr 2011 16:20:35 +0200
+
+yubico-pam (2.6release-1~ppa4~natty1) natty; urgency=low
+
+  * Build-dep on libusb-1.0 inherited from ykpers.
+
+ -- Fredrik Thulin <fredrik@yubico.com>  Thu, 14 Apr 2011 22:39:43 +0200
+
+yubico-pam (2.6release-1~ppa3~natty1) natty; urgency=low
+
+  * Require ykpers 1.5.1 that has ykdef.h.
+
+ -- Fredrik Thulin <fredrik@yubico.com>  Thu, 14 Apr 2011 21:43:04 +0200
+
+yubico-pam (2.6release-1~ppa2~natty1) natty; urgency=low
+
+  * Add build dependency on libyubikey-dev.
+
+ -- Fredrik Thulin <fredrik@yubico.com>  Wed, 13 Apr 2011 23:21:11 +0200
+
+yubico-pam (2.6release-1~ppa1~natty1) natty; urgency=low
+
+  * New upstreams release.
+  * Many many bug fixes (to LDAP code etc.).
+  * Challenge-response mode for offline authentication.
+
+ -- Fredrik Thulin <fredrik@yubico.com>  Wed, 13 Apr 2011 22:42:00 +0200
+
+yubico-pam (2.6pre3-1~ppa1~natty1) natty; urgency=medium
+
+  * Add a bunch of LDAP fixes. Some memory leaks, but also fix a
+    bug which made us look for YubiKey public ID in ANY attribute,
+    not just the one specified by yubi_attr.
+
+ -- Fredrik Thulin <fredrik@yubico.com>  Thu, 10 Mar 2011 20:53:13 +0100
+
+yubico-pam (2.6pre2-1~ppa4~natty1) natty; urgency=low
+
+  * Documentation.
+
+ -- Fredrik Thulin <fredrik@yubico.com>  Thu, 10 Mar 2011 15:23:02 +0100
+
+yubico-pam (2.6pre2-1~ppa3~natty1) natty; urgency=low
+
+  * Correct name of runtime LDAP depencency.
+
+ -- Fredrik Thulin <fredrik@yubico.com>  Thu, 10 Mar 2011 13:35:24 +0100
+
+yubico-pam (2.6pre2-1~ppa2~natty1) natty; urgency=low
+
+  * Add LDAP depencency.
+
+ -- Fredrik Thulin <fredrik@yubico.com>  Thu, 10 Mar 2011 11:16:04 +0100
+
+yubico-pam (2.6pre2-1~ppa1~natty1) natty; urgency=low
+
+  * Documentation update.
+
+ -- Fredrik Thulin <fredrik@yubico.com>  Thu, 10 Mar 2011 10:50:17 +0100
+
+yubico-pam (2.6pre1-1~ppa1~natty1) natty; urgency=low
+
+  * Initial release.
+
+ -- Fredrik Thulin <fredrik@yubico.com>  Mon, 28 Feb 2011 10:47:51 +0100

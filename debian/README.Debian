@@ -1,0 +1,38 @@
+This is a first attempt at packaging the Yubico OTP PAM module for
+Ubuntu (and perhaps Debian -- it seems to have pam-auth-update too).
+
+********************************************************************
+* You WILL need to configure the arguments to the pam_yubico.so in *
+* /etc/pam.d/common-auth manually after installing this package.   *
+********************************************************************
+
+Maybe this package could be made to use debconf to do this at
+dpkg-configure time -- patches welcome.
+
+The minimum parameters you need to add (after 'debug') is an id=nn,
+and ideally the API key that goes with that id in order to get
+integrity protection of the communication between the client (you)
+and the validation server (the YubiCloud online service per default).
+
+Example common-auth entry for two-factor authentication using
+YubiKey and your UNIX password :
+
+  # here are the per-package modules (the "Primary" block)
+  auth   required                    pam_yubico.so   debug id=4711 key=pJMccccc05pJMccccT05=
+  auth   [success=1 default=ignore]  pam_unix.so     nullok_secure try_first_pass
+  # here's the fallback if no module succeeds
+  auth	 requisite    	    pam_deny.so
+
+To get an API key, visit https://upgrade.yubico.com/getapikey/
+
+  (don't worry, it's free).
+
+To see the debug output, do the following :
+
+  $ sudo touch /var/run/pam-debug.log
+  $ sudo chmod 666 /var/run/pam-debug.log
+  $ sudo tail -F /var/run/pam-debug.log
+
+There is more documentation online in the Yubico-PAM wiki at
+
+  https://github.com/Yubico/yubico-pam/wiki/

@@ -1,0 +1,36 @@
+Description: Upstream changes introduced in version 2.6-2~ppa2~natty1
+ This patch has been created by dpkg-source during the package build.
+ Here's the last changelog entry, hopefully it gives details on why
+ those changes were made:
+ .
+ yubico-pam (2.6-2~ppa2~natty1) natty; urgency=low
+ .
+   * Need pkg-config build-dep to find ykpers.
+ .
+ The person named in the Author field signed this changelog entry.
+Author: Fredrik Thulin <fredrik@yubico.com>
+
+---
+The information above should follow the Patch Tagging Guidelines, please
+checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
+are templates for supplementary fields that you might want to add:
+
+Origin: <vendor|upstream|other>, <url of original patch>
+Bug: <url in upstream bugtracker>
+Bug-Debian: http://bugs.debian.org/<bugnumber>
+Bug-Ubuntu: https://launchpad.net/bugs/<bugnumber>
+Forwarded: <no|not-needed|url proving that it has been forwarded>
+Reviewed-By: <name and email of someone who approved the patch>
+Last-Update: <YYYY-MM-DD>
+
+--- /dev/null
++++ yubico-pam-2.6/files/usr/share/pam-configs/yubikey
+@@ -0,0 +1,8 @@
++Name: YubiKey online validation
++Default: yes
++Priority: 704
++Auth-Type: Primary
++Auth:
++	required	pam_yubico.so	debug
++Auth-Initial:
++	required	pam_yubico.so	debug
