@@ -1,3 +1,16 @@
+yubico-pam (2.7-2~ppa1~natty1) natty; urgency=low
+
+  * Default to 'off' to prevent people from being locked out from their
+    computers by installing the package and not configuring any YubiKeys.
+
+ -- Fredrik Thulin <fredrik@yubico.com>  Fri, 26 Aug 2011 10:23:14 +0200
+
+yubico-pam (2.7-1~ppa1~natty1) natty; urgency=low
+
+  * New upstream release.
+
+ -- Fredrik Thulin <fredrik@yubico.com>  Thu, 25 Aug 2011 20:03:31 +0200
+
 yubico-pam (2.6-2~ppa2~natty1) natty; urgency=low
 
   * Need pkg-config build-dep to find ykpers.

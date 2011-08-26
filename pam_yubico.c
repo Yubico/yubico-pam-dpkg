@@ -75,257 +75,6 @@
 #define MAX_TOKEN_ID_LEN 16
 #define DEFAULT_TOKEN_ID_LEN 12
 
-/*
- * This function will look for users name with valid user token id. It
- * will returns 0 for failure and 1 for success.
- *
- * File format is as follows:
- * <user-name>:<token_id>:<token_id>
- * <user-name>:<token_id>
- *
- */
-static int
-check_user_token (const char *authfile,
-		  const char *username,
-		  const char *otp_id)
-{
-  char buf[1024];
-  char *s_user, *s_token;
-  int retval = 0;
-  FILE *opwfile;
-
-  opwfile = fopen (authfile, "r");
-  if (opwfile == NULL)
-    {
-      D (("Cannot open file: %s", authfile));
-      return retval;
-    }
-
-  while (fgets (buf, 1024, opwfile))
-    {
-      if (buf[strlen (buf) - 1] == '\n')
-	buf[strlen (buf) - 1] = '\0';
-      D (("Authorization line: %s", buf));
-      s_user = strtok (buf, ":");
-      if (s_user && strcmp (username, s_user) == 0)
-	{
-	  D (("Matched user: %s", s_user));
-	  do
-	    {
-	      s_token = strtok (NULL, ":");
-	      D (("Authorization token: %s", s_token));
-	      if (s_token && strcmp (otp_id, s_token) == 0)
-		{
-		  D (("Match user/token as %s/%s", username, otp_id));
-		  fclose (opwfile);
-		  return 1;
-		}
-	    }
-	  while (s_token != NULL);
-	}
-    }
-
-  fclose (opwfile);
-
-  return 0;
-}
-
-/*
- * Authorize authenticated OTP_ID for login as USERNAME using
- * AUTHFILE.  Return 0 on failures, otherwise success.
- */
-static int
-authorize_user_token (const char *authfile,
-		      const char *username,
-		      const char *otp_id)
-{
-  int retval;
-
-  if (authfile)
-    {
-      /* Administrator had configured the file and specified is name
-         as an argument for this module.
-       */
-      retval = check_user_token (authfile, username, otp_id);
-    }
-  else
-    {
-      char *userfile = NULL;
-
-      /* Getting file from user home directory
-         ..... i.e. ~/.yubico/authorized_yubikeys
-       */
-      if (! get_user_cfgfile_path (NULL, "authorized_yubikeys", username, &userfile))
-	return 0;
-
-      retval = check_user_token (userfile, username, otp_id);
-
-      free (userfile);
-    }
-
-  return retval;
-#undef USERFILE
-}
-
-/*
- * This function will look in ldap id the token correspond to the
- * requested user. It will returns 0 for failure and 1 for success.
- *
- * For the moment ldaps is not supported. ldap serve can be on a
- * remote host.
- *
- * You need the following parameters in you pam config:
- * ldapserver=  OR ldap_uri=
- * ldapdn=
- * user_attr=
- * yubi_attr=
- *
- */
-static int
-authorize_user_token_ldap (const char *ldap_uri,
-			   const char *ldapserver,
-			   const char *ldapdn,
-			   const char *user_attr,
-			   const char *yubi_attr,
-			   const char *user,
-			   const char *token_id)
-{
-
-  D(("called"));
-  int retval = 0;
-  int protocol;
-#ifdef HAVE_LIBLDAP
-  LDAP *ld = NULL;
-  LDAPMessage *result = NULL, *e;
-  BerElement *ber;
-  char *a;
-  char *attrs[2] = {NULL, NULL};
-
-  struct berval **vals;
-  int i, rc;
-
-  char *find = NULL, *sr = NULL;
-
-  if (user_attr == NULL) {
-    D (("Trying to look up user to YubiKey mapping in LDAP, but user_attr not set!"));
-    return 0;
-  }
-  if (yubi_attr == NULL) {
-    D (("Trying to look up user to YubiKey mapping in LDAP, but yubi_attr not set!"));
-    return 0;
-  }
-  if (ldapdn == NULL) {
-    D (("Trying to look up user to YubiKey mapping in LDAP, but ldapdn not set!"));
-    return 0;
-  }
-
-  /* Get a handle to an LDAP connection. */
-  if (ldap_uri)
-    {
-      rc = ldap_initialize (&ld,ldap_uri);
-      if (rc != LDAP_SUCCESS)
-	{
-	  D (("ldap_init: %s", ldap_err2string (rc)));
-	  retval = 0;
-	  goto done;
-	}
-    }
-  else
-    {
-      if ((ld = ldap_init (ldapserver, PORT_NUMBER)) == NULL)
-	{
-	  D (("ldap_init"));
-	  retval = 0;
-	  goto done;
-	}
-    }
-
-  /* LDAPv2 is historical -- RFC3494. */
-  protocol = LDAP_VERSION3;
-  ldap_set_option (ld, LDAP_OPT_PROTOCOL_VERSION, &protocol);
-
-  /* Bind anonymously to the LDAP server. */
-  rc = ldap_simple_bind_s (ld, NULL, NULL);
-  if (rc != LDAP_SUCCESS)
-    {
-      D (("ldap_simple_bind_s: %s", ldap_err2string (rc)));
-      retval = 0;
-      goto done;
-    }
-
-  /* Allocation of memory for search strings depending on input size */
-  find = malloc((strlen(user_attr)+strlen(ldapdn)+strlen(user)+3)*sizeof(char));
-
-  sprintf (find, "%s=%s,%s", user_attr, user, ldapdn);
-
-  attrs[0] = (char *) yubi_attr;
-
-  D(("LDAP : look up object '%s', ask for attribute '%s'", find, yubi_attr));
-
-  /* Search for the entry. */
-  if ((rc = ldap_search_ext_s (ld, find, LDAP_SCOPE_BASE,
-			       NULL, attrs, 0, NULL, NULL, LDAP_NO_LIMIT,
-			       LDAP_NO_LIMIT, &result)) != LDAP_SUCCESS)
-    {
-      D (("ldap_search_ext_s: %s", ldap_err2string (rc)));
-
-      retval = 0;
-      goto done;
-    }
-
-  e = ldap_first_entry (ld, result);
-  if (e == NULL)
-    {
-      D (("No result from LDAP search"));
-    }
-  else
-    {
-      /* Iterate through each returned attribute. */
-      for (a = ldap_first_attribute (ld, e, &ber);
-	   a != NULL; a = ldap_next_attribute (ld, e, ber))
-	{
-	  if ((vals = ldap_get_values_len (ld, e, a)) != NULL)
-	    {
-	      /* Compare each value for the attribute against the token id. */
-	      for (i = 0; vals[i] != NULL; i++)
-		{
-		  if (!strncmp (token_id, vals[i]->bv_val, strlen (token_id)))
-		    {
-		      D (("Token Found :: %s", vals[i]->bv_val));
-		      retval = 1;
-		    }
-		  else
-		    {
-		      D (("No match : (%s) %s != %s", a, vals[i]->bv_val, token_id));
-		    }
-		}
-	      ldap_value_free_len (vals);
-	    }
-	  ldap_memfree (a);
-	}
-      if (ber != NULL)
-	  ber_free (ber, 0);
-    }
-
- done:
-  if (result != NULL)
-    ldap_msgfree (result);
-  if (ld != NULL)
-    ldap_unbind (ld);
-
-  /* free memory allocated for search strings */
-  if (find != NULL)
-    free(find);
-  if (sr != NULL)
-    free(sr);
-
-#else
-  D (("Trying to use LDAP, but this function is not compiled in pam_yubico!!"));
-  D (("Install libldap-dev and then recompile pam_yubico."));
-#endif
-  return retval;
-}
-
 enum key_mode {
   CHRESP,
   CLIENT
@@ -352,6 +101,258 @@ struct cfg
   enum key_mode mode;
   char *chalresp_path;
 };
+
+#ifdef DBG
+#undef DBG
+#endif
+#define DBG(x) if (cfg->debug) { D(x); }
+
+/*
+ * This function will look for users name with valid user token id. It
+ * will returns 0 for failure and 1 for success.
+ *
+ * File format is as follows:
+ * <user-name>:<token_id>:<token_id>
+ * <user-name>:<token_id>
+ *
+ */
+static int
+check_user_token (struct cfg *cfg,
+		  const char *authfile,
+		  const char *username,
+		  const char *otp_id)
+{
+  char buf[1024];
+  char *s_user, *s_token;
+  int retval = 0;
+  FILE *opwfile;
+
+  opwfile = fopen (authfile, "r");
+  if (opwfile == NULL)
+    {
+      DBG (("Cannot open file: %s", authfile));
+      return retval;
+    }
+
+  while (fgets (buf, 1024, opwfile))
+    {
+      if (buf[strlen (buf) - 1] == '\n')
+	buf[strlen (buf) - 1] = '\0';
+      DBG (("Authorization line: %s", buf));
+      s_user = strtok (buf, ":");
+      if (s_user && strcmp (username, s_user) == 0)
+	{
+	  DBG (("Matched user: %s", s_user));
+	  do
+	    {
+	      s_token = strtok (NULL, ":");
+	      DBG (("Authorization token: %s", s_token));
+	      if (s_token && strcmp (otp_id, s_token) == 0)
+		{
+		  DBG (("Match user/token as %s/%s", username, otp_id));
+		  fclose (opwfile);
+		  return 1;
+		}
+	    }
+	  while (s_token != NULL);
+	}
+    }
+
+  fclose (opwfile);
+
+  return 0;
+}
+
+/*
+ * Authorize authenticated OTP_ID for login as USERNAME using
+ * AUTHFILE.  Return 0 on failures, otherwise success.
+ */
+static int
+authorize_user_token (struct cfg *cfg,
+		      const char *username,
+		      const char *otp_id)
+{
+  int retval;
+
+  if (cfg->auth_file)
+    {
+      /* Administrator had configured the file and specified is name
+         as an argument for this module.
+       */
+      retval = check_user_token (cfg, cfg->auth_file, username, otp_id);
+    }
+  else
+    {
+      char *userfile = NULL;
+
+      /* Getting file from user home directory
+         ..... i.e. ~/.yubico/authorized_yubikeys
+       */
+      if (! get_user_cfgfile_path (NULL, "authorized_yubikeys", username, &userfile))
+	return 0;
+
+      retval = check_user_token (cfg, userfile, username, otp_id);
+
+      free (userfile);
+    }
+
+  return retval;
+#undef USERFILE
+}
+
+/*
+ * This function will look in ldap id the token correspond to the
+ * requested user. It will returns 0 for failure and 1 for success.
+ *
+ * For the moment ldaps is not supported. ldap serve can be on a
+ * remote host.
+ *
+ * You need the following parameters in you pam config:
+ * ldapserver=  OR ldap_uri=
+ * ldapdn=
+ * user_attr=
+ * yubi_attr=
+ *
+ */
+static int
+authorize_user_token_ldap (struct cfg *cfg,
+			   const char *user,
+			   const char *token_id)
+{
+  DBG(("called"));
+  int retval = 0;
+  int protocol;
+#ifdef HAVE_LIBLDAP
+  LDAP *ld = NULL;
+  LDAPMessage *result = NULL, *e;
+  BerElement *ber;
+  char *a;
+  char *attrs[2] = {NULL, NULL};
+
+  struct berval **vals;
+  int i, rc;
+
+  char *find = NULL, *sr = NULL;
+
+  if (cfg->user_attr == NULL) {
+    DBG (("Trying to look up user to YubiKey mapping in LDAP, but user_attr not set!"));
+    return 0;
+  }
+  if (cfg->yubi_attr == NULL) {
+    DBG (("Trying to look up user to YubiKey mapping in LDAP, but yubi_attr not set!"));
+    return 0;
+  }
+  if (cfg->ldapdn == NULL) {
+    DBG (("Trying to look up user to YubiKey mapping in LDAP, but ldapdn not set!"));
+    return 0;
+  }
+
+  /* Get a handle to an LDAP connection. */
+  if (cfg->ldap_uri)
+    {
+      rc = ldap_initialize (&ld, cfg->ldap_uri);
+      if (rc != LDAP_SUCCESS)
+	{
+	  DBG (("ldap_init: %s", ldap_err2string (rc)));
+	  retval = 0;
+	  goto done;
+	}
+    }
+  else
+    {
+      if ((ld = ldap_init (cfg->ldapserver, PORT_NUMBER)) == NULL)
+	{
+	  DBG (("ldap_init"));
+	  retval = 0;
+	  goto done;
+	}
+    }
+
+  /* LDAPv2 is historical -- RFC3494. */
+  protocol = LDAP_VERSION3;
+  ldap_set_option (ld, LDAP_OPT_PROTOCOL_VERSION, &protocol);
+
+  /* Bind anonymously to the LDAP server. */
+  rc = ldap_simple_bind_s (ld, NULL, NULL);
+  if (rc != LDAP_SUCCESS)
+    {
+      DBG (("ldap_simple_bind_s: %s", ldap_err2string (rc)));
+      retval = 0;
+      goto done;
+    }
+
+  /* Allocation of memory for search strings depending on input size */
+  find = malloc((strlen(cfg->user_attr)+strlen(cfg->ldapdn)+strlen(user)+3)*sizeof(char));
+
+  sprintf (find, "%s=%s,%s", cfg->user_attr, user, cfg->ldapdn);
+
+  attrs[0] = (char *) cfg->yubi_attr;
+
+  DBG(("LDAP : look up object '%s', ask for attribute '%s'", find, cfg->yubi_attr));
+
+  /* Search for the entry. */
+  if ((rc = ldap_search_ext_s (ld, find, LDAP_SCOPE_BASE,
+			       NULL, attrs, 0, NULL, NULL, LDAP_NO_LIMIT,
+			       LDAP_NO_LIMIT, &result)) != LDAP_SUCCESS)
+    {
+      DBG (("ldap_search_ext_s: %s", ldap_err2string (rc)));
+
+      retval = 0;
+      goto done;
+    }
+
+  e = ldap_first_entry (ld, result);
+  if (e == NULL)
+    {
+      DBG (("No result from LDAP search"));
+    }
+  else
+    {
+      /* Iterate through each returned attribute. */
+      for (a = ldap_first_attribute (ld, e, &ber);
+	   a != NULL; a = ldap_next_attribute (ld, e, ber))
+	{
+	  if ((vals = ldap_get_values_len (ld, e, a)) != NULL)
+	    {
+	      /* Compare each value for the attribute against the token id. */
+	      for (i = 0; vals[i] != NULL; i++)
+		{
+		  if (!strncmp (token_id, vals[i]->bv_val, strlen (token_id)))
+		    {
+		      DBG (("Token Found :: %s", vals[i]->bv_val));
+		      retval = 1;
+		    }
+		  else
+		    {
+		      DBG (("No match : (%s) %s != %s", a, vals[i]->bv_val, token_id));
+		    }
+		}
+	      ldap_value_free_len (vals);
+	    }
+	  ldap_memfree (a);
+	}
+      if (ber != NULL)
+	  ber_free (ber, 0);
+    }
+
+ done:
+  if (result != NULL)
+    ldap_msgfree (result);
+  if (ld != NULL)
+    ldap_unbind (ld);
+
+  /* free memory allocated for search strings */
+  if (find != NULL)
+    free(find);
+  if (sr != NULL)
+    free(sr);
+
+#else
+  DBG (("Trying to use LDAP, but this function is not compiled in pam_yubico!!"));
+  DBG (("Install libldap-dev and then recompile pam_yubico."));
+#endif
+  return retval;
+}
 
 static int
 display_error(pam_handle_t *pamh, char *message) {
@@ -381,6 +382,7 @@ display_error(pam_handle_t *pamh, char *message) {
   return retval;
 }
 
+#if HAVE_LIBYKPERS_1
 static int
 do_challenge_response(pam_handle_t *pamh, struct cfg *cfg, const char *username)
 {
@@ -417,7 +419,7 @@ do_challenge_response(pam_handle_t *pamh, struct cfg *cfg, const char *username)
     goto out;
   }
 
-  D(("Loading challenge from file %s", userfile));
+  DBG(("Loading challenge from file %s", userfile));
 
   /* XXX should drop root privileges before opening file in user's home directory */
   f = fopen(userfile, "r");
@@ -450,7 +452,7 @@ do_challenge_response(pam_handle_t *pamh, struct cfg *cfg, const char *username)
     goto out;
   }
 
-  D(("Got the expected response, generating new challenge (%i bytes).", CR_CHALLENGE_SIZE));
+  DBG(("Got the expected response, generating new challenge (%i bytes).", CR_CHALLENGE_SIZE));
 
   errstr = "Error generating new challenge, please check syslog or contact your system administrator";
   if (generate_random(state.challenge, sizeof(state.challenge))) {
@@ -502,15 +504,17 @@ do_challenge_response(pam_handle_t *pamh, struct cfg *cfg, const char *username)
     goto out;
   }
 
-  D(("Challenge-response success!"));
+  DBG(("Challenge-response success!"));
   errstr = NULL;
 
  out:
   if (yk_errno) {
     if (yk_errno == YK_EUSBERR) {
       syslog(LOG_ERR, "USB error: %s", yk_usb_strerror());
+      D(("USB error: %s", yk_usb_strerror()));
     } else {
       syslog(LOG_ERR, "Yubikey core error: %s", yk_strerror(yk_errno));
+      D(("Yubikey core error: %s", yk_strerror(yk_errno)));
     }
   }
 
@@ -519,6 +523,7 @@ do_challenge_response(pam_handle_t *pamh, struct cfg *cfg, const char *username)
 
   if (errno) {
     syslog(LOG_ERR, "Challenge response failed: %s", strerror(errno));
+    D(("Challenge response failed: %s", strerror(errno)));
   }
 
   if (yk)
@@ -533,30 +538,17 @@ do_challenge_response(pam_handle_t *pamh, struct cfg *cfg, const char *username)
   return ret;
 }
 #undef USERFILE
+#endif
 
 static void
 parse_cfg (int flags, int argc, const char **argv, struct cfg *cfg)
 {
   int i;
 
+  memset (cfg, 0, sizeof(struct cfg));
   cfg->client_id = -1;
-  cfg->client_key = NULL;
-  cfg->debug = 0;
-  cfg->alwaysok = 0;
-  cfg->verbose_otp = 0;
-  cfg->try_first_pass = 0;
-  cfg->use_first_pass = 0;
-  cfg->auth_file = NULL;
-  cfg->capath = NULL;
-  cfg->url = NULL;
-  cfg->ldapserver = NULL;
-  cfg->ldap_uri = NULL;
-  cfg->ldapdn = NULL;
-  cfg->user_attr = NULL;
-  cfg->yubi_attr = NULL;
   cfg->token_id_length = DEFAULT_TOKEN_ID_LEN;
   cfg->mode = CLIENT;
-  cfg->chalresp_path = NULL;
 
   for (i = 0; i < argc; i++)
     {
@@ -627,8 +619,6 @@ parse_cfg (int flags, int argc, const char **argv, struct cfg *cfg)
     }
 }
 
-#define DBG(x) if (cfg.debug) { D(x); }
-
 PAM_EXTERN int
 pam_sm_authenticate (pam_handle_t * pamh,
 		     int flags, int argc, const char **argv)
@@ -646,9 +636,10 @@ pam_sm_authenticate (pam_handle_t * pamh,
   struct pam_response *resp;
   int nargs = 1;
   ykclient_t *ykc = NULL;
-  struct cfg cfg;
+  struct cfg cfg_st;
+  struct cfg *cfg = &cfg_st; /* for DBG macro */
 
-  parse_cfg (flags, argc, argv, &cfg);
+  parse_cfg (flags, argc, argv, cfg);
 
   retval = pam_get_user (pamh, &user, NULL);
   if (retval != PAM_SUCCESS)
@@ -658,11 +649,17 @@ pam_sm_authenticate (pam_handle_t * pamh,
     }
   DBG (("get user returned: %s", user));
 
-  if (cfg.mode == CHRESP) {
-    return do_challenge_response(pamh, &cfg, user);
+  if (cfg->mode == CHRESP) {
+#if HAVE_LIBYKPERS_1
+    return do_challenge_response(pamh, cfg, user);
+#else
+    DBG (("no support for challenge/response"));
+    retval = PAM_AUTH_ERR;
+    goto done;
+#endif
   }
 
-  if (cfg.try_first_pass || cfg.use_first_pass)
+  if (cfg->try_first_pass || cfg->use_first_pass)
     {
       retval = pam_get_item (pamh, PAM_AUTHTOK, (const void **) &password);
       if (retval != PAM_SUCCESS)
@@ -674,7 +671,7 @@ pam_sm_authenticate (pam_handle_t * pamh,
       DBG (("get password returned: %s", password));
     }
 
-  if (cfg.use_first_pass && password == NULL)
+  if (cfg->use_first_pass && password == NULL)
     {
       DBG (("use_first_pass set and no password, giving up"));
       retval = PAM_AUTH_ERR;
@@ -689,7 +686,7 @@ pam_sm_authenticate (pam_handle_t * pamh,
       goto done;
     }
 
-  rc = ykclient_set_client_b64 (ykc, cfg.client_id, cfg.client_key);
+  rc = ykclient_set_client_b64 (ykc, cfg->client_id, cfg->client_key);
   if (rc != YKCLIENT_OK)
     {
       DBG (("ykclient_set_client_b64() failed (%d): %s",
@@ -698,11 +695,11 @@ pam_sm_authenticate (pam_handle_t * pamh,
       goto done;
     }
 
-  if (cfg.capath)
-    ykclient_set_ca_path (ykc, cfg.capath);
+  if (cfg->capath)
+    ykclient_set_ca_path (ykc, cfg->capath);
 
-  if (cfg.url)
-    ykclient_set_url_template (ykc, cfg.url);
+  if (cfg->url)
+    ykclient_set_url_template (ykc, cfg->url);
 
   if (password == NULL)
     {
@@ -733,7 +730,7 @@ pam_sm_authenticate (pam_handle_t * pamh,
 	    goto done;
 	  }
       }
-      msg[0].msg_style = cfg.verbose_otp ? PAM_PROMPT_ECHO_ON : PAM_PROMPT_ECHO_OFF;
+      msg[0].msg_style = cfg->verbose_otp ? PAM_PROMPT_ECHO_ON : PAM_PROMPT_ECHO_OFF;
       resp = NULL;
 
       retval = conv->conv (nargs, (const struct pam_message **) pmsg,
@@ -759,33 +756,33 @@ pam_sm_authenticate (pam_handle_t * pamh,
     }
 
   password_len = strlen (password);
-  if (password_len < (cfg.token_id_length + TOKEN_OTP_LEN))
+  if (password_len < (cfg->token_id_length + TOKEN_OTP_LEN))
     {
-      DBG (("OTP too short to be considered : %i < %i", password_len, (cfg.token_id_length + TOKEN_OTP_LEN)));
+      DBG (("OTP too short to be considered : %i < %i", password_len, (cfg->token_id_length + TOKEN_OTP_LEN)));
       retval = PAM_AUTH_ERR;
       goto done;
     }
 
   /* In case the input was systempassword+YubiKeyOTP, we want to skip over
      "systempassword" when copying the token_id and OTP to separate buffers */
-  skip_bytes = password_len - (cfg.token_id_length + TOKEN_OTP_LEN);
+  skip_bytes = password_len - (cfg->token_id_length + TOKEN_OTP_LEN);
 
   DBG (("Skipping first %i bytes. Length is %i, token_id set to %i and token OTP always %i.",
-	skip_bytes, password_len, cfg.token_id_length, TOKEN_OTP_LEN));
+	skip_bytes, password_len, cfg->token_id_length, TOKEN_OTP_LEN));
 
   /* Copy full YubiKey output (public ID + OTP) into otp */
   strncpy (otp, password + skip_bytes, sizeof (otp) - 1);
   /* Copy only public ID into otp_id. Destination buffer is zeroed. */
-  strncpy (otp_id, password + skip_bytes, cfg.token_id_length);
+  strncpy (otp_id, password + skip_bytes, cfg->token_id_length);
 
   DBG (("OTP: %s ID: %s ", otp, otp_id));
 
   /* user entered their system password followed by generated OTP? */
-  if (password_len > TOKEN_OTP_LEN + cfg.token_id_length)
+  if (password_len > TOKEN_OTP_LEN + cfg->token_id_length)
     {
       char *onlypasswd = strdup (password);
 
-      onlypasswd[password_len - (TOKEN_OTP_LEN + cfg.token_id_length)] = '\0';
+      onlypasswd[password_len - (TOKEN_OTP_LEN + cfg->token_id_length)] = '\0';
 
       DBG (("Extracted a probable system password entered before the OTP - "
 	    "setting item PAM_AUTHTOK"));
@@ -822,12 +819,10 @@ pam_sm_authenticate (pam_handle_t * pamh,
     }
 
   /* authorize the user with supplied token id */
-  if (cfg.ldapserver != NULL || cfg.ldap_uri != NULL)
-    valid_token = authorize_user_token_ldap (cfg.ldap_uri, cfg.ldapserver,
-					     cfg.ldapdn, cfg.user_attr,
-					     cfg.yubi_attr, user, otp_id);
+  if (cfg->ldapserver != NULL || cfg->ldap_uri != NULL)
+    valid_token = authorize_user_token_ldap (cfg, user, otp_id);
   else
-    valid_token = authorize_user_token (cfg.auth_file, user, otp_id);
+    valid_token = authorize_user_token (cfg, user, otp_id);
 
   if (valid_token == 0)
     {
@@ -841,7 +836,7 @@ pam_sm_authenticate (pam_handle_t * pamh,
 done:
   if (ykc)
     ykclient_done (&ykc);
-  if (cfg.alwaysok && retval != PAM_SUCCESS)
+  if (cfg->alwaysok && retval != PAM_SUCCESS)
     {
       DBG (("alwaysok needed (otherwise return with %d)", retval));
       retval = PAM_SUCCESS;
