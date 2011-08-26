@@ -1,12 +1,17 @@
-Description: Upstream changes introduced in version 2.7-2~ppa1~natty1
+Description: Upstream changes introduced in version 2.8-1~ppa1~natty1
  This patch has been created by dpkg-source during the package build.
  Here's the last changelog entry, hopefully it gives details on why
  those changes were made:
  .
- yubico-pam (2.7-2~ppa1~natty1) natty; urgency=low
+ yubico-pam (2.8-1~ppa1~natty1) natty; urgency=high
  .
-   * Default to 'off' to prevent people from being locked out from their
-     computers by installing the package and not configuring any YubiKeys.
+   * New upstream release with security fix :
+     Fix big security hole: Authentication succeeded when no password
+     was given, unless use_first_pass was being used.
+     This is fatal if pam_yubico is considered 'sufficient' in the PAM
+     configuration.
+ .
+     Signed-off-by: Nanakos Chrysostomos <nanakos@wired-net.gr>
  .
  The person named in the Author field signed this changelog entry.
 Author: Fredrik Thulin <fredrik@yubico.com>
@@ -25,7 +30,7 @@ Reviewed-By: <name and email of someone who approved the patch>
 Last-Update: <YYYY-MM-DD>
 
 --- /dev/null
-+++ yubico-pam-2.7/files/usr/share/pam-configs/yubikey
++++ yubico-pam-2.8/files/usr/share/pam-configs/yubikey
 @@ -0,0 +1,8 @@
 +Name: YubiKey two-factor authentication with online validation (recommended)
 +Default: no

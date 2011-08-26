@@ -1,3 +1,15 @@
+yubico-pam (2.8-1~ppa1~natty1) natty; urgency=high
+
+  * New upstream release with security fix :
+    Fix big security hole: Authentication succeeded when no password
+    was given, unless use_first_pass was being used.
+    This is fatal if pam_yubico is considered 'sufficient' in the PAM
+    configuration.
+
+    Signed-off-by: Nanakos Chrysostomos <nanakos@wired-net.gr>
+
+ -- Fredrik Thulin <fredrik@yubico.com>  Fri, 26 Aug 2011 14:27:57 +0200
+
 yubico-pam (2.7-2~ppa1~natty1) natty; urgency=low
 
   * Default to 'off' to prevent people from being locked out from their
