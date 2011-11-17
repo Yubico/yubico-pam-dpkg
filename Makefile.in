@@ -209,6 +209,7 @@ LTLIBOBJS = @LTLIBOBJS@
 LTLIBYKCLIENT = @LTLIBYKCLIENT@
 LTLIBYUBIKEY = @LTLIBYUBIKEY@
 MAKEINFO = @MAKEINFO@
+MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
 NM = @NM@
 NMEDIT = @NMEDIT@
@@ -240,6 +241,7 @@ abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
+ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
 am__include = @am__include@
@@ -272,7 +274,6 @@ libdir = $(PAMDIR)
 libexecdir = @libexecdir@
 localedir = @localedir@
 localstatedir = @localstatedir@
-lt_ECHO = @lt_ECHO@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
@@ -293,7 +294,7 @@ lib_LTLIBRARIES = pam_yubico.la
 include_HEADERS = util.h
 pam_yubico_la_SOURCES = pam_yubico.c util.c
 # XXX add -Wl,-x too?  PAM documentation suggests it.
-pam_yubico_la_LIBADD = @LTLIBYKCLIENT@ @LIBLDAP@ @YKPERS_LIBS@ @LTLIBYUBIKEY@
+pam_yubico_la_LIBADD = @LTLIBYKCLIENT@ @LIBLDAP@ @YKPERS_LIBS@ @LTLIBYUBIKEY@ -lpam
 pam_yubico_la_LDFLAGS = -module -avoid-version
 pam_yubico_la_CPPFLAGS = @YKPERS_CFLAGS@
 ykpamcfg_SOURCES = ykpamcfg.c util.c
@@ -303,7 +304,7 @@ ykpamcfg_CPPFLAGS = @YKPERS_CFLAGS@
 
 # Self tests.
 AM_LDFLAGS = -no-install
-LDADD = ./pam_yubico.la -lpam
+LDADD = ./pam_yubico.la
 TESTS = $(check_PROGRAMS)
 
 # Dist docs from wiki.
