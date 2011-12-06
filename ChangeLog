@@ -1,0 +1,505 @@
+2011-02-16  Fredrik Thulin <fredrik@yubico.com>
+
+	* README: Convert to asciidoc (used by Github wiki).
+
+2011-02-16  Fredrik Thulin <fredrik@yubico.com>
+
+	* .gitmodules: Add submodule doc.
+
+2010-09-10  Simon Josefsson <simon@yubico.com>
+
+	* NEWS, configure.ac: Bump versions.
+
+2010-09-10  Simon Josefsson <simon@yubico.com>
+
+	* Makefile.am: Fix.
+
+2010-09-10  Simon Josefsson <simon@yubico.com>
+
+	* NEWS: Add.
+
+2010-09-10  Simon Josefsson <simon@yubico.com>
+
+	* Makefile.am: Include wiki pages in distribution.
+
+2010-09-10  Simon Josefsson <simon@yubico.com>
+
+	* Makefile.am: Fix release target.
+
+2010-09-09  Simon Josefsson <simon@yubico.com>
+
+	* NEWS, configure.ac: Bump versions.
+
+2010-09-09  Simon Josefsson <simon@yubico.com>
+
+	* NEWS: Version 2.4.
+
+2010-09-09  Simon Josefsson <simon@yubico.com>
+
+	* NEWS: Add.
+
+2010-09-09  Simon Josefsson <simon@yubico.com>
+
+	* NEWS, pam_yubico.c: Fix segmentation fault on 64-bit systems.  Reported by multiple people in Issue #11
+	<http://code.google.com/p/yubico-pam/issues/detail?id=11>.
+
+2010-09-09  Simon Josefsson <simon@yubico.com>
+
+	* README: Improve verbose_otp documentation.
+
+2010-09-09  Simon Josefsson <simon@yubico.com>
+
+	* pam_yubico.c: Handle ^D at su prompt.
+
+2010-07-13  Simon Josefsson <simon@yubico.com>
+
+	* NEWS, pam_yubico.c: Make deprecated "ldapserver" work again.
+	Reported by giovannibajo in Issue #27:
+	<http://code.google.com/p/yubico-pam/issues/detail?id=27>.
+
+2010-05-20  Erinn Looney-Triggs <erinn.looneytriggs@gmail.com>
+
+	* README: Update README to clarify a few points, put in wiki markup
+	and add section on how to locate the token ID.
+
+2010-04-14  Simon Josefsson <simon@yubico.com>
+
+	* README: Document "verbose_otp".  From  qistoph in
+	http://code.google.com/p/yubico-pam/issues/detail?id=22
+
+2010-04-14  Simon Josefsson <simon@yubico.com>
+
+	* Makefile.am, NEWS: Build with -DPAM_DEBUG so that debug file
+	writing works.  Reported by qistoph in Issue #20:
+	<http://code.google.com/p/yubico-pam/issues/detail?id=20>.
+
+2010-04-14  Simon Josefsson <simon@yubico.com>
+
+	* NEWS, pam_yubico.c: New keyword "verbose_otp" to allow displaying
+	OTP characters.  Contributed by qistoph reported in Issue #22:
+	<http://code.google.com/p/yubico-pam/issues/detail?id=22>.
+
+2010-04-14  Simon Josefsson <simon@yubico.com>
+
+	* Makefile.am: Save a local copy of released archives.
+
+2010-04-14  Simon Josefsson <simon@yubico.com>
+
+	* NEWS, configure.ac: Bump versions.
+
+2010-04-14  Simon Josefsson <simon@yubico.com>
+
+	* Makefile.am: Fix googlecode_upload username.
+
+2010-04-14  Simon Josefsson <simon@yubico.com>
+
+	* NEWS: Version 2.3.
+
+2010-04-14  Simon Josefsson <simon@yubico.com>
+
+	* NEWS: Add.
+
+2010-04-14  Simon Josefsson <simon@yubico.com>
+
+	* NEWS, pam_yubico.c: Add deprecated support for old ldapserver
+	keyword.
+
+2010-04-14  Simon Josefsson <simon@yubico.com>
+
+	* README: Re-add documentation for "ldapserver".
+
+2010-04-14  Simon Josefsson <simon@yubico.com>
+
+	* README: More fixes from Erinn Looney-Triggs
+	<erinn.looneytriggs@gmail.com>.
+
+2010-04-13  Simon Josefsson <simon@yubico.com>
+
+	* README: More fixes from Erinn Looney-Triggs
+	<erinn.looneytriggs@gmail.com>.
+
+2010-04-13  Simon Josefsson <simon@yubico.com>
+
+	* pam_yubico.c: Doc fix.
+
+2010-04-13  Simon Josefsson <simon@yubico.com>
+
+	* README: Describe authfile parameter.  From Erinn Looney-Triggs <erinn.looneytriggs@gmail.com>.
+
+2009-08-11  zubrick433 <zubrick433@unknown.example.org>
+
+	* README, pam_yubico.c: Corrections in ldap part:Â Removed deprecated ldap functions. New functions need a ldap uri
+	instead of a hostname. changed configuration parameter ldapserver to
+	ldap_uri to reflect change and avoid errors in configuration.  Search string are now of variable size depending on configuration
+	parameters length, instead of an arbitrary fixed length.  Modified README for the new ldap_uri configuration parameter
+
+2009-06-22  Simon Josefsson <simon@josefsson.org>
+
+	* Makefile.am: Fix release target.
+
+2009-05-11  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, configure.ac: Bump versions.
+
+2009-05-11  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Version 2.2.
+
+2009-05-11  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2009-05-11  Simon Josefsson <simon@josefsson.org>
+
+	* README, configure.ac, pam_yubico.c: Add new key parameter to set
+	verification key.
+
+2009-05-11  Simon Josefsson <simon@josefsson.org>
+
+	* pam_yubico.c: Don't output debug information unconditionally.
+
+2009-03-31  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, configure.ac: Bump versions.
+
+2009-03-31  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Version 2.1.
+
+2009-03-31  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2009-03-31  Simon Josefsson <simon@josefsson.org>
+
+	* Makefile.am: Fix release target.
+
+2009-03-31  Simon Josefsson <simon@josefsson.org>
+
+	* README: Fix.
+
+2009-03-30  Simon Josefsson <simon@josefsson.org>
+
+	* pam_yubico.c: Avoid warning.
+
+2009-03-25  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, configure.ac: Bump versions.
+
+2009-03-25  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Version 2.0.
+
+2009-03-25  Simon Josefsson <simon@josefsson.org>
+
+	* Makefile.am, NEWS, README, configure.ac, pam_yubico.c: Use and
+	require libykclient v2.0+.
+
+2009-03-24  Simon Josefsson <simon@josefsson.org>
+
+	* README: Fix.
+
+2009-03-24  Simon Josefsson <simon@josefsson.org>
+
+	* README: Fix.
+
+2009-03-24  Simon Josefsson <simon@josefsson.org>
+
+	* build-aux/config.rpath, m4/lib-ld.m4, m4/lib-link.m4,
+	m4/lib-prefix.m4: Update gnulib files.
+
+2009-03-24  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, configure.ac: Bump versions.
+
+2009-03-24  Simon Josefsson <simon@josefsson.org>
+
+	* Makefile.am: Reorder.
+
+2009-03-24  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Version 1.14.
+
+2009-03-24  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2009-03-24  Simon Josefsson <simon@josefsson.org>
+
+	* pam_yubico.c: Improve matching logic.
+
+2009-03-24  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, configure.ac: Bump versions.
+
+2009-03-24  Simon Josefsson <simon@josefsson.org>
+
+	* Makefile.am: Fix release target.
+
+2009-03-24  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Version 1.13.
+
+2009-03-24  Simon Josefsson <simon@josefsson.org>
+
+	* pam_yubico.c: Fix crash on memory errors.
+
+2009-03-24  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2009-03-24  Simon Josefsson <simon@josefsson.org>
+
+	* pam_yubico.c: Fix parsing of password+otp into id/otp/passwd.  Fix
+	return codes.  Fix setcred.
+
+2009-03-24  Simon Josefsson <simon@josefsson.org>
+
+	* pam_yubico.c: Fix ykc handling.
+
+2009-03-24  Simon Josefsson <simon@josefsson.org>
+
+	* pam_yubico.c: Reduce failure points with live unverified OTP.
+
+2009-03-24  Simon Josefsson <simon@josefsson.org>
+
+	* pam_yubico.c: Split off configuration parsing.
+
+2009-03-24  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, pam_yubico.c: Don't pass integers via
+	pam_set_data/pam_get_data.
+
+2009-03-24  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, configure.ac: Bump versions.
+
+2009-03-24  Simon Josefsson <simon@josefsson.org>
+
+	* Makefile.am: Fix dist target.
+
+2009-03-24  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Version 1.12.
+
+2009-03-24  Simon Josefsson <simon@josefsson.org>
+
+	* Makefile.am: Fix release target.
+
+2009-03-24  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2009-03-24  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, README, pam_yubico.c: Support use_first_pass and
+	try_first_pass.
+
+2009-03-24  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, configure.ac: Bump version.
+
+2009-02-11  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Version 1.11.
+
+2009-02-11  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Check for better symbol in -lldap.
+
+2009-02-11  Simon Josefsson <simon@josefsson.org>
+
+	* pam_yubico.c: Fix typo.
+
+2009-02-11  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2009-02-11  Simon Josefsson <simon@josefsson.org>
+
+	* pam_yubico.c: Indent code.  Add FIXME note.  Handle NULL values in
+	debug strings.
+
+2009-02-11  zubrick433 <zubrick433@unknown.example.org>
+
+	* Makefile.am, README, configure.ac, pam_yubico.c: Added ldap
+	support
+
+2009-01-13  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Version 1.10.
+
+2009-01-13  Simon Josefsson <simon@josefsson.org>
+
+	* README: Doc fix.
+
+2009-01-13  Simon Josefsson <simon@josefsson.org>
+
+	* test.c: Indent.
+
+2009-01-13  Simon Josefsson <simon@josefsson.org>
+
+	* COPYING, Makefile.am, NEWS, README, configure.ac, pam_yubico.c,
+	test.c: Change license to 2-clause BSD.
+
+2009-01-13  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Version 1.9.
+
+2009-01-13  Simon Josefsson <simon@josefsson.org>
+
+	* pam_yubico.c: Support debugging even on non-Linux.
+
+2009-01-13  Simon Josefsson <simon@josefsson.org>
+
+	* pam_yubico.c: Avoid use of asprintf, to fix Solaris.  Suggested by
+	Martin Englund <Martin.Englund@Sun.COM>.
+
+2009-01-13  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac, configure.in: Rename.
+
+2009-01-13  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2009-01-13  Simon Josefsson <simon@josefsson.org>
+
+	* configure.in: Disable static libraries, not supported and breaks
+	building on Solaris.
+
+2009-01-13  Simon Josefsson <simon@josefsson.org>
+
+	* test.c: Don't include pam_misc.h, doesn't exist on Solaris.
+
+2009-01-13  Simon Josefsson <simon@josefsson.org>
+
+	* configure.in: Improve PAM header test.
+
+2009-01-13  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, configure.in: Bump versions.
+
+2008-09-15  Simon Josefsson <simon@josefsson.org>
+
+	* Makefile.am: Fix release target.
+
+2008-09-15  Simon Josefsson <simon@josefsson.org>
+
+	* Makefile.am: generate changelog
+
+2008-09-15  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Version 1.8.
+
+2008-09-15  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, README, pam_yubico.c: Add new parameter 'url' to specify the
+	server template URL.
+
+2008-09-01  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, configure.in: Bump versions.
+
+2008-09-01  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Version 1.7.
+
+2008-09-01  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2008-09-01  Simon Josefsson <simon@josefsson.org>
+
+	* configure.in: Bump version.
+
+2008-09-01  Simon Josefsson <simon@josefsson.org>
+
+	* Makefile.am: Drop manual.
+
+2008-09-01  Simon Josefsson <simon@josefsson.org>
+
+	* pam_yubico.c: Indent.
+
+2008-09-01  Simon Josefsson <simon@josefsson.org>
+
+	* pam_yubico.c: Merge in Samir's work.  Support two-factor mode.
+	Support user configurations.
+
+2008-06-25  Simon Josefsson <simon@josefsson.org>
+
+	* README: Drop url parameter.
+
+2008-06-25  Simon Josefsson <simon@josefsson.org>
+
+	* README: Update.
+
+2008-06-25  Simon Josefsson <simon@josefsson.org>
+
+	* Makefile.am: Drop curl.
+
+2008-06-25  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2008-06-25  Simon Josefsson <simon@josefsson.org>
+
+	* configure.in, m4/libcurl.m4, pam_yubico.c: Use libyubikey-client
+	instead of curl directly.
+
+2008-06-25  Simon Josefsson <simon@josefsson.org>
+
+	* Makefile.am: Link to libyubikey-client too.
+
+2008-06-25  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Reformat.
+
+2008-06-25  Simon Josefsson <simon@josefsson.org>
+
+	* Makefile.am, build-aux/config.rpath, configure.in, libcurl.m4,
+	m4/lib-ld.m4, m4/lib-link.m4, m4/lib-prefix.m4, m4/libcurl.m4: 
+	Create m4/ and build-aux/ and use them.
+
+2008-05-03  Simon Josefsson <simon@josefsson.org>
+
+	* README: Convert to google code wiki markup.
+
+2008-05-02  Simon Josefsson <simon@josefsson.org>
+
+	* README: Better to move pam_yubico.so, in case of separate /usr
+	partition.
+
+2008-05-02  Simon Josefsson <simon@josefsson.org>
+
+	* README: Libtool is needed too.
+
+2008-01-11  Simon Josefsson <simon@josefsson.org>
+
+	* pam_yubico.c: Remove obsolete comments.
+
+2008-01-11  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2008-01-11  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, configure.in: Bump version.
+
+2008-01-11  Simon Josefsson <simon@josefsson.org>
+
+	* Makefile.am: Add release target.
+
+2008-01-11  Simon Josefsson <simon@josefsson.org>
+
+	* README: Add info.
+
+2008-01-11  Simon Josefsson <simon@josefsson.org>
+
+	* COPYING, Makefile.am, NEWS, README, configure.in, libcurl.m4,
+	pam_yubico.c, test.c: Import from private CVS repository.
+
+2008-01-11  no author <no.author@unknown.example.org>
+
+	* Initial directory structure.
+
