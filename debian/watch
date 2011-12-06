@@ -1,0 +1,5 @@
+version=3
+# Use /p/<project> to retrieve available downloads for <project>.
+# Append ?current to the resulting URL to retrieve only current downloads, not all.
+http://googlecode.debian.net/p/yubico-pam/pam_yubico-(\d+.*)\.tar\.gz
+

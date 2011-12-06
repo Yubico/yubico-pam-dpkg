@@ -1,3 +1,9 @@
+yubico-pam (2.9-2~ppa1~oneiric1) oneiric; urgency=low
+
+  * Clean up packaging.
+
+ -- Fredrik Thulin <fredrik@yubico.com>  Tue, 06 Dec 2011 11:47:15 +0100
+
 yubico-pam (2.9-1~ppa1~oneiric1) oneiric; urgency=high
 
   * New upstream release. Explicitly asks ykclient to verify servers

@@ -1,15 +1,18 @@
 Source: yubico-pam
-Maintainer: Fredrik Thulin <fredrik@yubico.com>
+Maintainer: Yubico Developers <yubico-devel@googlegroups.com>
+Uploaders: Fredrik Thulin <fredrik@yubico.com>
 Section: admin
 Priority: optional
 Build-Depends: debhelper (>= 7.0.50~),
 	       pkg-config,
+	       cdbs,
 	       libykclient-dev (>= 2.4),
 	       libpam0g-dev,
 	       libldap2-dev,
 	       libykpers-1-dev (>= 1.5.2),
 	       libyubikey-dev
-Standards-Version: 3.9.1
+Standards-Version: 3.9.2
+Homepage: http://code.google.com/p/yubico-pam/
 
 Package: libpam-yubikey
 Architecture: any
@@ -17,6 +20,7 @@ Depends: libpam-runtime (>= 1.0.1-6~),
 	 libykclient3 (>= 2.4),
 	 libldap-2.4-2,
 	 libykpers-1-1 (>= 1.5.2),
+	 ${shlibs:Depends},
 	 ${misc:Depends}
 Description: Yubikey PAM module
  This is a packaging of the yubico-pam module. When installed, it will set

@@ -1,7 +1,16 @@
 #!/usr/bin/make -f
+#
+# Some parts of this file was gleaned from libpam-mount
+#
+include /usr/share/cdbs/1/rules/debhelper.mk
+include /usr/share/cdbs/1/class/autotools.mk
 
-override_dh_auto_configure:
-	dh_auto_configure -- --with-pam-dir=$(DESTDIR)/lib/security
+CFLAGS += -fstack-protector -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security
+DEB_CONFIGURE_USER_FLAGS := --with-pam-dir=$(DESTDIR)/lib/security
 
-%:
-	dh $@
+binary-post-install/libpam-yubikey::
+# install pam-auth-update script
+	mkdir $(CURDIR)/debian/libpam-yubikey/usr/share/pam-configs
+	install -m 0644 debian/pam-auth-update $(CURDIR)/debian/libpam-yubikey/usr/share/pam-configs/yubikey
+# remove the .la module - no PAM package installs it
+	rm $(CURDIR)/debian/libpam-yubikey/lib/security/pam_yubico.la

@@ -1,0 +1,8 @@
+Name: YubiKey two-factor authentication with online validation (recommended)
+Default: no
+Priority: 704
+Auth-Type: Primary
+Auth:
+	required	pam_yubico.so	debug
+Auth-Initial:
+	required	pam_yubico.so	debug
