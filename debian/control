@@ -1,6 +1,6 @@
 Source: yubico-pam
 Maintainer: Yubico Developers <yubico-devel@googlegroups.com>
-Uploaders: Fredrik Thulin <fredrik@yubico.com>
+Uploaders: Fredrik Thulin <fredrik@yubico.com>, Simon Josefsson <simon@josefsson.org>
 Section: admin
 Priority: optional
 Build-Depends: debhelper (>= 7.0.50~),
@@ -13,6 +13,7 @@ Build-Depends: debhelper (>= 7.0.50~),
 	       libyubikey-dev
 Standards-Version: 3.9.2
 Homepage: http://code.google.com/p/yubico-pam/
+DM-Upload-Allowed: yes
 
 Package: libpam-yubikey
 Architecture: any
@@ -22,7 +23,7 @@ Depends: libpam-runtime (>= 1.0.1-6~),
 	 libykpers-1-1 (>= 1.5.2),
 	 ${shlibs:Depends},
 	 ${misc:Depends}
-Description: Yubikey PAM module
+Description: YubiKey two-factor username+OTP PAM module
  This is a packaging of the yubico-pam module. When installed, it will set
  your system up to require the use of a YubiKey token in addition to your
  existing authentication configuration (for example password authentication).
