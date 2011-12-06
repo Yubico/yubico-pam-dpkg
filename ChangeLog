@@ -1,3 +1,350 @@
+2011-06-07  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Fix date.
+
+2011-06-07  Simon Josefsson <simon@josefsson.org>
+
+	* Makefile.am: Fix release target.
+
+2011-06-07  Simon Josefsson <simon@josefsson.org>
+
+	* .gitignore: Ignore more.
+
+2011-06-07  Simon Josefsson <simon@josefsson.org>
+
+	* doc: Update doc/.
+
+2011-06-07  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Version 2.7.
+
+2011-06-07  Simon Josefsson <simon@josefsson.org>
+
+	* .gitignore, Makefile.am, NEWS, configure.ac, pam_yubico.c,
+	util.c, util.h: Make dependency on libykpers optional.  Use --without-cr to force it.  Reported by Jussi Sallinen
+	<jussi@jus.si>.
+
+2011-04-15  Fredrik Thulin <fredrik@yubico.com>
+
+	* pam_yubico.c: parse_cfg: Use memset to clear cfg struct.  The code will be easier to maintain if one does not have to remember
+	explicitly initializing all new members of the config struct.
+
+2011-04-15  Fredrik Thulin <fredrik@yubico.com>
+
+	* pam_yubico.c: Fix some D's that should've been DBG.
+
+2011-04-15  Fredrik Thulin <fredrik@yubico.com>
+
+	* pam_yubico.c: Make DBG macro unified.  Refactor authorize_user_token and authorize_user_token_ldap to take
+	a cfg argument instead of a number of elements from cfg.
+
+2011-04-15  Romain Riviere <lecoyote@lecoyote.org>
+
+	* pam_yubico.c: Debug: adding a dbg flag and macro so as to disable
+	unwanted debug messages
+
+2011-04-13  Fredrik Thulin <fredrik@yubico.com>
+
+	* README: Add mentioning of recursive dependency on libyubikey.
+
+2011-04-13  Fredrik Thulin <fredrik@yubico.com>
+
+	* Makefile.am: Tag releases consistent with previous ones (no 'v').
+
+2011-04-13  Fredrik Thulin <fredrik@yubico.com>
+
+	* README: sync
+
+2011-04-11  Fredrik Thulin <fredrik@yubico.com>
+
+	* README: sync
+
+2011-03-23  Fredrik Thulin <fredrik@yubico.com>
+
+	* Makefile.am, configure.ac: Explicitly link with libyubikey.
+
+2011-04-11  Fredrik Thulin <fredrik@yubico.com>
+
+	* NEWS: Version 2.6.
+
+2011-04-11  Fredrik Thulin <fredrik@yubico.com>
+
+	* util.c, ykpamcfg.c: whitespace
+
+2011-03-18  Tollef Fog Heen <tfheen@err.no>
+
+	* pam_yubico.c: Tell the user if something goes wrong after
+	authenticating If we successfully authenticate, but something then goes wrong, such
+	as failure to generate a new challenge, failure to update the
+	challenge and so on, tell the user.
+
+2011-03-18  Tollef Fog Heen <tfheen@err.no>
+
+	* : Merge remote branch 'fredrikt/master' Conflicts: 	util.c
+
+2011-03-17  Fredrik Thulin <fredrik@yubico.com>
+
+	* Makefile.am, ykpamcfg.1, ykpamcfg.c: Add ykpamcfg - C/R setup
+	command line utility.
+
+2011-03-17  Fredrik Thulin <fredrik@yubico.com>
+
+	* pam_yubico.c, util.c, util.h: Make get_user_challenge_file() also
+	include YubiKey serial number, and move it to util.c.
+
+2011-03-17  Fredrik Thulin <fredrik@yubico.com>
+
+	* util.c: Version-tag challenge-response state file contents.  Helps in case we ever want to change the file format.
+
+2011-03-17  Fredrik Thulin <fredrik@yubico.com>
+
+	* pam_yubico.c, util.c, util.h: Further cleanups to challenge
+	response code, and move more code to util.c.
+
+2011-03-17  Fredrik Thulin <fredrik@yubico.com>
+
+	* pam_yubico.c: Revert "Wait with declaring PAM_SUCCESS on
+	challenge-response until new" Tollef has argued that the login should not fail if, for example,
+	the disk is full. I'd rather fail on the cautious side and make sure
+	we don't end up always sending the same challenge to the YubiKey,
+	but I'll leave it up to Tollef to decide for now.  This reverts commit 14e917ffae52e05121a69a192d03f98090e8ae41.  Conflicts: 	pam_yubico.c
+
+2011-03-17  Fredrik Thulin <fredrik@yubico.com>
+
+	* pam_yubico.c, util.c, util.h: Move more challenge-response code to
+	util.c.
+
+2011-03-17  Fredrik Thulin <fredrik@yubico.com>
+
+	* Makefile.am, pam_yubico.c, util.c, util.h: Move soon-to-be
+	commonly used code to util.c
+
+2011-03-16  Tollef Fog Heen <tfheen@err.no>
+
+	* pam_yubico.c: Use a temporary file to ensure we always have a
+	challenge If we use ftruncate we might end up in the situation that we do not
+	have a challenge on disk, leading to the user being unable to log
+	in.  By using a temporary file, fsync and rename we avoid this
+	problem.
+
+2011-03-17  Fredrik Thulin <fredrik@yubico.com>
+
+	* Makefile.am, ykpamcfg.1, ykpamcfg.c: Add ykpamcfg - C/R setup
+	command line utility.
+
+2011-03-17  Fredrik Thulin <fredrik@yubico.com>
+
+	* pam_yubico.c, util.c, util.h: Make get_user_challenge_file() also
+	include YubiKey serial number, and move it to util.c.
+
+2011-03-17  Fredrik Thulin <fredrik@yubico.com>
+
+	* util.c: Version-tag challenge-response state file contents.  Helps in case we ever want to change the file format.
+
+2011-03-17  Fredrik Thulin <fredrik@yubico.com>
+
+	* pam_yubico.c, util.c, util.h: Further cleanups to challenge
+	response code, and move more code to util.c.
+
+2011-03-17  Fredrik Thulin <fredrik@yubico.com>
+
+	* pam_yubico.c: Revert "Wait with declaring PAM_SUCCESS on
+	challenge-response until new" Tollef has argued that the login should not fail if, for example,
+	the disk is full. I'd rather fail on the cautious side and make sure
+	we don't end up always sending the same challenge to the YubiKey,
+	but I'll leave it up to Tollef to decide for now.  This reverts commit 14e917ffae52e05121a69a192d03f98090e8ae41.  Conflicts: 	pam_yubico.c
+
+2011-03-17  Fredrik Thulin <fredrik@yubico.com>
+
+	* pam_yubico.c, util.c, util.h: Move more challenge-response code to
+	util.c.
+
+2011-03-17  Fredrik Thulin <fredrik@yubico.com>
+
+	* Makefile.am, pam_yubico.c, util.c, util.h: Move soon-to-be
+	commonly used code to util.c
+
+2011-03-14  Fredrik Thulin <fredrik@yubico.com>
+
+	* pam_yubico.c: Remove hard coded values for challenge/responses.  Also do some input validation on what we read from the C/R file.
+
+2011-03-14  Fredrik Thulin <fredrik@yubico.com>
+
+	* pam_yubico.c: generate_challenge() only generated half as many
+	bytes as it should.  Changed generate_challenge() to generating bytes instead of a hex
+	encoded string, to not have to decode what we just encoded - instead
+	just generate plain bytes of randomness and then encode them once.
+
+2011-03-16  Tollef Fog Heen <tfheen@err.no>
+
+	* pam_yubico.c: Use a temporary file to ensure we always have a
+	challenge If we use ftruncate we might end up in the situation that we do not
+	have a challenge on disk, leading to the user being unable to log
+	in.  By using a temporary file, fsync and rename we avoid this
+	problem.
+
+2011-03-14  Fredrik Thulin <fredrik@yubico.com>
+
+	* pam_yubico.c: fsync() wants file descriptor Also, truncate file before writing if the challenge length has
+	changed (became shorter) or garbage has otherwise been appended.
+
+2011-03-14  Fredrik Thulin <fredrik@yubico.com>
+
+	* pam_yubico.c: Don't generate new challenge on bad response.
+
+2011-03-14  Fredrik Thulin <fredrik@yubico.com>
+
+	* pam_yubico.c: Support challenge-response files outside user's home
+	directory.  Having the challege-response data inside the home directory won't
+	work very well if the YubiKey is to unlock an ecryptfs encrypted
+	home directory.
+
+2011-03-16  Tollef Fog Heen <tfheen@err.no>
+
+	* : Merge remote branch 'origin/master'
+
+2011-03-14  Fredrik Thulin <fredrik@yubico.com>
+
+	* pam_yubico.c: generate_challenge() only generated half as many
+	bytes as it should.  Changed generate_challenge() to generating bytes instead of a hex
+	encoded string, to not have to decode what we just encoded - instead
+	just generate plain bytes of randomness and then encode them once.
+
+2011-03-14  Fredrik Thulin <fredrik@yubico.com>
+
+	* pam_yubico.c: Wait with declaring PAM_SUCCESS on
+	challenge-response until new challenge-response has been stored
+	properly on disk.
+
+2011-03-14  Fredrik Thulin <fredrik@yubico.com>
+
+	* pam_yubico.c: fsync() wants file descriptor Also, truncate file before writing if the challenge length has
+	changed (became shorter) or garbage has otherwise been appended.
+
+2011-03-14  Fredrik Thulin <fredrik@yubico.com>
+
+	* pam_yubico.c: Don't generate new challenge on bad response.
+
+2011-03-14  Fredrik Thulin <fredrik@yubico.com>
+
+	* pam_yubico.c: Support challenge-response files outside user's home
+	directory.  Having the challege-response data inside the home directory won't
+	work very well if the YubiKey is to unlock an ecryptfs encrypted
+	home directory.
+
+2011-03-14  Fredrik Thulin <fredrik@yubico.com>
+
+	* : Merge remote branch 'remim/master'
+
+2011-03-12  Tollef Fog Heen <tfheen@err.no>
+
+	* pam_yubico.c: Undef USERFILE when we don't need it any more
+
+2011-03-12  Tollef Fog Heen <tfheen@err.no>
+
+	* Makefile.am, configure.ac: Look for libykpers-1, which we will
+	need for challenge-response
+
+2011-03-12  Tollef Fog Heen <tfheen@err.no>
+
+	* pam_yubico.c: Get rid of unimplemented PAM functions
+
+2011-03-10  Fredrik Thulin <fredrik@yubico.com>
+
+	* : commit 27346d9be9739954dadf24c460c74b8ea4043488 Author: Fredrik
+	Thulin <fredrik@yubico.com> Date:   Thu Mar 10 10:48:20 2011 +0100
+
+2011-03-04  Fredrik Thulin <fredrik@yubico.com>
+
+	* pam_yubico.c: Ignore errors from pam_get_data().
+
+2011-03-03  Fredrik Thulin <fredrik@yubico.com>
+
+	* pam_yubico.c: Correct debug log message for too short OTPs.
+
+2011-03-03  Fredrik Thulin <fredrik@yubico.com>
+
+	* : commit 952668811dd212d7444d4903feacaa40d30f4ea8 Merge: 60d9e60
+	702ac98 Author: Fredrik Thulin <fredrik@yubico.com> Date:   Thu Mar
+	3 15:06:22 2011 +0100
+
+2011-03-03  Fredrik Thulin <fredrik@yubico.com>
+
+	* pam_yubico.c: Bugfix getting option token_id_length.
+
+2011-03-03  Fredrik Thulin <fredrik@yubico.com>
+
+	* pam_yubico.c: Avoid logging passwords when debug is enabled.  Problem reported in
+	http://code.google.com/p/yubico-pam/issues/detail?id=28
+
+2011-03-03  Fredrik Thulin <fredrik@yubico.com>
+
+	* : commit abb0b7e4e4d9ed0e09778815328126c6813b0d78 Author: Fredrik
+	Thulin <fredrik@yubico.com> Date:   Thu Mar 3 14:14:54 2011 +0100
+
+2011-03-03  Fredrik Thulin <fredrik@yubico.com>
+
+	* pam_yubico.c: authorize_user_token_ldap: Don't leak memory on
+	failures.
+
+2011-03-03  Fredrik Thulin <fredrik@yubico.com>
+
+	* pam_yubico.c: authorize_user_token_ldap: sr was under-allocated by
+	one byte.  Also change strcat's to sprintf to make code easier to maintain.
+
+2011-03-03  Fredrik Thulin <fredrik@yubico.com>
+
+	* pam_yubico.c: Don't segfault on unset LDAP parameters.  When ldapserver / ldap_uri was specified, but not for example
+	user_attr, authorize_user_token_ldap() used to cause a segmentation
+	fault.
+
+2011-03-03  Fredrik Thulin <fredrik@yubico.com>
+
+	* pam_yubico.c: Use LDAPv3 instead of LDAPv2.  LDAPv2 was declared historical in 2003, and is now not supported by
+	for example Mac OS X Server's Open Directory.  Patch by
+	maxsanna81@gmail.com.
+
+2011-03-03  Fredrik Thulin <fredrik@yubico.com>
+
+	* pam_yubico.c: Avoid LDAP warnings about deprecated functions.  Patch by judas.iscariote.
+
+2011-03-03  Fredrik Thulin <fredrik@yubico.com>
+
+	* pam_yubico.c: authorize_user_token_ldap: Use correct LDAP free
+	function.  Patch by judas.iscariote.
+
+2011-02-28  Fredrik Thulin <fredrik@yubico.com>
+
+	* pam_yubico.c: Make length of public ID part of tokens
+	configurable.  Now that we support setting URL, not all public ID's can be expected
+	to be six bytes (the length used in the YubiCloud validation
+	service).  Unfortunately we can't support OTPs of different lengths at once,
+	because there is code supporting users entering their (other)
+	password followed by the OTP from the YubiKey.  Patch by fraser.scott@gmail.com in
+	http://code.google.com/p/yubico-pam/issues/detail?id=19
+
+2011-03-02  Fredrik Thulin <fredrik@yubico.com>
+
+	* configure.ac: Check for ykclient-2.4+, since we use new ca_path
+	function.
+
+2011-02-28  Fredrik Thulin <fredrik@yubico.com>
+
+	* pam_yubico.c: Add debug output of url and capath.
+
+2011-02-22  Fredrik Thulin <fredrik@yubico.com>
+
+	* : commit e3440786bfa3c3475721b5933b8ab6c8074d1e64 Author: Fredrik
+	Thulin <fredrik@yubico.com> Date:   Wed Feb 16 22:22:23 2011 +0100
+
+2011-02-16  Fredrik Thulin <fredrik@yubico.com>
+
+	* doc: sync
+
+2011-02-16  Fredrik Thulin <fredrik@yubico.com>
+
+	* Makefile.am: Change to make releases from Github.
+
 2011-02-16  Fredrik Thulin <fredrik@yubico.com>
 
 	* README: Convert to asciidoc (used by Github wiki).
@@ -5,6 +352,14 @@
 2011-02-16  Fredrik Thulin <fredrik@yubico.com>
 
 	* .gitmodules: Add submodule doc.
+
+2011-02-11  Remi Mollon <remi.mollon@cern.ch>
+
+	* pam_yubico.c: Add capath parameter to PAM module
+
+2011-02-11  Remi Mollon <remi.mollon@cern.ch>
+
+	* pam_yubico.c: Add capath parameter to PAM module
 
 2010-09-10  Simon Josefsson <simon@yubico.com>
 
