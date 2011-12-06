@@ -3,8 +3,6 @@
 
 set -e
 
-echo "Activating PAM profile"
-
 pam-auth-update --package
 
 #DEBHELPER#
