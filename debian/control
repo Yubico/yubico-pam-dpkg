@@ -23,7 +23,16 @@ Depends: libpam-runtime (>= 1.0.1-6~),
 	 libykpers-1-1 (>= 1.5.2),
 	 ${shlibs:Depends},
 	 ${misc:Depends}
-Description: YubiKey two-factor username+OTP PAM module
- This is a packaging of the yubico-pam module. When installed, it will set
- your system up to require the use of a YubiKey token in addition to your
- existing authentication configuration (for example password authentication).
+Description: YubiKey two-factor password+OTP PAM module
+ This is the Yubico PAM module. It enables you to set up your system to
+ require two-factor authentication with your normal username and password
+ and a YubiKey OTP that is validated against an online validation service.
+ .
+ The default validation service is the free YubiCloud, but you can easily
+ set up and use your own validation service.
+ .
+ A second mode of operation is available using the YubiKeys HMAC-SHA-1
+ Challenge-Response functionality. Using this mode, you can accomplish
+ offline validation using a YubiKey, for example on a laptop computer.
+ This only works for local logins though, and not for logging in using
+ for example SSH.
