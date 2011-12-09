@@ -39,7 +39,7 @@ Description: Yubico two-factor password+OTP (YubiKey) PAM module
 
 Package: libpam-yubikey
 Architecture: any
-Depends: libpam-yubico
+Depends: ${misc:Depends}, libpam-yubico
 Description: Transition package
  This is a dummy packet to install the new libpam-yubico instead of the
  old libpam-yubikey. It may be removed after installation.
