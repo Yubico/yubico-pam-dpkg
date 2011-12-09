@@ -6,17 +6,17 @@ include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/class/autotools.mk
 
 # helper var
-BASE:=$(CURDIR)/debian/libpam-yubikey
+BASE:=$(CURDIR)/debian/libpam-yubico
 CFLAGS += -fstack-protector -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security
-DEB_CONFIGURE_EXTRA_FLAGS := --with-pam-dir=$(DESTDIR)/lib/security --includedir=/usr/include/libpam-yubikey
+DEB_CONFIGURE_EXTRA_FLAGS := --with-pam-dir=$(DESTDIR)/lib/security --includedir=/usr/include/libpam-yubico
 DEB_MAKE_CHECK_TARGET = check
 
-binary-post-install/libpam-yubikey::
+binary-post-install/libpam-yubico::
 # install pam-auth-update script
 	mkdir $(BASE)/usr/share/pam-configs
-	install -m 0644 debian/pam-auth-update $(BASE)/usr/share/pam-configs/yubikey
+	install -m 0644 debian/pam-auth-update $(BASE)/usr/share/pam-configs/yubico
 # remove the .la module - no PAM package installs it
 	rm -f $(BASE)/lib/security/pam_yubico.la
 # remove the private header files that should not be installed
-	rm -rf $(BASE)/usr/include/libpam-yubikey
+	rm -rf $(BASE)/usr/include/libpam-yubico
 	find $(BASE) -type d -empty -delete

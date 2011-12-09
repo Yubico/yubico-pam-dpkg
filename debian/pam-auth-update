@@ -1,4 +1,4 @@
-Name: YubiKey two-factor authentication with online validation (recommended)
+Name: Yubico two-factor authentication with YubiKey online validation (recommended)
 Default: no
 Priority: 704
 Auth-Type: Primary

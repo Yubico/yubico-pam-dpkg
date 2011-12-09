@@ -15,7 +15,7 @@ Standards-Version: 3.9.2
 Homepage: http://code.google.com/p/yubico-pam/
 DM-Upload-Allowed: yes
 
-Package: libpam-yubikey
+Package: libpam-yubico
 Architecture: any
 Depends: libpam-runtime (>= 1.0.1-6~),
 	 libykclient3 (>= 2.4),
@@ -23,7 +23,7 @@ Depends: libpam-runtime (>= 1.0.1-6~),
 	 libykpers-1-1 (>= 1.5.2),
 	 ${shlibs:Depends},
 	 ${misc:Depends}
-Description: YubiKey two-factor password+OTP PAM module
+Description: Yubico two-factor password+OTP (YubiKey) PAM module
  This is the Yubico PAM module. It enables you to set up your system to
  require two-factor authentication with your normal username and password
  and a YubiKey OTP that is validated against an online validation service.
@@ -36,3 +36,10 @@ Description: YubiKey two-factor password+OTP PAM module
  offline validation using a YubiKey, for example on a laptop computer.
  This only works for local logins though, and not for logging in using
  for example SSH.
+
+Package: libpam-yubikey
+Architecture: any
+Depends: libpam-yubico
+Description: Transition package
+ This is a dummy packet to install the new libpam-yubico instead of the
+ old libpam-yubikey. It may be removed after installation.

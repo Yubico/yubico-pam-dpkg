@@ -4,7 +4,7 @@
 set -e
 
 if [ "$1" = remove ]; then
-    pam-auth-update --package --remove yubikey
+    pam-auth-update --package --remove yubico
 fi
 
 #DEBHELPER#
