@@ -1,0 +1,64 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: yubico-pam@packages.debian.org\n"
+"POT-Creation-Date: 2011-12-10 15:08+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. Type: string
+#. Description
+#: ../libpam-yubico.templates:1001
+msgid "Parameters for Yubico PAM:"
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../libpam-yubico.templates:1001
+msgid ""
+"The Yubico PAM module supports two modes of operation - online validation of "
+"YubiKey OTPs or offline validation of YubiKey HMAC-SHA-1 responses to "
+"challenges."
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../libpam-yubico.templates:1001
+msgid ""
+"The default is online validation, and for that to work you need to get an "
+"API key (they are free) at https://upgrade.yubico.com/getapikey/ and enter "
+"the key id as \"id=NNNN\" and the base64 key as \"key=...\"."
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../libpam-yubico.templates:1001
+msgid ""
+"All the available parameters for the Yubico PAM module are described in /usr/"
+"share/doc/libpam-yubico/README.gz."
+msgstr ""
+
+#. Type: note
+#. Description
+#: ../libpam-yubico.templates:2001
+msgid "Yubico PAM module disabled by default"
+msgstr ""
+
+#. Type: note
+#. Description
+#: ../libpam-yubico.templates:2001
+msgid ""
+"To avoid locking anyone out of their system, the Yubico PAM module is not "
+"activated by default. Use the program `pam-auth-update' to enable it."
+msgstr ""

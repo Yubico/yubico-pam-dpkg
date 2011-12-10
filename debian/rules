@@ -12,9 +12,9 @@ DEB_CONFIGURE_EXTRA_FLAGS := --with-pam-dir=$(DESTDIR)/lib/security --includedir
 DEB_MAKE_CHECK_TARGET = check
 
 binary-post-install/libpam-yubico::
-# install pam-auth-update script
+# install pam-auth-update template
 	mkdir $(BASE)/usr/share/pam-configs
-	install -m 0644 debian/pam-auth-update $(BASE)/usr/share/pam-configs/yubico
+	install -m 0644 debian/pam-auth-update $(BASE)/usr/share/libpam-yubico/pam-auth-update.template
 # remove the .la module - no PAM package installs it
 	rm -f $(BASE)/lib/security/pam_yubico.la
 # remove the private header files that should not be installed

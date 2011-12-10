@@ -3,6 +3,16 @@
 
 set -e
 
+# Source debconf library.
+. /usr/share/debconf/confmodule
+
+# Write a new /usr/share/pam-configs/yubico from our template with the
+# configuration gathered using debconf in libpam-yubico.config
+db_get libpam-yubico/module_args
+sed -e "s/#DEBCONF_REPLACE/$RET/g" \
+    < /usr/share/libpam-yubico/pam-auth-update.template \
+    > /usr/share/pam-configs/yubico
+
 pam-auth-update --package
 
 #DEBHELPER#

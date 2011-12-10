@@ -4,6 +4,7 @@ Uploaders: Fredrik Thulin <fredrik@yubico.com>, Simon Josefsson <simon@josefsson
 Section: admin
 Priority: optional
 Build-Depends: debhelper (>= 8),
+	       po-debconf,
 	       pkg-config,
 	       cdbs,
 	       libykclient-dev (>= 2.4),
@@ -21,6 +22,7 @@ Depends: libpam-runtime (>= 1.0.1-6~),
 	 libykclient3 (>= 2.4),
 	 libldap-2.4-2,
 	 libykpers-1-1 (>= 1.5.2),
+	 debconf,
 	 ${shlibs:Depends},
 	 ${misc:Depends}
 Description: Yubico two-factor password+OTP (YubiKey) PAM module
