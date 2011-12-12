@@ -3,7 +3,7 @@ Maintainer: Yubico Developers <yubico-devel@googlegroups.com>
 Uploaders: Fredrik Thulin <fredrik@yubico.com>, Simon Josefsson <simon@josefsson.org>
 Section: admin
 Priority: optional
-Build-Depends: debhelper (>= 7.0.50~),
+Build-Depends: debhelper (>= 8),
 	       pkg-config,
 	       cdbs,
 	       libykclient-dev (>= 2.4),
