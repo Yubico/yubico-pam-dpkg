@@ -1,21 +1,46 @@
-This is a first attempt at packaging the Yubico OTP PAM module for
-Ubuntu (and perhaps Debian -- it seems to have pam-auth-update too).
+libpam-yubico for Debian
+------------------------
 
-********************************************************************
-* You WILL need to configure the arguments to the pam_yubico.so in *
-* /etc/pam.d/common-auth manually after installing this package.   *
-********************************************************************
 
-Maybe this package could be made to use debconf to do this at
-dpkg-configure time -- patches welcome.
+Online validation
+-----------------
 
-The minimum parameters you need to add (after 'debug') is an id=nn,
-and ideally the API key that goes with that id in order to get
-integrity protection of the communication between the client (you)
-and the validation server (the YubiCloud online service per default).
+The default way to use this PAM module is to validate YubiKey OTPs
+using the free online validation service, the YubiCloud. If this
+PAM module is enabled together with for example pam_unix, you can
+get two-factor (2FA) authentication with your YubiKey as one factor
+and your UNIX password as the second factor.
 
-Example common-auth entry for two-factor authentication using
-YubiKey and your UNIX password :
+To use the YubiCloud securely, you should get an API key and enter
+that at the package configuration prompt. To change the configuration
+after initial install, use `dpkg-reconfigure libpam-yubico'.
+
+To get an API key, visit https://upgrade.yubico.com/getapikey/
+
+  (don't worry, it's free).
+
+If you want to use some other online validation service than the
+YubiCloud, you can. All the software for the YubiCloud is available
+as open source. See the Developer section at http://yubico.com/.
+
+
+Offline validation
+------------------
+
+YubiKeys can be programmed for HMAC-SHA-1 Challenge-Response, and
+this PAM module can use that to provide offline authentication
+requiring a YubiKey. See /usr/share/doc/libpam-yubico/README.gz
+for more information about how to configure that (search for
+"challenge-response").
+
+
+Example and debugging
+---------------------
+
+While you generally should use `dpkg-reconfigure libpam-yubico' to
+change the configuration for this PAM module, this is an example PAM
+stack configuration for two-factor authentication using YubiKey and
+your UNIX password (note that debugging is enabled with `debug') :
 
   # here are the per-package modules (the "Primary" block)
   auth   required                    pam_yubico.so   debug id=4711 key=pJMccccc05pJMccccT05=
@@ -23,9 +48,6 @@ YubiKey and your UNIX password :
   # here's the fallback if no module succeeds
   auth	 requisite    	    pam_deny.so
 
-To get an API key, visit https://upgrade.yubico.com/getapikey/
-
-  (don't worry, it's free).
 
 To see the debug output, do the following :
 
@@ -36,3 +58,16 @@ To see the debug output, do the following :
 There is more documentation online in the Yubico-PAM wiki at
 
   https://github.com/Yubico/yubico-pam/wiki/
+
+but it might be for a more recent version of the Yubico PAM module
+than the one you are using.
+
+
+Other
+-----
+
+See the file /usr/share/doc/libpam-yubico/README.gz to learn about
+what else can be configured for the Yubico PAM module.
+
+
+Fredrik Thulin <fredrik@yubico.com>, Tue Dec 13 13:32:59 CET 2011
