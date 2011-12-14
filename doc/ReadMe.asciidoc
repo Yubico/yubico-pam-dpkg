@@ -17,8 +17,9 @@ the 'url' parameter).
 
 In version 2.6, offline validation was also made possible through
 the use of HMAC-SHA1 Challenge-Response found in YubiKey 2.2 and
-later. This has introduced a currently mandatory dependency of
-libykpers-1 from the ykpersonalize package.
+later. This has introduced a dependency of libykpers-1 from the
+ykpersonalize package. Pass `--without-cr' to `configure' to avoid
+this dependency.
 
 The development community is co-ordinated via Google Code :
 
@@ -98,11 +99,9 @@ Ubuntu platforms :
 
   $ sudo add-apt-repository ppa:fredrikt/yubico
   $ sudo apt-get update
-  $ sudo apt-get install libpam-yubikey
+  $ sudo apt-get install libpam-yubico
 
-You will have to configure pam_yubico manually in /etc/pam.d/common-auth
-manually after installing, minimally adding an "id" parameter. See the
-file /usr/share/doc/libpam-yubikey/README.Debian after installing.
+See the file /usr/share/doc/libpam-yubico/README.Debian after installing.
 
 
 Configuration
@@ -193,6 +192,18 @@ Supported PAM module parameters are:
   "yubi_attr":  specify the LDAP attribute used to store the Yubikey id.
 
   "capath":     Path to a directory with SSL CA certs you trust.
+
+  "token_id_length":
+		Length of ID prefixing the OTP (this is 12 if using the
+		YubiCloud).
+  "mode":
+		Mode of operation. Use "client" for online validation with
+		a YubiKey validation service such as the YubiCloud, or use
+		"challenge-response" for offline validation using YubiKeys
+		with HMAC-SHA-1 Challenge-Response configurations. See the
+		man-page ykpamcfg(1) for further details on how to configure
+		offline Challenge-Response validation.
+
 ------
 
 If you are using "debug" you may find it useful to create a
@@ -276,4 +287,4 @@ Feedback
 --------
 
 If you want to discuss anything related to the Yubico PAM module,
-please contact Simon Josefsson <simon@yubico.com>.
+please e-mail the mailing list yubico-devel@googlegroups.com.

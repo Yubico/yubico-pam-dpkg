@@ -85,10 +85,10 @@ report_yk_error()
 int
 parse_args(int argc, char **argv,
 	   int *slot, bool *verbose,
-	   unsigned char **action,
+	   char **action,
 	   int *exit_code)
 {
-  char c;
+  int c;
 
   while((c = getopt(argc, argv, optstring)) != -1) {
     switch (c) {
@@ -116,9 +116,9 @@ parse_args(int argc, char **argv,
 }
 
 int
-do_add_hmac_chalresp(YK_KEY *yk, uint8_t slot, bool verbose, unsigned char *output_dir, int *exit_code)
+do_add_hmac_chalresp(YK_KEY *yk, uint8_t slot, bool verbose, char *output_dir, int *exit_code)
 {
-  unsigned char buf[CR_RESPONSE_SIZE + 16];
+  char buf[CR_RESPONSE_SIZE + 16];
   CR_STATE state;
   unsigned int flags = 0;
   int ret = 0;
@@ -191,7 +191,7 @@ main(int argc, char **argv)
 
   /* Options */
   bool verbose = false;
-  unsigned char *action = ACTION_ADD_HMAC_CHALRESP;
+  char *action = ACTION_ADD_HMAC_CHALRESP;
   int slot = 1;
 
   ykp_errno = 0;
