@@ -38,10 +38,3 @@ Description: Yubico two-factor password+OTP (YubiKey) PAM module
  offline validation using a YubiKey, for example on a laptop computer.
  This only works for local logins though, and not for logging in using
  for example SSH.
-
-Package: libpam-yubikey
-Architecture: any
-Depends: ${misc:Depends}, libpam-yubico
-Description: Transition package
- This is a dummy packet to install the new libpam-yubico instead of the
- old libpam-yubikey. It may be removed after installation.
