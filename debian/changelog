@@ -1,3 +1,11 @@
+yubico-pam (2.10-1~ppa1~ppadisttarget1) ppadisttarget; urgency=low
+
+  * New upstream release.
+  * Restores challenge-response functionality.
+  * Drop permissions before reading file in users home directory.
+
+ -- Fredrik Thulin <fredrik@yubico.com>  Wed, 14 Dec 2011 13:23:23 +0100
+
 yubico-pam (2.9-3~ppa1~ppadisttarget1) ppadisttarget; urgency=low
 
   * Rename libpam-yubikey to libpam-yubico to match upstream project name
