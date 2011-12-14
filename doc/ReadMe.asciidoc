@@ -99,11 +99,9 @@ Ubuntu platforms :
 
   $ sudo add-apt-repository ppa:fredrikt/yubico
   $ sudo apt-get update
-  $ sudo apt-get install libpam-yubikey
+  $ sudo apt-get install libpam-yubico
 
-You will have to configure pam_yubico manually in /etc/pam.d/common-auth
-manually after installing, minimally adding an "id" parameter. See the
-file /usr/share/doc/libpam-yubikey/README.Debian after installing.
+See the file /usr/share/doc/libpam-yubico/README.Debian after installing.
 
 
 Configuration
@@ -289,4 +287,4 @@ Feedback
 --------
 
 If you want to discuss anything related to the Yubico PAM module,
-please contact Simon Josefsson <simon@yubico.com>.
+please e-mail the mailing list yubico-devel@googlegroups.com.
