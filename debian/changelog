@@ -1,3 +1,9 @@
+yubico-pam (2.10-2~ppa1~ppadisttarget1) ppadisttarget; urgency=low
+
+  * Fix build on Lucid by reverting to debhelper compat level 7.
+
+ -- Fredrik Thulin <fredrik@yubico.com>  Fri, 16 Dec 2011 07:28:26 +0100
+
 yubico-pam (2.10-1~ppa1~ppadisttarget1) ppadisttarget; urgency=low
 
   * New upstream release.
