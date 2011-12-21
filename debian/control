@@ -22,7 +22,7 @@ Depends: libpam-runtime (>= 1.0.1-6~),
 	 libykclient3 (>= 2.4),
 	 libldap-2.4-2,
 	 libykpers-1-1 (>= 1.5.2),
-	 debconf,
+	 debconf | debconf-2.0,
 	 ${shlibs:Depends},
 	 ${misc:Depends}
 Description: Yubico two-factor password+OTP (YubiKey) PAM module
