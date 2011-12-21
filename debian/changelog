@@ -1,3 +1,9 @@
+yubico-pam (2.10-2~ppa2~ppadisttarget1) ppadisttarget; urgency=low
+
+  * Implement some final comments from Tollef.
+
+ -- Fredrik Thulin <fredrik@yubico.com>  Wed, 21 Dec 2011 17:12:43 +0100
+
 yubico-pam (2.10-2~ppa1~ppadisttarget1) ppadisttarget; urgency=low
 
   * Fix build on Lucid by reverting to debhelper compat level 7.
