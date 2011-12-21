@@ -1,0 +1,3 @@
+debian/tmp/lib/security/pam_yubico.so
+debian/tmp/usr/bin/ykpamcfg
+debian/tmp/usr/share/man/man1/ykpamcfg.1
