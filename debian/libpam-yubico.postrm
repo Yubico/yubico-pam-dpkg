@@ -8,7 +8,10 @@ if [ "$1" = "purge" -a -e /usr/share/debconf/confmodule ]; then
     . /usr/share/debconf/confmodule
     # Remove my changes to the db.
     db_purge
-    # and the file we created in libpam-yubico.config
+fi
+
+if [ "$1" = "remove" ]; then
+    # remove the file we created in libpam-yubico.config
     rm -f /usr/share/pam-configs/yubico
 fi
 
