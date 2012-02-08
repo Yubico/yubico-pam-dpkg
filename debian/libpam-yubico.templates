@@ -1,20 +1,25 @@
+# These templates have been reviewed by the debian-l10n-english
+# team
+#
+# If modifications/additions/rewording are needed, please ask
+# debian-l10n-english@lists.debian.org for advice.
+#
+# Even minor modifications require translation updates and such
+# changes should be coordinated with translators and reviewers.
+
 Template: libpam-yubico/module_args
 Type: string
 Default: mode=client try_first_pass id=N key=K
 _Description: Parameters for Yubico PAM:
- The Yubico PAM module supports two modes of operation - online
+ The Yubico PAM module supports two modes of operation: online
  validation of YubiKey OTPs or offline validation of YubiKey HMAC-SHA-1
  responses to challenges.
  .
  The default is online validation, and for that to work you need to get
- an API key (they are free) at https://upgrade.yubico.com/getapikey/ and
+ a free API key at https://upgrade.yubico.com/getapikey/ and
  enter the key id as "id=NNNN" and the base64 secret as "key=...".
  .
  All the available parameters for the Yubico PAM module are described
- in /usr/share/doc/libpam-yubico/README.gz.
-
-Template: libpam-yubico/disabled_by_default
-Type: note
-_Description: Yubico PAM module disabled by default
- To avoid locking anyone out of their system, the Yubico PAM module is
- not activated by default. Use the program `pam-auth-update' to enable it.
+ in /usr/share/doc/libpam-yubico/README.gz. To avoid accidental
+ lock-outs the module will not be active until it is enabled with the
+ "pam-auth-update" command.

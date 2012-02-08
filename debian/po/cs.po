@@ -1,0 +1,60 @@
+# Czech PO debconf template translation of yubico-pam.
+# Copyright (C) 2012 Michal Simunek <michal.simunek@gmail.com>
+# This file is distributed under the same license as the yubico-pam package.
+# Michal Simunek <michal.simunek@gmail.com>, 2012.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: yubico-pam 2.10-2\n"
+"Report-Msgid-Bugs-To: yubico-pam@packages.debian.org\n"
+"POT-Creation-Date: 2012-01-18 07:24+0100\n"
+"PO-Revision-Date: 2012-01-25 17:31+0100\n"
+"Last-Translator: Michal Simunek <michal.simunek@gmail.com>\n"
+"Language-Team: Czech <debian-l10n-czech@lists.debian.org>\n"
+"Language: cs\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. Type: string
+#. Description
+#: ../libpam-yubico.templates:2001
+msgid "Parameters for Yubico PAM:"
+msgstr "Parametry pro Yubico PAM:"
+
+#. Type: string
+#. Description
+#: ../libpam-yubico.templates:2001
+msgid ""
+"The Yubico PAM module supports two modes of operation: online validation of "
+"YubiKey OTPs or offline validation of YubiKey HMAC-SHA-1 responses to "
+"challenges."
+msgstr ""
+"Modul Yubico PAM podporuje dva provozní režimy, které zpracovávají "
+"požadavky: online ověřování YubiKey OTP nebo offline ověřování YubiKey HMAC-"
+"SHA-1."
+
+#. Type: string
+#. Description
+#: ../libpam-yubico.templates:2001
+msgid ""
+"The default is online validation, and for that to work you need to get a "
+"free API key at https://upgrade.yubico.com/getapikey/ and enter the key id "
+"as \"id=NNNN\" and the base64 secret as \"key=...\"."
+msgstr ""
+"Výchozí je online ověřování a k tomu, aby fungovalo, potřebujete klíč k API, "
+"který zdarma získáte na https://upgrade.yubico.com/getapikey/ a který zadáte "
+"jako \"id=NNNN\" a neveřejnou část v kódování base64 jako \"key=...\"."
+
+#. Type: string
+#. Description
+#: ../libpam-yubico.templates:2001
+msgid ""
+"All the available parameters for the Yubico PAM module are described in /usr/"
+"share/doc/libpam-yubico/README.gz. To avoid accidental lock-outs the module "
+"will not be active until it is enabled with the \"pam-auth-update\" command."
+msgstr ""
+"Všechny dostupné parametry pro modul Yubico PAM jsou popsány v souboru /usr/"
+"share/doc/libpam-yubico/README.gz. Aby se předešlo náhodnému uzamykání, "
+"modul nebude aktivní, dokud nebude povolen pomocí příkazu \"pam-auth-update"
+"\"."

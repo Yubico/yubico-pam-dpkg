@@ -1,27 +1,26 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Translation of yubico-pam debconf template to Swedish
+# Copyright (C) 2012 Martin Bagge <brother@bsnet.se>
+# This file is distributed under the same license as the yubico-pam package.
 #
-#, fuzzy
+# Martin Bagge <brother@bsnet.se>, 2012
 msgid ""
 msgstr ""
 "Project-Id-Version: yubico-pam\n"
 "Report-Msgid-Bugs-To: yubico-pam@packages.debian.org\n"
 "POT-Creation-Date: 2012-01-18 07:24+0100\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"PO-Revision-Date: 2012-01-26 23:25+0100\n"
+"Last-Translator: Martin Bagge / brother <brother@bsnet.se>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
 #. Type: string
 #. Description
 #: ../libpam-yubico.templates:2001
 msgid "Parameters for Yubico PAM:"
-msgstr ""
+msgstr "Parametrar för Yubico PAM:"
 
 #. Type: string
 #. Description
@@ -31,6 +30,8 @@ msgid ""
 "YubiKey OTPs or offline validation of YubiKey HMAC-SHA-1 responses to "
 "challenges."
 msgstr ""
+"Yubico PAM-modulen har stöd för två lägen; uppkopplad verifiering av YubiKey "
+"OTP eller nedkopplad validering av YubiKey HMAC-SHA-1 fråga-svar."
 
 #. Type: string
 #. Description
@@ -40,6 +41,10 @@ msgid ""
 "free API key at https://upgrade.yubico.com/getapikey/ and enter the key id "
 "as \"id=NNNN\" and the base64 secret as \"key=...\"."
 msgstr ""
+"Standard är den uppkopplade valideringen och för att det ska fungera måste "
+"du hämta en gratis API-nyckel från https://upgrade.yubico.com/getapikey/ och "
+"ange key id på formen \"id=NNNN\" och den base64-kodade hemligheten som "
+"\"key=...\"."
 
 #. Type: string
 #. Description
@@ -49,3 +54,7 @@ msgid ""
 "share/doc/libpam-yubico/README.gz. To avoid accidental lock-outs the module "
 "will not be active until it is enabled with the \"pam-auth-update\" command."
 msgstr ""
+"Alla tillgängliga parametrar för Yubico PAM-modulen beskrivs i /usr/share/"
+"doc/libpam-yubico/README.gz. För att undvika oförutsedda utlåsningar så "
+"kommer modulen inte vara aktiv innan den aktiveras med kommandot \"pam-auth-"
+"update\"."
