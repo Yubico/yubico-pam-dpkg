@@ -1,0 +1,62 @@
+# Copyright (C) 2012
+# This file is distributed under the same license as the yubico-pam package.
+#
+# Michał Kułach <michal.kulach@gmail.com>, 2012.
+msgid ""
+msgstr ""
+"Project-Id-Version: yubico-pam\n"
+"Report-Msgid-Bugs-To: yubico-pam@packages.debian.org\n"
+"POT-Creation-Date: 2012-01-18 07:24+0100\n"
+"PO-Revision-Date: 2012-01-31 19:16+0100\n"
+"Last-Translator: Michał Kułach <michal.kulach@gmail.com>\n"
+"Language-Team: Polish <debian-l10n-polish@lists.debian.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Lokalize 1.2\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
+"|| n%100>=20) ? 1 : 2);\n"
+
+#. Type: string
+#. Description
+#: ../libpam-yubico.templates:2001
+msgid "Parameters for Yubico PAM:"
+msgstr "Parametry do Yubico PAM:"
+
+#. Type: string
+#. Description
+#: ../libpam-yubico.templates:2001
+msgid ""
+"The Yubico PAM module supports two modes of operation: online validation of "
+"YubiKey OTPs or offline validation of YubiKey HMAC-SHA-1 responses to "
+"challenges."
+msgstr ""
+"Moduł Yubico PAM obsługuje dwa typy działania: walidacja online za pomocą "
+"OTP YubiKey lub walidacja offline odpowiedzi na pytania za pomocą HMAC-SHA-1 "
+"YubiKey (uwierzytelnianie typu challenge-response)."
+
+#. Type: string
+#. Description
+#: ../libpam-yubico.templates:2001
+msgid ""
+"The default is online validation, and for that to work you need to get a "
+"free API key at https://upgrade.yubico.com/getapikey/ and enter the key id "
+"as \"id=NNNN\" and the base64 secret as \"key=...\"."
+msgstr ""
+"Domyślną opcją jest walidacja online, do której należy pobrać darmowy klucz "
+"API z https://upgrade.yubico.com/getapikey/ i wpisać identyfikator klucza "
+"jako \"id=NNNN\" oraz sekret base64 jako \"key=...\"."
+
+#. Type: string
+#. Description
+#: ../libpam-yubico.templates:2001
+msgid ""
+"All the available parameters for the Yubico PAM module are described in /usr/"
+"share/doc/libpam-yubico/README.gz. To avoid accidental lock-outs the module "
+"will not be active until it is enabled with the \"pam-auth-update\" command."
+msgstr ""
+"Wszystkie dostępne parametry do modułu Yubico PAM są opisane w /usr/share/"
+"doc/libpam-yubico/README.gz. Aby zapobiec przypadkowemu zablokowaniu "
+"użytkownika, moduł nie będzie aktywny, dopóki nie zostanie włączony "
+"poleceniem \"pam-auth-update\"."

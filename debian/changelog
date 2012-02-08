@@ -1,3 +1,21 @@
+yubico-pam (2.10-2) UNRELEASED; urgency=low
+
+  * Debconf templates and debian/control reviewed by the debian-l10n-
+    english team as part of the Smith review project. Closes: #654848
+  * [Debconf translation updates]
+  * Russian (Yuri Kozlov).  Closes: #656344
+  * Danish (Joe Hansen).  Closes: #656514
+  * Dutch; (Jeroen Schot).  Closes: #657147
+  * German (Chris Leick).  Closes: #657214
+  * Czech (Michal Simunek).  Closes: #657535
+  * Swedish (Martin Bagge / brother).  Closes: #657547
+  * Spanish; (Jardi A. Martínez Jordán).  Closes: #657946
+  * French (Julien Patriarca).  Closes: #658079
+  * Polish (Michał Kułach).  Closes: #658165
+  * Portuguese (Miguel Figueiredo).  Closes: #658420
+
+ -- Christian Perrier <bubulle@debian.org>  Fri, 06 Jan 2012 18:35:42 +0100
+
 yubico-pam (2.10-1) unstable; urgency=low
 
   * Initial release.
