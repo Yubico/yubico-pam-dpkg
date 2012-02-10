@@ -1,5 +1,6 @@
-yubico-pam (2.10-2) UNRELEASED; urgency=low
+yubico-pam (2.11-1~ppa1~ppadisttarget1) ppadisttarget; urgency=low
 
+  [ Christian Perrier <bubulle@debian.org> ]
   * Debconf templates and debian/control reviewed by the debian-l10n-
     english team as part of the Smith review project. Closes: #654848
   * [Debconf translation updates]
@@ -14,7 +15,13 @@ yubico-pam (2.10-2) UNRELEASED; urgency=low
   * Polish (Michał Kułach).  Closes: #658165
   * Portuguese (Miguel Figueiredo).  Closes: #658420
 
- -- Christian Perrier <bubulle@debian.org>  Fri, 06 Jan 2012 18:35:42 +0100
+  [ Fredrik Thulin ]
+  * Fix crash-bug with challenge-response mode when button-press is
+    required, but button isn't pressed.
+  * Fix a memset() of wrong size, reported by clang.
+  * Add prefix matching to LDAP fetched values.
+
+ -- Fredrik Thulin <fredrik@yubico.com>  Fri, 10 Feb 2012 14:55:41 +0100
 
 yubico-pam (2.10-2~ppa2~ppadisttarget1) ppadisttarget; urgency=low
 
