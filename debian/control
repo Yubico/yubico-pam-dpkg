@@ -25,7 +25,7 @@ Depends: libpam-runtime (>= 1.0.1-6~),
 	 debconf | debconf-2.0,
 	 ${shlibs:Depends},
 	 ${misc:Depends}
-Description: two-factor password and Yubikey OTP PAM module
+Description: two-factor password and YubiKey OTP PAM module
  This package provides the Yubico PAM module. It enables the use of
  two-factor authentication, with existing logins and passwords plus
  a YubiKey One-Time Password that is validated against an online
