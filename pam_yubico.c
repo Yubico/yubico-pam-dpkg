@@ -1,5 +1,5 @@
 /* Written by Simon Josefsson <simon@yubico.com>.
- * Copyright (c) 2006, 2007, 2008, 2009, 2010, 2011 Yubico AB
+ * Copyright (c) 2006-2012 Yubico AB
  * Copyright (c) 2011 Tollef Fog Heen <tfheen@err.no>
  * All rights reserved.
  *
@@ -36,6 +36,7 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <fcntl.h>
 #include <unistd.h>
 #include <errno.h>
 #include <string.h>
@@ -109,6 +110,7 @@ struct cfg
   char *ldapdn;
   char *user_attr;
   char *yubi_attr;
+  char *yubi_attr_prefix;
   int token_id_length;
   enum key_mode mode;
   char *chalresp_path;
@@ -278,6 +280,7 @@ authorize_user_token_ldap (struct cfg *cfg,
   int retval = 0;
   int protocol;
 #ifdef HAVE_LIBLDAP
+  int yubi_attr_prefix_len = 0;
   LDAP *ld = NULL;
   LDAPMessage *result = NULL, *e;
   BerElement *ber;
@@ -374,17 +377,24 @@ authorize_user_token_ldap (struct cfg *cfg,
 	{
 	  if ((vals = ldap_get_values_len (ld, e, a)) != NULL)
 	    {
+	      DBG(("LDAP : Found %i values - checking if any of them match '%s%s'",
+		   ldap_count_values_len(vals),
+		   cfg->yubi_attr_prefix ? cfg->yubi_attr_prefix : "",
+		   token_id));
+
+	      yubi_attr_prefix_len = cfg->yubi_attr_prefix ? strlen(cfg->yubi_attr_prefix) : 0;
+
 	      /* Compare each value for the attribute against the token id. */
 	      for (i = 0; vals[i] != NULL; i++)
 		{
-		  if (!strncmp (token_id, vals[i]->bv_val, strlen (token_id)))
+		  /* Only values containing this prefix are considered. */
+		  if ((!cfg->yubi_attr_prefix || !strncmp (cfg->yubi_attr_prefix, vals[i]->bv_val, yubi_attr_prefix_len)))
 		    {
-		      DBG (("Token Found :: %s", vals[i]->bv_val));
-		      retval = 1;
-		    }
-		  else
-		    {
-		      DBG (("No match : (%s) %s != %s", a, vals[i]->bv_val, token_id));
+		      if(!strncmp (token_id, vals[i]->bv_val + yubi_attr_prefix_len, strlen (token_id)))
+		        {
+		          DBG (("Token Found :: %s", vals[i]->bv_val));
+		          retval = 1;
+		        }
 		    }
 		}
 	      ldap_value_free_len (vals);
@@ -526,6 +536,7 @@ do_challenge_response(pam_handle_t *pamh, struct cfg *cfg, const char *username)
     f = NULL;
     goto out;
   }
+  f = NULL;
 
   if (restore_privileges(pamh) < 0) {
       DBG (("could not restore privileges"));
@@ -575,7 +586,7 @@ do_challenge_response(pam_handle_t *pamh, struct cfg *cfg, const char *username)
    * Write the challenge and response we will expect the next time to the state file.
    */
   if (response_len > sizeof(state.response)) {
-    D(("Got too long response ??? (%i/%i)", response_len, sizeof(state.response)));
+    D(("Got too long response ??? (%u/%lu)", response_len, (unsigned long) sizeof(state.response)));
     goto out;
   }
   memcpy (state.response, buf, response_len);
@@ -617,6 +628,7 @@ do_challenge_response(pam_handle_t *pamh, struct cfg *cfg, const char *username)
 
   DBG(("Challenge-response success!"));
   errstr = NULL;
+  errno = 0;
 
  out:
   if (yk_errno) {
@@ -692,6 +704,8 @@ parse_cfg (int flags, int argc, const char **argv, struct cfg *cfg)
 	cfg->user_attr = (char *) argv[i] + 10;
       if (strncmp (argv[i], "yubi_attr=", 10) == 0)
 	cfg->yubi_attr = (char *) argv[i] + 10;
+      if (strncmp (argv[i], "yubi_attr_prefix=", 17) == 0)
+	cfg->yubi_attr_prefix = (char *) argv[i] + 17;
       if (strncmp (argv[i], "token_id_length=", 16) == 0)
 	sscanf (argv[i], "token_id_length=%d", &cfg->token_id_length);
       if (strcmp (argv[i], "mode=challenge-response") == 0)
@@ -721,11 +735,12 @@ parse_cfg (int flags, int argc, const char **argv, struct cfg *cfg)
       D (("ldapdn=%s", cfg->ldapdn ? cfg->ldapdn : "(null)"));
       D (("user_attr=%s", cfg->user_attr ? cfg->user_attr : "(null)"));
       D (("yubi_attr=%s", cfg->yubi_attr ? cfg->yubi_attr : "(null)"));
+      D (("yubi_attr_prefix=%s", cfg->yubi_attr_prefix ? cfg->yubi_attr_prefix : "(null)"));
       D (("url=%s", cfg->url ? cfg->url : "(null)"));
       D (("capath=%s", cfg->capath ? cfg->capath : "(null)"));
       D (("token_id_length=%d", cfg->token_id_length));
       D (("mode=%s", cfg->mode == CLIENT ? "client" : "chresp" ));
-      D (("chalresp_path=%d", cfg->chalresp_path));
+      D (("chalresp_path=%s", cfg->chalresp_path ? cfg->chalresp_path : "(null)"));
     }
 }
 
@@ -827,7 +842,7 @@ pam_sm_authenticate (pam_handle_t * pamh,
       {
 	const char *query_template = "Yubikey for `%s': ";
 	size_t len = strlen (query_template) + strlen (user);
-	size_t wrote;
+	int wrote;
 
 	msg[0].msg = malloc (len);
 	if (!msg[0].msg)
@@ -864,7 +879,7 @@ pam_sm_authenticate (pam_handle_t * pamh,
 	  goto done;
 	}
 
-      DBG (("conv returned %i bytes", strlen(resp->resp)));
+      DBG (("conv returned %lu bytes", (unsigned long) strlen(resp->resp)));
 
       password = resp->resp;
     }

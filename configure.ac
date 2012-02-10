@@ -1,5 +1,5 @@
 # Written by Simon Josefsson <simon@yubico.com>.
-# Copyright (c) 2006, 2007, 2008, 2009, 2010, 2011 Yubico AB
+# Copyright (c) 2006-2012 Yubico AB
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,11 +26,12 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-AC_INIT([pam_yubico], [2.10], [yubico-devel@googlegroups.com])
+AC_INIT([pam_yubico], [2.11], [yubico-devel@googlegroups.com])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
-AM_INIT_AUTOMAKE([foreign])
-AC_PROG_CC
+AM_INIT_AUTOMAKE([1.10 foreign -Wall -Werror])
+AM_SILENT_RULES([yes])
+AM_PROG_CC_C_O
 AC_LIBTOOL_WIN32_DLL
 AC_DISABLE_STATIC
 AC_PROG_LIBTOOL
