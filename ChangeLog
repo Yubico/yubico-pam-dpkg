@@ -1,3 +1,338 @@
+2012-06-15  Klas Lindfors <klas@yubico.com>
+
+	* README: copy changes about dependencies from wiki.
+
+2012-06-15  Klas Lindfors <klas@yubico.com>
+
+	* NEWS: NEWS for 2.12
+
+2012-06-15  Klas Lindfors <klas@yubico.com>
+
+	* README, configure.ac: remove -Wno-extra-portability, it breaks on
+	automake before 1.11.2
+
+2012-06-14  Klas Lindfors <klas@yubico.com>
+
+	* pam_yubico.c: use errstr to communicate with the user
+
+2012-06-14  Klas Lindfors <klas@yubico.com>
+
+	* NEWS, configure.ac: bump versions as 2.11 is released
+
+2012-06-08  Klas Lindfors <klas@yubico.com>
+
+	* pam_yubico.c: check for same response in pam module, output debug
+	for the user
+
+2012-06-08  Klas Lindfors <klas@yubico.com>
+
+	* ykpamcfg.c: add check that two challenges get different responses
+
+2012-06-08  Klas Lindfors <klas@yubico.com>
+
+	* pam_yubico.c: replace fopen with open+fdopen to set more
+	restrictive bits
+
+2012-06-05  Clemens Lang <neverpanic@gmail.com>
+
+	* configure.ac: Silence warning: missing AM_PROG_AR on non-POSIX Automake 1.12 complains: "linking libraries using a non-POSIX
+	archiver requires 'AM_PROG_AR' in 'configure.ac'". This patch
+	silences this warning, allowing automake 1.12 to process
+	configure.ac with -Werror
+
+2012-03-27  James Dingwall <james@dingwall.me.uk>
+
+	* configure.ac: Modify the PAM headers test in configure.ac to
+	#include <sys/types.h>.  This is required to compile conftest.c for
+	  pam_modutil.h on Gentoo with sys-libs/pam-1.1.5   sys-libs/glibc-2.13-r4   sys-devel/gcc-4.5.3-r2
+
+2012-03-05  Fredrik Thulin <fredrik@yubico.com>
+
+	* README: Correct libyubikey requirement
+
+2012-03-05  Fredrik Thulin <fredrik@yubico.com>
+
+	* configure.ac: libyubikey is really only required --with-cr
+
+2012-02-13  Fredrik Thulin <fredrik@yubico.com>
+
+	* pam_yubico.c, util.c, util.h: load_chalresp_state: Debug message
+	was always shown.
+
+2012-02-10  Fredrik Thulin <fredrik@yubico.com>
+
+	* NEWS: Prepare version 2.11
+
+2012-02-10  Fredrik Thulin <fredrik@yubico.com>
+
+	* pam_yubico.c: do_challenge_response: Clear errno when done.
+
+2012-02-10  Fredrik Thulin <fredrik@yubico.com>
+
+	* ykpamcfg.1: Fix project name.
+
+2012-02-10  Fredrik Thulin <fredrik@yubico.com>
+
+	* util.c: Avoid warnings for fscanf() by passing pointer to first
+	element of array.
+
+2012-02-10  Fredrik Thulin <fredrik@yubico.com>
+
+	* drop_privs.c: include stdlib, for malloc()
+
+2012-02-10  Fredrik Thulin <fredrik@yubico.com>
+
+	* pam_yubico.c: DBG format fix
+
+2012-02-08  Fredrik Thulin <fredrik@yubico.com>
+
+	* pam_yubico.c, ykpamcfg.c: Fix clang indicated printf format
+	warnings.
+
+2012-02-06  Fredrik Thulin <fredrik@yubico.com>
+
+	* pam_yubico.c: Fix debug-logging of chalresp_path. Oddity reported
+	by clang.
+
+2012-02-06  Fredrik Thulin <fredrik@yubico.com>
+
+	* pam_yubico.c: snprintf returns an int, not a size_t. reported by
+	clang.
+
+2012-02-02  Fredrik Thulin <fredrik@yubico.com>
+
+	* NEWS: Describe recent changes.
+
+2012-02-02  Fredrik Thulin <fredrik@yubico.com>
+
+	* README: Remove redundant explanation of 'capath'.
+
+2012-02-02  Fredrik Thulin <fredrik@yubico.com>
+
+	* : commit bf8ececae38a27c09c695ecc934119d3dd2fe1a7 Author: Remi
+	Mollon <remi.mollon@cern.ch> Date:   Wed Feb 1 09:29:27 2012 +0100
+
+2012-02-01  Remi Mollon <remi.mollon@cern.ch>
+
+	* pam_yubico.c: renaming yubi_prefix to yubi_Attr_prefix and
+	changing debug
+
+2012-01-28  Clemens Lang <neverpanic@gmail.com>
+
+	* util.h: Make yubico-pam compile without -DDEBUG_PAM
+
+2012-01-28  Clemens Lang <neverpanic@gmail.com>
+
+	* pam_yubico.c, util.c: Add missing headers fcntl.h in pam_yubico.c is needed on OS X with clang for the build
+	to succeed, while unistd.h in util.c is required so clang doesn't
+	complain about implicit declarations of ftruncate and fsync.
+
+2012-01-28  Clemens Lang <neverpanic@gmail.com>
+
+	* util.c: Fix memset() with wrong size as reported by clang
+
+2012-01-27  Fredrik Thulin <fredrik@yubico.com>
+
+	* pam_yubico.c: Avoid double fclose() in some error cases.  Problem reported (and patched) by Lingzhu Xiang
+	<xianglingzhu@gmail.com> in
+	http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=657524
+
+2012-01-24  Remi Mollon <remi.mollon@cern.ch>
+
+	* pam_yubico.c: add comment
+
+2012-01-23  Simon Josefsson <simon@josefsson.org>
+
+	* doc: Update doc/.
+
+2012-01-23  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Fix automake warning.
+
+2012-01-23  Simon Josefsson <simon@josefsson.org>
+
+	* COPYING, Makefile.am, NEWS, README, configure.ac, drop_privs.c,
+	drop_privs.h, pam_yubico.c, test.c, util.c, util.h, ykpamcfg.1,
+	ykpamcfg.c: Bump version.  Use silent rules.  Bump copyright years.
+
+2012-01-18  Remi Mollon <remi.mollon@cern.ch>
+
+	* pam_yubico.c: adding yubi_prefix parameter, when looking for
+	token_id in ldap
+
+2011-12-14  Fredrik Thulin <fredrik@yubico.com>
+
+	* : commit 6c23f476458961c202758375d0ce2d11888dda32 Author: Fredrik
+	Thulin <fredrik@yubico.com> Date:   Wed Dec 14 13:11:12 2011 +0100
+
+2011-12-14  Fredrik Thulin <fredrik@yubico.com>
+
+	* Makefile.am: check-doc-dist: restore submodule doc branch master
+
+2011-12-14  Fredrik Thulin <fredrik@yubico.com>
+
+	* NEWS: New date for 2.10 release (today).
+
+2011-12-13  Simon Josefsson <simon@josefsson.org>
+
+	* README, configure.ac: Shift blame.
+
+2011-12-13  Fredrik Thulin <fredrik@yubico.com>
+
+	* pam_yubico.c: authorize_user_token: Don't drop privs for
+	system-wide file.
+
+2011-12-13  Fredrik Thulin <fredrik@yubico.com>
+
+	* drop_privs.c: Bug fix dropping privileges using
+	pam_modutil_drop_priv.
+
+2011-12-13  Fredrik Thulin <fredrik@yubico.com>
+
+	* NEWS: prepare 2.10
+
+2011-12-13  Fredrik Thulin <fredrik@yubico.com>
+
+	* configure.ac, test.c: update copyright for files changed 2011
+
+2011-12-12  Fredrik Thulin <fredrik@yubico.com>
+
+	* README: Document arguments token_id_length and mode.
+
+2011-12-12  Fredrik Thulin <fredrik@yubico.com>
+
+	* AUTHORS: Compile list of authors from ChangeLog.
+
+2011-12-12  Fredrik Thulin <fredrik@yubico.com>
+
+	* COPYING: update
+
+2011-12-06  Fredrik Thulin <fredrik@yubico.com>
+
+	* configure.ac: Prepare version 2.10.
+
+2011-12-06  Fredrik Thulin <fredrik@yubico.com>
+
+	* test.c: Pedantically removing warnings.
+
+2011-12-06  Fredrik Thulin <fredrik@yubico.com>
+
+	* test.c: Fix implicit declaration warning.
+
+2011-12-06  Fredrik Thulin <fredrik@yubico.com>
+
+	* util.c: challenge_response: reject bad slot
+
+2011-12-06  Fredrik Thulin <fredrik@yubico.com>
+
+	* util.c, util.h, ykpamcfg.c: Further pointer signedness fixes.
+
+2011-12-06  Fredrik Thulin <fredrik@yubico.com>
+
+	* pam_yubico.c: do_challenge_response: Remove 2 unused variables.
+
+2011-12-06  Fredrik Thulin <fredrik@yubico.com>
+
+	* ykpamcfg.1: Hyphen-fix.
+
+2011-12-06  Fredrik Thulin <fredrik@yubico.com>
+
+	* pam_yubico.c, util.c: Fix implicit yubikey_* declarations.
+
+2011-12-06  Fredrik Thulin <fredrik@yubico.com>
+
+	* util.c: Avoid asprintf.  To improve portability, we do malloc() + snprintf() instead.
+
+2011-12-06  Fredrik Thulin <fredrik@yubico.com>
+
+	* pam_yubico.c, util.c, ykpamcfg.c: Fix pointer signedness warnings.
+
+2011-12-06  Fredrik Thulin <fredrik@yubico.com>
+
+	* util.c: generate_random: Remove unused variable 'i'.
+
+2011-12-01  Fredrik Thulin <fredrik@yubico.com>
+
+	* ykpamcfg.1: fix lintian errors
+
+2011-11-23  Fredrik Thulin <fredrik@yubico.com>
+
+	* NEWS: Update with new things in 2.10.
+
+2011-11-23  Fredrik Thulin <fredrik@yubico.com>
+
+	* pam_yubico.c: Drop privileges before writing new C-R file.
+
+2011-11-23  Fredrik Thulin <fredrik@yubico.com>
+
+	* pam_yubico.c: Verify that challenge-response file is a normal
+	file.
+
+2011-11-23  Fredrik Thulin <fredrik@yubico.com>
+
+	* pam_yubico.c: improve debug messages
+
+2011-11-23  Fredrik Thulin <fredrik@yubico.com>
+
+	* Makefile.am, configure.ac, drop_privs.c, drop_privs.h,
+	pam_yubico.c: Use pam_modutil_drop_priv if it is available.  Utility functions for what was done in drop_priv.c appeared in PAM
+	1.1.3. Use them when available.
+
+2011-11-23  Fredrik Thulin <fredrik@yubico.com>
+
+	* pam_yubico.c: Restore challenge-response functionality.  HAVE_LIBYKPERS_1 did not seem to ever get defined, so use HAVE_CR
+	instead.
+
+2011-11-23  Ricky Zhou <ricky@fedoraproject.org>
+
+	* drop_privs.c, drop_privs.h, pam_yubico.c: Drop privileges before
+	opening user files.  This change also ensures that user tokens are regular files.  We may
+	want to add a similar check for user challenge files.
+
+2011-11-22  Fredrik Thulin <fredrik@yubico.com>
+
+	* pam_yubico.c: Remove unused variable and extra undef.
+
+2011-11-22  Fredrik Thulin <fredrik@yubico.com>
+
+	* pam_yubico.c: pam_sm_authenticate: check strdup return value
+
+2011-11-22  Fredrik Thulin <fredrik@yubico.com>
+
+	* pam_yubico.c: authorize_user_token_ldap: check malloc return value
+
+2011-11-22  Fredrik Thulin <fredrik@yubico.com>
+
+	* ykpamcfg.c: parse_args: getopt() return value is int.
+
+2011-11-17  Fredrik Thulin <fredrik@yubico.com>
+
+	* NEWS: Fix release date of 2.9.
+
+2011-11-17  Fredrik Thulin <fredrik@yubico.com>
+
+	* Makefile.am: Link pam_yubico.la directly with -lpam.
+
+2011-11-08  Fredrik Thulin <fredrik@yubico.com>
+
+	* README, doc: updates
+
+2011-11-08  Fredrik Thulin <fredrik@yubico.com>
+
+	* NEWS, configure.ac: Prepare for version 2.9.
+
+2011-11-08  dr8 <github@dominicrutherford.co.uk>
+
+	* pam_yubico.c: Bug fix: pam_yubico doesn't check server signature Squashed commit of the following: commit 9e7746bc53957f2a1e68784c0c26d082049180a7 Author: dr8
+	<github@dominicrutherford.co.uk> Date:   Mon Oct 31 14:27:47 2011
+	+0000     Bug fix: pam_yubico doesn't check server signature commit 2f3d5e721cbfc905582da6208495c1da6dd2f79c Author: dr8
+	<github@dominicrutherford.co.uk> Date:   Sat Oct 29 16:59:08 2011
+	+0100     Bug fix: pam_yubico does not validate server signature commit 58a1e6820a88f6aa365ef006e9cca4c62af7c7cf Author: dr8
+	<github@dominicrutherford.co.uk> Date:   Fri Oct 28 22:09:49 2011
+	+0100     only validate server signature when key is specified commit d705f429bc972f85a50f0b2f96703cbdc28b744f Author: dr8
+	<github@dominicrutherford.co.uk> Date:   Tue Oct 25 22:45:22 2011
+	+0100     fix failure to validate server signature
+
 2011-08-26  Fredrik Thulin <fredrik@yubico.com>
 
 	* NEWS, configure.ac: Prepare for version 2.8.
@@ -262,7 +597,8 @@
 
 2011-03-10  Fredrik Thulin <fredrik@yubico.com>
 
-	* doc: sync
+	* : commit 27346d9be9739954dadf24c460c74b8ea4043488 Author: Fredrik
+	Thulin <fredrik@yubico.com> Date:   Thu Mar 10 10:48:20 2011 +0100
 
 2011-03-04  Fredrik Thulin <fredrik@yubico.com>
 
@@ -271,6 +607,12 @@
 2011-03-03  Fredrik Thulin <fredrik@yubico.com>
 
 	* pam_yubico.c: Correct debug log message for too short OTPs.
+
+2011-03-03  Fredrik Thulin <fredrik@yubico.com>
+
+	* : commit 952668811dd212d7444d4903feacaa40d30f4ea8 Merge: 60d9e60
+	702ac98 Author: Fredrik Thulin <fredrik@yubico.com> Date:   Thu Mar
+	3 15:06:22 2011 +0100
 
 2011-03-03  Fredrik Thulin <fredrik@yubico.com>
 
@@ -283,10 +625,8 @@
 
 2011-03-03  Fredrik Thulin <fredrik@yubico.com>
 
-	* pam_yubico.c: authorize_user_token_ldap: Only fetch the attribute
-	we're interested in.  Previous version fetched ALL attributes of the identified object,
-	and treated them all equal when looking for the YubiKey token
-	identifier.
+	* : commit abb0b7e4e4d9ed0e09778815328126c6813b0d78 Author: Fredrik
+	Thulin <fredrik@yubico.com> Date:   Thu Mar 3 14:14:54 2011 +0100
 
 2011-03-03  Fredrik Thulin <fredrik@yubico.com>
 
@@ -338,9 +678,10 @@
 
 	* pam_yubico.c: Add debug output of url and capath.
 
-2011-02-16  Fredrik Thulin <fredrik@yubico.com>
+2011-02-22  Fredrik Thulin <fredrik@yubico.com>
 
-	* .gitignore: init
+	* : commit e3440786bfa3c3475721b5933b8ab6c8074d1e64 Author: Fredrik
+	Thulin <fredrik@yubico.com> Date:   Wed Feb 16 22:22:23 2011 +0100
 
 2011-02-16  Fredrik Thulin <fredrik@yubico.com>
 
