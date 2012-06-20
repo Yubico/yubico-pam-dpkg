@@ -26,7 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-AC_INIT([pam_yubico], [2.11], [yubico-devel@googlegroups.com])
+AC_INIT([pam_yubico], [2.12], [yubico-devel@googlegroups.com])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE([1.10 foreign -Wall -Werror])
@@ -39,7 +39,8 @@ AC_PROG_LIBTOOL
 AC_CHECK_HEADERS([security/pam_appl.h], [],
   [AC_MSG_ERROR([[PAM header files not found, install libpam-dev.]])])
 AC_CHECK_HEADERS([security/pam_modules.h security/_pam_macros.h security/pam_modutil.h], [], [],
-  [#include <security/pam_appl.h>])
+  [#include <sys/types.h>
+   #include <security/pam_appl.h>])
 
 AC_CHECK_LIB([pam], [pam_start])
 
@@ -69,9 +70,6 @@ fi
 
 AC_LIB_HAVE_LINKFLAGS(yubikey,, [#include <yubikey.h>],
                       [yubikey_modhex_p("foo")])
-if test "$ac_cv_libyubikey" != yes; then
-  AC_MSG_ERROR([Libyubikey v1.5+ not found, see http://code.google.com/p/yubico-c/])
-fi
 
 AC_ARG_WITH([cr],
   [AS_HELP_STRING([--without-cr],
@@ -80,9 +78,13 @@ AC_ARG_WITH([cr],
   [with_cr=yes])
 if test "x$with_cr" != xno; then
   PKG_CHECK_MODULES([YKPERS], [ykpers-1]);
+  # libyubikey required for HAVE_CR
+  if test "$ac_cv_libyubikey" != yes; then
+    AC_MSG_ERROR([Libyubikey v1.5+ not found, see http://code.google.com/p/yubico-c/ (required for challenge-response)])
+  fi
 fi
 if test -n "$YKPERS_LIBS"; then
-  AC_DEFINE([HAVE_CR], [1], [Define if you have libykpers-1])
+  AC_DEFINE([HAVE_CR], [1], [Define if you have libykpers-1 and libyubikey])
 fi
 AM_CONDITIONAL([YKPERS], [test -n "$YKPERS_LIBS"])
 
@@ -101,3 +103,14 @@ AC_MSG_NOTICE([PAM installation path $PAMDIR])
 
 AC_CONFIG_FILES(Makefile)
 AC_OUTPUT
+
+AC_MSG_NOTICE([Summary of build options:
+
+  Version:            ${VERSION}
+  Host type:          ${host}
+  Install prefix:     ${prefix}
+  Compiler:           ${CC}
+  Library types:      Shared=${enable_shared}, Static=${enable_static}
+  LDAP:               ${with_ldap}
+  Challenge-Response: ${with_cr}
+])
