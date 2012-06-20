@@ -2,6 +2,7 @@ yubico-pam (2.12-1) unstable; urgency=low
 
   * New upstream release.
   * Use DEP5 copyright format.  Sync with upstream COPYING.
+  * Bump to Debian Policy version 3.9.3.
 
  -- Simon Josefsson <simon@josefsson.org>  Wed, 20 Jun 2012 08:46:29 +0200
 
