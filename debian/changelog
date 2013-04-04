@@ -5,6 +5,7 @@ yubico-pam (2.13-1) unstable; urgency=low
   * Remove obsolete 'DM-Upload-Allowed'.
   * Simplify watch file.
   * Drop Fredrik as uploader, add Klas and Dain.
+  * Add Italian translation.  Closes: #657450.
 
  -- Simon Josefsson <simon@yubico.com>  Thu, 04 Apr 2013 19:18:22 +0200
 

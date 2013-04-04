@@ -1,0 +1,78 @@
+# Italian translation for yubico-pam debconf templates.
+# Copyright (C) 2012, the yubico-pam copyright holder
+# This file is distributed under the same license as the yubico-pam package.
+# Francesca Ciceri, <madamezou@zouish.org>, 2012.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: yubico-pam 2.10-2\n"
+"Report-Msgid-Bugs-To: yubico-pam@packages.debian.org\n"
+"POT-Creation-Date: 2011-12-14 13:26+0100\n"
+"PO-Revision-Date: 2012-01-18 15:11+0100\n"
+"Last-Translator: Francesca Ciceri <madamezou@zouish.org>\n"
+"Language-Team: Italian <debian-l10n-italian@lists.debian.org>\n"
+"Language: Italian\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. Type: string
+#. Description
+#: ../libpam-yubico.templates:1001
+msgid "Parameters for Yubico PAM:"
+msgstr "Parametri per il modulo PAM Yubico:"
+
+#. Type: string
+#. Description
+#: ../libpam-yubico.templates:1001
+msgid ""
+"The Yubico PAM module supports two modes of operation - online validation of "
+"YubiKey OTPs or offline validation of YubiKey HMAC-SHA-1 responses to "
+"challenges."
+msgstr ""
+"Il modulo PAM Yubico supporta due modalità di operazioni: autenticazione "
+"online delle YubiKey OTP o autenticazione offline di YubiKey"
+"HMAC-SHA-1 con funzionalità challenge response"
+
+
+#. Type: string
+#. Description
+#: ../libpam-yubico.templates:1001
+msgid ""
+"The default is online validation, and for that to work you need to get an "
+"API key (they are free) at https://upgrade.yubico.com/getapikey/ and enter "
+"the key id as \"id=NNNN\" and the base64 secret as \"key=...\"."
+msgstr ""
+"La modalità predefinita è l'autenticazione online e perché funzioni è "
+"necessario ottenere una chiave API (sono gratuite) all'indirizzo "
+"https://upgrade.yubico.com/getapikey/ e digitare l'identificativo "
+"della chiave nel formato \"id=NNNN\" e la chiave di sessione in base64 "
+"come \"key=...\"."
+
+#. Type: string
+#. Description
+#: ../libpam-yubico.templates:1001
+msgid ""
+"All the available parameters for the Yubico PAM module are described in /usr/"
+"share/doc/libpam-yubico/README.gz."
+msgstr ""
+"I parametri disponibili per il modulo PAM Yubico sono descritti in"
+"/usr/share/doc/libpam-yubico/README.gz."
+
+#. Type: note
+#. Description
+#: ../libpam-yubico.templates:2001
+msgid "Yubico PAM module disabled by default"
+msgstr "Il modulo PAM Yubico è disabilitato per impostazione predefinita"
+
+#. Type: note
+#. Description
+#: ../libpam-yubico.templates:2001
+msgid ""
+"To avoid locking anyone out of their system, the Yubico PAM module is not "
+"activated by default. Use the program `pam-auth-update' to enable it."
+msgstr ""
+"Per evitare di chiudere qualcuno fuori dal proprio sistema, il modulo "
+"PAM Yubico non è attivato in modo predefinito. Si usi il programma"
+"\"pam-auth-update\" per abilitarlo."
+
