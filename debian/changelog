@@ -4,6 +4,7 @@ yubico-pam (2.13-1) unstable; urgency=low
   * Bump to Debian Policy version 3.9.4.
   * Remove obsolete 'DM-Upload-Allowed'.
   * Simplify watch file.
+  * Drop Fredrik as uploader, add Klas and Dain.
 
  -- Simon Josefsson <simon@yubico.com>  Thu, 04 Apr 2013 19:18:22 +0200
 

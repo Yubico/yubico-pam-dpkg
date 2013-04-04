@@ -1,6 +1,6 @@
 Source: yubico-pam
 Maintainer: Yubico Open Source Maintainers <ossmaint@yubico.com>
-Uploaders: Fredrik Thulin <fredrik@yubico.com>, Simon Josefsson <simon@josefsson.org>
+Uploaders: Simon Josefsson <simon@yubico.com>, Klas Lindfors <klas@yubico.com>, Dain Nilsson <dain@yubico.com>
 Section: admin
 Priority: optional
 Build-Depends: debhelper (>= 8),
