@@ -1,3 +1,123 @@
+2013-03-01  Klas Lindfors <klas@yubico.com>
+
+	* Makefile.am: add more docs
+
+2013-03-01  Klas Lindfors <klas@yubico.com>
+
+	* doc: update doc
+
+2013-03-01  Klas Lindfors <klas@yubico.com>
+
+	* NEWS: release 2.13
+
+2013-02-14  Dain Nilsson <dainzor@gmail.com>
+
+	* : Merge pull request #15 from wwest4/master util.c version check fix
+
+2013-01-18  Klas Lindfors <klas@yubico.com>
+
+	* configure.ac: bump automake version to 1.11
+
+2013-01-18  Clemens Lang <neverpanic@gmail.com>
+
+	* configure.ac: configure.ac: call AM_PROG_AR if available
+
+2013-01-17  Klas Lindfors <klas@yubico.com>
+
+	* ykpamcfg.1: add path option to man page
+
+2012-11-14  Tommaso Galassi De Orchi <tom@yubico.com>
+
+	* ykpamcfg.c: New feature, create directory in the user home.
+
+2012-11-14  Tommaso Galassi De Orchi <tom@yubico.com>
+
+	* ykpamcfg.c: Added option to specify a path for ykpamcfg.
+
+2012-11-13  Klas Lindfors <klas@yubico.com>
+
+	* README: update ppa location
+
+2012-11-07  Klas Lindfors <klas@yubico.com>
+
+	* README, configure.ac: add AM_PROG_AR workaround for automake 1.12.
+
+2012-11-05  Klas Lindfors <klas@yubico.com>
+
+	* : commit 37e6a6a80f08cbd4793fee4ff82f58410ab2326e Author: Simon
+	Josefsson <simon@josefsson.org> Date:   Wed Oct 31 17:01:18 2012
+	+0100
+
+2012-10-30  alexandru totolici <alex@hackd.net>
+
+	* README: Distinguish 'characters' from 'digits' in README The Yubikey token ID is 12 characters long, not 12 digits long. This
+	can make it slightly confusing when first setting a key up, and in
+	any case it's incorrect language.
+
+2012-10-10  Karl Goetz <kgoetz@squiz.net>
+
+	* README: Mention google code hosts downloads too Per request on Issue 45 I've reworded this bit so it mentions google
+	code hosting the package downloads. I've had to reflow the text
+	slightly because it pushed it over 72 chars.
+
+2012-10-04  Karl Goetz <kgoetz@squiz.net>
+
+	* README, ykpamcfg.1: Finish both files with a blank line Helps to keep all text readable on broken terminals/screens.
+
+2012-10-04  Karl Goetz <kgoetz@squiz.net>
+
+	* README: Correct wording for PPA Its 'Personal' not 'Private'
+	https://help.launchpad.net/Packaging/PPA
+
+2012-10-04  Karl Goetz <kgoetz@squiz.net>
+
+	* README: Refer to Github as well as G.Code.  This attempts to help explain where to look for various things (eg
+	bugs, code, doco).
+
+2012-10-03  Klas Lindfors <klas@yubico.com>
+
+	* README: break line so we keep document width consistent
+
+2012-10-03  Karl Goetz <kgoetz@squiz.net>
+
+	* README: Attempt to clarify format of mapping files I didn't realise from the original version that it was a series of
+	different token IDs - i thought it was different parts of the OTP.
+	Hopefully this change clarifys whats really going on here.  Part of the patch/doco for Issue 44.
+	http://code.google.com/p/yubico-pam/issues/detail?id=44
+
+2012-10-03  Karl Goetz <kgoetz@squiz.net>
+
+	* README: Explain how to generate an OTP.  This wasn't obvious to me and so I suspect others may be confused
+	too.  This commit provides the documentation to close Issue 44, but
+	is NOT identical to the patch provided on that report.  http://code.google.com/p/yubico-pam/issues/detail?id=44
+
+2012-10-03  Karl Goetz <kgoetz@squiz.net>
+
+	* README: Explain what an OTP is
+
+2012-10-03  Karl Goetz <kgoetz@squiz.net>
+
+	* README: adding a new line for consistancy with spacing on other
+	headings
+
+2012-10-03  Karl Goetz <kgoetz@squiz.net>
+
+	* README: Add information about SELinux to README Because SELinux in enforcing mode will cause yubikey authentication
+	to fail I'm including some references to discussion around this
+	problem.  The RH bugzilla link also includes a policy snippet which
+	can be used for this." This commit should resolve Issue #43.
+	http://code.google.com/p/yubico-pam/issues/detail?id=43
+
+2012-08-06  Vincent Brillault <git@lerya.net>
+
+	* pam_yubico.c: Verify the otp_length given by the configuration
+	Avoid out of bound writing at ligne -920,1 +927,1: strncpy (otp_id,
+	password + skip_bytes, cfg->token_id_length);
+
+2012-06-15  Klas Lindfors <klas@yubico.com>
+
+	* NEWS, configure.ac: bump versions post-release
+
 2012-06-15  Klas Lindfors <klas@yubico.com>
 
 	* README: copy changes about dependencies from wiki.

@@ -149,10 +149,11 @@ Test Setup :
 ------------
 
 Our test environment is as follows:
-  # Operating System: Fedora release 8 (Werewolf)
-  # FreeRADIUS Server : FreeRADIUS Version 1.1.7
-  # Yubico PAM: pam_yubico  Version 1.8
-  # "/etc/pam.d/radiusd" file:
+
+* Operating System: Fedora release 8 (Werewolf)
+* FreeRADIUS Server : FreeRADIUS Version 1.1.7
+* Yubico PAM: pam_yubico  Version 1.8
+* "/etc/pam.d/radiusd" file:
 
 ------
     auth      	 required     	pam_yubico.so authfile=/etc/yubikeyid id=16 debug
@@ -168,14 +169,17 @@ Testing the configuration :
 
 We have tested the pam_yubico configuration on following Linux sever platforms:
 
-# Fedora 8:
-    * Operating system: Fedora release 8 (Werewolf)
-    * FreeRADIUS Server : FreeRADIUS Version 1.1.7
-    * Yubico PAM: pam_yubico  Version 1.8
-# Fedora 6:
-    * Operating system: Fedora Core release 6 (Zod)
-    * FreeRADIUS Server : FreeRADIUS Version 1.1.7
-    * Yubico PAM: pam_yubico  Version 1.8
+Fedora 8:
+
+* Operating system: Fedora release 8 (Werewolf)
+* FreeRADIUS Server : FreeRADIUS Version 1.1.7
+* Yubico PAM: pam_yubico  Version 1.8
+
+Fedora 6:
+
+* Operating system: Fedora Core release 6 (Zod)
+* FreeRADIUS Server : FreeRADIUS Version 1.1.7
+* Yubico PAM: pam_yubico  Version 1.8
 
 To test the RADIUS two factor authentication with YubiKey, we can use
 “radtest” radius client. The command is as follows:
