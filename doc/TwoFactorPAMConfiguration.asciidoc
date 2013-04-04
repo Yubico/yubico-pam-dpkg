@@ -2,10 +2,10 @@ PAM configuration is somewhat complex, but a typical use-case is to
 require both a password and Yubikey to allow access.  This can be
 achieved by a PAM configuration like this:
 
-------
+```
    auth requisite pam_yubico.so id=42
    auth required pam_unix.so use_first_pass
-------
+```
 
 The first line makes pam_yubico check the OTP.  Use either a per-user
 file called ~/.yubico/authorized_yubikeys, or a system wide file called

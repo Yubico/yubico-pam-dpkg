@@ -37,6 +37,8 @@
 #include <pwd.h>
 #include <string.h>
 #include <errno.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 
 #include <ykpers.h>
 
@@ -53,6 +55,7 @@ const char *usage =
   "\t-1           Send challenge to slot 1. This is the default.\n"
   "\t-2           Send challenge to slot 2.\n"
   "\t-A action    What to do.\n"
+  "\t-p path      Specify an output path for the challenge file.\n"
   "\n"
   "\t-v           verbose\n"
   "\t-h           help (this text)\n"
@@ -63,7 +66,7 @@ const char *usage =
   "\n"
   "\n"
   ;
-const char *optstring = "12A:vh";
+const char *optstring = "12A:p:vh";
 
 static void
 report_yk_error()
@@ -85,7 +88,7 @@ report_yk_error()
 int
 parse_args(int argc, char **argv,
 	   int *slot, bool *verbose,
-	   char **action,
+	   char **action, char **output_dir,
 	   int *exit_code)
 {
   int c;
@@ -100,6 +103,9 @@ parse_args(int argc, char **argv,
       break;
     case 'A':
       *action = optarg;
+      break;
+    case 'p':
+      *output_dir = optarg;
       break;
     case 'v':
       *verbose = true;
@@ -132,10 +138,39 @@ do_add_hmac_chalresp(YK_KEY *yk, uint8_t slot, bool verbose, char *output_dir, i
   *exit_code = 1;
 
   p = getpwuid (getuid ());
-
+  
   if (! p) {
     fprintf (stderr, "Who am I???");
     goto out;
+  }
+
+ /*
+  * Create default output directory for the user
+  */
+  
+  if (!output_dir){
+      const char *pathname = p->pw_dir; 
+      char fullpath[256];
+      snprintf(fullpath, 256,"%s/.yubico",p->pw_dir);
+      struct stat st;
+      
+      //check if directory exists     
+      if (stat(fullpath,&st)!=0 ){     
+	if(mkdir(fullpath, S_IRWXU)==-1){
+	  fprintf(stderr, "Failed creating directory '%s' :%s\n",
+		  fullpath, strerror(errno));
+	}
+	if(verbose){
+	  printf("Directory %s created successfully.\n", fullpath);
+	}
+      }
+      else{
+	if(!S_ISDIR(st.st_mode)){
+	  fprintf(stderr, "Destination %s already exist and is not a directory.\n",
+		  fullpath);
+	  goto out;
+	  }
+      }
   }
 
   if (! get_user_challenge_file(yk, output_dir, p->pw_name, &fn)) {
@@ -216,6 +251,7 @@ main(int argc, char **argv)
   /* Options */
   bool verbose = false;
   char *action = ACTION_ADD_HMAC_CHALRESP;
+  char *output_dir = NULL;
   int slot = 1;
 
   ykp_errno = 0;
@@ -223,7 +259,7 @@ main(int argc, char **argv)
 
   if (! parse_args(argc, argv,
 		   &slot, &verbose,
-		   &action,
+		   &action, &output_dir,
 		   &exit_code))
     goto err;
 
@@ -237,9 +273,9 @@ main(int argc, char **argv)
       goto err;
 
     if (! check_firmware_version(yk, verbose, false))
-      goto err;
+      goto err;    
 
-    if (! do_add_hmac_chalresp (yk, slot, verbose, NULL, &exit_code))
+    if (! do_add_hmac_chalresp (yk, slot, verbose, output_dir, &exit_code))
       goto err;
   } else {
     fprintf (stderr, "Unknown action '%s'\n", action);
