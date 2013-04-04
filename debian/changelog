@@ -1,6 +1,6 @@
 yubico-pam (2.13-1) unstable; urgency=low
 
-  * New upstream release.
+  * New upstream release.  Closes: #657524.
   * Bump to Debian Policy version 3.9.4.
   * Remove obsolete 'DM-Upload-Allowed'.
   * Simplify watch file.
