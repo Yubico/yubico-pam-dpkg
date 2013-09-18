@@ -1,6 +1,7 @@
 yubico-pam (2.13-2) unstable; urgency=low
 
   * Improve README.source.
+  * Build-depend on autotools-dev to silence outdated-autotools-helper-file.
 
  -- Simon Josefsson <simon@yubico.com>  Wed, 18 Sep 2013 09:24:56 +0200
 
