@@ -3,11 +3,12 @@ Maintainer: Yubico Open Source Maintainers <ossmaint@yubico.com>
 Uploaders: Simon Josefsson <simon@yubico.com>, Klas Lindfors <klas@yubico.com>, Dain Nilsson <dain@yubico.com>
 Section: admin
 Priority: optional
-Build-Depends: debhelper (>= 8),
+Build-Depends: debhelper (>= 9),
 	       po-debconf,
-	       pkg-config,
-	       cdbs,
 	       autotools-dev,
+	       dh-autoreconf,
+	       chrpath,
+	       pkg-config,
 	       libykclient-dev (>= 2.4),
 	       libpam0g-dev,
 	       libldap2-dev,
