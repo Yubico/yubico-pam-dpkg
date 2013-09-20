@@ -1,5 +1,5 @@
 Source: yubico-pam
-Maintainer: Yubico Open Source Maintainers <ossmaint@yubico.com>
+Maintainer: Debian Authentication Maintainers <pkg-auth-maintainers@lists.alioth.debian.org>
 Uploaders: Simon Josefsson <simon@yubico.com>, Klas Lindfors <klas@yubico.com>, Dain Nilsson <dain@yubico.com>
 Section: admin
 Priority: optional
