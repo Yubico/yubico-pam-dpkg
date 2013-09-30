@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2012 Yubico AB
+ * Copyright (c) 2011-2013 Yubico AB
  * Copyright (c) 2011 Tollef Fog Heen <tfheen@err.no>
  * All rights reserved.
  *
@@ -43,6 +43,7 @@
 #if HAVE_CR
 /* for yubikey_hex_decode and yubikey_hex_p */
 #include <yubikey.h>
+#include <ykpbkdf2.h>
 #endif /* HAVE_CR */
 
 int
@@ -145,15 +146,19 @@ init_yubikey(YK_KEY **yk)
 
 int challenge_response(YK_KEY *yk, int slot,
 		       char *challenge, unsigned int len,
-		       bool hmac, unsigned int flags, bool verbose,
-		       char *response, int res_size, unsigned int *res_len)
+		       bool hmac, bool may_block, bool verbose,
+		       char *response, unsigned int res_size, unsigned int *res_len)
 {
 	int yk_cmd;
-	unsigned int response_len = 0;
-	unsigned int expect_bytes = 0;
 
-	if (res_size < sizeof(64 + 16))
+  if(hmac == true) {
+    *res_len = 20;
+  } else {
+    *res_len = 16;
+  }
+	if (res_size < *res_len) {
 	  return 0;
+  }
 
 	memset(response, 0, res_size);
 
@@ -173,28 +178,11 @@ int challenge_response(YK_KEY *yk, int slot,
 		return 0;
 	}
 
-	if (!yk_write_to_key(yk, yk_cmd, challenge, len))
-		return 0;
+  if(! yk_challenge_response(yk, yk_cmd, may_block, len,
+        (unsigned char*)challenge, res_size, (unsigned char*)response)) {
+    return 0;
+  }
 
-	if (verbose) {
-		fprintf(stderr, "Reading response...\n");
-	}
-
-	/* HMAC responses are 160 bits, Yubico 128 */
-	expect_bytes = (hmac == true) ? 20 : 16;
-
-	if (! yk_read_response_from_key(yk, slot, flags,
-					response, res_size,
-					expect_bytes,
-					&response_len))
-		return 0;
-
-	if (hmac && response_len > 20)
-		response_len = 20;
-	if (! hmac && response_len > 16)
-		response_len = 16;
-
-	*res_len = response_len;
 
 	return 1;
 }
@@ -212,7 +200,9 @@ get_user_challenge_file(YK_KEY *yk, const char *chalresp_path, const char *usern
    */
 
   char *filename; /* not including directory */
+  int filename_malloced = 0;
   unsigned int serial = 0;
+  int ret;
 
   if (! yk_get_serial(yk, 0, 0, &serial)) {
     D (("Failed to read serial number (serial-api-visible disabled?)."));
@@ -227,9 +217,9 @@ get_user_challenge_file(YK_KEY *yk, const char *chalresp_path, const char *usern
     len = strlen(chalresp_path == NULL ? "challenge" : username) + 1 + 10 + 1;
     if ((filename = malloc(len)) != NULL) {
       int res = snprintf(filename, len, "%s-%i", chalresp_path == NULL ? "challenge" : username, serial);
+      filename_malloced = 1;
       if (res < 0 || res > len) {
 	/* Not enough space, strangely enough. */
-	free(filename);
 	filename = NULL;
       }
     }
@@ -238,7 +228,11 @@ get_user_challenge_file(YK_KEY *yk, const char *chalresp_path, const char *usern
   if (filename == NULL)
     return 0;
 
-  return get_user_cfgfile_path (chalresp_path, filename, username, fn);
+  ret = get_user_cfgfile_path (chalresp_path, filename, username, fn);
+  if(filename_malloced == 1) {
+    free(filename);
+  }
+  return ret;
 }
 
 int
@@ -250,6 +244,8 @@ load_chalresp_state(FILE *f, CR_STATE *state, bool verbose)
    * Format is hex(challenge):hex(response):slot num
    */
   char challenge_hex[CR_CHALLENGE_SIZE * 2 + 1], response_hex[CR_RESPONSE_SIZE * 2 + 1];
+  char salt_hex[CR_SALT_SIZE * 2 + 1];
+  unsigned int iterations;
   int slot;
   int r;
 
@@ -261,14 +257,37 @@ load_chalresp_state(FILE *f, CR_STATE *state, bool verbose)
    * 40 is twice the size of CR_RESPONSE_SIZE
    * (twice because we hex encode the challenge and response)
    */
-  r = fscanf(f, "v1:%126[0-9a-z]:%40[0-9a-z]:%d", &challenge_hex[0], &response_hex[0], &slot);
-  if (r != 3) {
-    D(("Could not parse contents of chalresp_state file (%i)", r));
-    goto out;
+  r = fscanf(f, "v2:%126[0-9a-z]:%40[0-9a-z]:%64[0-9a-z]:%d:%d", challenge_hex, response_hex, salt_hex, &iterations, &slot);
+  if(r == 5) {
+    if (! yubikey_hex_p(salt_hex)) {
+      D(("Invalid salt hex input : %s", salt_hex));
+      goto out;
+    }
+
+    if(verbose) {
+      D(("Challenge: %s, hashed response: %s, salt: %s, iterations: %d, slot: %d",
+            challenge_hex, response_hex, salt_hex, iterations, slot));
+    }
+
+    yubikey_hex_decode(state->salt, salt_hex, sizeof(state->salt));
+    state->salt_len = strlen(salt_hex) / 2;
+  } else {
+    rewind(f);
+    r = fscanf(f, "v1:%126[0-9a-z]:%40[0-9a-z]:%d", challenge_hex, response_hex, &slot);
+    if (r != 3) {
+      D(("Could not parse contents of chalresp_state file (%i)", r));
+      goto out;
+    }
+
+    if (verbose) {
+      D(("Challenge: %s, expected response: %s, slot: %d", challenge_hex, response_hex, slot));
+    }
+
+    iterations = CR_DEFAULT_ITERATIONS;
   }
 
-  if (verbose)
-    D(("Challenge: %s, expected response: %s, slot: %d", challenge_hex, response_hex, slot));
+  state->iterations = iterations;
+
 
   if (! yubikey_hex_p(challenge_hex)) {
     D(("Invalid challenge hex input : %s", challenge_hex));
@@ -303,13 +322,30 @@ int
 write_chalresp_state(FILE *f, CR_STATE *state)
 {
   char challenge_hex[CR_CHALLENGE_SIZE * 2 + 1], response_hex[CR_RESPONSE_SIZE * 2 + 1];
+  char salt_hex[CR_SALT_SIZE * 2 + 1], hashed_hex[CR_RESPONSE_SIZE * 2 + 1];
+  unsigned char salt[CR_SALT_SIZE], hash[CR_RESPONSE_SIZE];
+  YK_PRF_METHOD prf_method = {20, yk_hmac_sha1};
+  unsigned int iterations = CR_DEFAULT_ITERATIONS;
   int fd;
 
   memset(challenge_hex, 0, sizeof(challenge_hex));
   memset(response_hex, 0, sizeof(response_hex));
+  memset(salt_hex, 0, sizeof(salt_hex));
+  memset(hashed_hex, 0, sizeof(hashed_hex));
 
   yubikey_hex_encode(challenge_hex, (char *)state->challenge, state->challenge_len);
   yubikey_hex_encode(response_hex, (char *)state->response, state->response_len);
+
+  if(state->iterations > 0) {
+    iterations = state->iterations;
+  }
+
+  generate_random(salt, CR_SALT_SIZE);
+  yk_pbkdf2(response_hex, salt, CR_SALT_SIZE, iterations,
+      hash, CR_RESPONSE_SIZE, &prf_method);
+
+  yubikey_hex_encode(hashed_hex, (char *)hash, CR_RESPONSE_SIZE);
+  yubikey_hex_encode(salt_hex, (char *)salt, CR_SALT_SIZE);
 
   rewind(f);
 
@@ -320,7 +356,7 @@ write_chalresp_state(FILE *f, CR_STATE *state)
   if (ftruncate(fd, 0))
     goto out;
 
-  fprintf(f, "v1:%s:%s:%d\n", challenge_hex, response_hex, state->slot);
+  fprintf(f, "v2:%s:%s:%s:%d:%d\n", challenge_hex, hashed_hex, salt_hex, iterations, state->slot);
 
   if (fflush(f) < 0)
     goto out;

@@ -1,3 +1,136 @@
+2013-09-27  Klas Lindfors <klas@yubico.com>
+
+	* NEWS: release 2.14
+
+2013-09-27  Simon Josefsson <simon@josefsson.org>
+
+	* : Merge pull request #14 from BinetReseau/master No match between user and token detailed pam values
+
+2013-09-23  Klas Lindfors <klas@yubico.com>
+
+	* configure.ac: require version 1.8.0 of libykpers since we use yk_challenge_response() introduced in that version.
+
+2013-09-20  Klas Lindfors <klas@yubico.com>
+
+	* doc: update doc submodule
+
+2013-09-20  Klas Lindfors <klas@yubico.com>
+
+	* drop_privs.c, drop_privs.h, pam_yubico.c: reimplement drop_privs
+	to implement the pam_modutils interface Original patch from maxime.deroucy@gmail.com.
+	http://code.google.com/p/yubico-pam/issues/detail?id=49 fixes #19
+
+2013-09-19  Klas Lindfors <klas@yubico.com>
+
+	* : Merge pull request #27 from eworm-de/stack use correct size to hex decode salt
+
+2013-09-19  Klas Lindfors <klas@yubico.com>
+
+	* Makefile.am: fixup release target for move to github
+
+2013-09-19  Klas Lindfors <klas@yubico.com>
+
+	* README: minor formatting fixes
+
+2013-09-19  Klas Lindfors <klas@yubico.com>
+
+	* README, ykpamcfg.1: everything moved to github
+
+2013-09-19  Klas Lindfors <klas@yubico.com>
+
+	* COPYING, configure.ac, drop_privs.c, pam_yubico.c, util.c,
+	util.h, ykpamcfg.1, ykpamcfg.c: update copyright years
+
+2013-09-19  Klas Lindfors <klas@yubico.com>
+
+	* drop_privs.c: allocate space for the grplist in the privs
+	structure as we want to save the privs structure longer than the scope of
+	def_privs we need to allocate the space for grplist.
+
+2013-09-19  Klas Lindfors <klas@yubico.com>
+
+	* drop_privs.c: correct debug message
+
+2013-09-18  Klas Lindfors <klas@yubico.com>
+
+	* util.c: move around to avoid warning
+
+2013-09-18  Klas Lindfors <klas@yubico.com>
+
+	* util.c: always set iterations and rewind before second fscanf()
+
+2013-09-18  Klas Lindfors <klas@yubico.com>
+
+	* README, configure.ac: update urls to other projects
+
+2013-09-18  Klas Lindfors <klas@yubico.com>
+
+	* util.c: use malloc() instead of alloca() and free after use
+
+2013-04-20  Eugene Crosser <crosser@average.org>
+
+	* drop_privs.c, pam_yubico.c, util.c: Stop leaks of memory and of
+	privileges Fix several memory leaks and mishandling of the privilege status
+	where a function returned failure indication, and previously
+	allocated memory was not freed (and the referece was lost), or
+	previously droped privileges where not restored.
+
+2013-09-18  Klas Lindfors <klas@yubico.com>
+
+	* ykpamcfg.1, ykpamcfg.c: add -i switch for setting iterations with
+	ykpamcfg
+
+2013-09-18  Klas Lindfors <klas@yubico.com>
+
+	* .gitignore: ignore signed releases
+
+2013-09-18  Klas Lindfors <klas@yubico.com>
+
+	* drop_privs.c: fix warnings
+
+2013-09-18  Klas Lindfors <klas@yubico.com>
+
+	* pam_yubico.c: fixup warnings
+
+2013-09-18  Klas Lindfors <klas@yubico.com>
+
+	* ykpamcfg.c: fix warnings
+
+2013-09-18  Klas Lindfors <klas@yubico.com>
+
+	* pam_yubico.c, util.c, util.h: use pbkdf2 to process the exepected
+	response this bumps the version on the state file to 2 old files can still be
+	read but new files will use the new format
+
+2013-09-18  Klas Lindfors <klas@yubico.com>
+
+	* pam_yubico.c, util.c, util.h, ykpamcfg.c: refactor to use chalresp
+	function from ykpers so challenge_response() now calls yk_challenge_response() to do the
+	yubikey internal stuff.
+
+2013-09-18  Klas Lindfors <klas@yubico.com>
+
+	* Makefile.am, configure.ac, m4/manywarnings.m4, m4/warnings.m4: add
+	the same warnings package as yubico-c
+
+2013-09-18  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2013-09-18  Simon Josefsson <simon@josefsson.org>
+
+	* Makefile.am, NEWS: Don't install internal header files.
+
+2013-05-13  Christian Hesse <mail@eworm.de>
+
+	* pam_yubico.c: print information only if debug is specified The pam module is very informative. I do not want it to print any
+	information unless debug is specified. An attacker should not get
+	any information.
+
+2013-03-01  Klas Lindfors <klas@yubico.com>
+
+	* NEWS, configure.ac: bump version after release
+
 2013-03-01  Klas Lindfors <klas@yubico.com>
 
 	* Makefile.am: add more docs
@@ -13,6 +146,10 @@
 2013-02-14  Dain Nilsson <dainzor@gmail.com>
 
 	* : Merge pull request #15 from wwest4/master util.c version check fix
+
+2013-01-26  Pierre-Alain Dupont <pad@melix.net>
+
+	* pam_yubico.c: A more precise handling of user-token match errors Signed-off-by: Pierre-Alain Dupont <pad@melix.net>
 
 2013-01-18  Klas Lindfors <klas@yubico.com>
 
@@ -1178,7 +1315,7 @@
 
 2009-01-13  Simon Josefsson <simon@josefsson.org>
 
-	* configure.ac, configure.in: Rename.
+	* configure.in => configure.ac: Rename.
 
 2009-01-13  Simon Josefsson <simon@josefsson.org>
 
@@ -1278,8 +1415,8 @@
 
 2008-06-25  Simon Josefsson <simon@josefsson.org>
 
-	* Makefile.am, build-aux/config.rpath, configure.in, libcurl.m4,
-	m4/lib-ld.m4, m4/lib-link.m4, m4/lib-prefix.m4, m4/libcurl.m4: 
+	* Makefile.am, build-aux/config.rpath, configure.in, m4/lib-ld.m4,
+	m4/lib-link.m4, m4/lib-prefix.m4, libcurl.m4 => m4/libcurl.m4: 
 	Create m4/ and build-aux/ and use them.
 
 2008-05-03  Simon Josefsson <simon@josefsson.org>

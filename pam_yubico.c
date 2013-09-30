@@ -1,5 +1,5 @@
 /* Written by Simon Josefsson <simon@yubico.com>.
- * Copyright (c) 2006-2012 Yubico AB
+ * Copyright (c) 2006-2013 Yubico AB
  * Copyright (c) 2011 Tollef Fog Heen <tfheen@err.no>
  * All rights reserved.
  *
@@ -40,6 +40,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include <string.h>
+#include <pwd.h>
 
 #include "util.h"
 #include "drop_privs.h"
@@ -47,6 +48,7 @@
 #if HAVE_CR
 /* for yubikey_hex_decode and yubikey_hex_p */
 #include <yubikey.h>
+#include <ykpbkdf2.h>
 #endif /* HAVE_CR */
 
 /* Libtool defines PIC for shared objects */
@@ -123,7 +125,7 @@ struct cfg
 
 /*
  * This function will look for users name with valid user token id. It
- * will returns 0 for failure and 1 for success.
+ * will returns -2 if the user is unknown, -1 if the token do not match the user line, 0 for internal failure and 1 for success.
  *
  * File format is as follows:
  * <user-name>:<token_id>:<token_id>
@@ -168,6 +170,7 @@ check_user_token (struct cfg *cfg,
       return retval;
   }
 
+  retval = -2;
   while (fgets (buf, 1024, opwfile))
     {
       if (buf[strlen (buf) - 1] == '\n')
@@ -177,6 +180,7 @@ check_user_token (struct cfg *cfg,
       if (s_user && strcmp (username, s_user) == 0)
 	{
 	  DBG (("Matched user: %s", s_user));
+      retval = -1; //We found at least one line for the user
 	  do
 	    {
 	      s_token = strtok (NULL, ":");
@@ -194,12 +198,12 @@ check_user_token (struct cfg *cfg,
 
   fclose (opwfile);
 
-  return 0;
+  return retval;
 }
 
 /*
  * Authorize authenticated OTP_ID for login as USERNAME using
- * AUTHFILE.  Return 0 on failures, otherwise success.
+ * AUTHFILE.  Return -2 if the user is unknown, -1 if the OTP_ID does not match,  0 on internal failures, otherwise success.
  */
 static int
 authorize_user_token (struct cfg *cfg,
@@ -221,6 +225,7 @@ authorize_user_token (struct cfg *cfg,
     {
       char *userfile = NULL;
       struct passwd *p;
+      PAM_MODUTIL_DEF_PRIVS(privs);
 
       p = getpwnam (username);
       if (p == NULL) {
@@ -237,20 +242,21 @@ authorize_user_token (struct cfg *cfg,
       }
 
       DBG (("Dropping privileges"));
-
-      if (drop_privileges(p, pamh) < 0) {
-	D (("could not drop privileges"));
-	return 0;
+      if(pam_modutil_drop_priv(pamh, &privs, p)) {
+        DBG (("could not drop privileges"));
+	retval = 0;
+	goto free_out;
       }
 
       retval = check_user_token (cfg, userfile, username, otp_id);
 
-      if (restore_privileges(pamh) < 0)
-	{
-	  DBG (("could not restore privileges"));
-	  return 0;
-	}
+      if(pam_modutil_regain_priv(pamh, &privs)) {
+        DBG (("could not restore privileges"));
+        retval = 0;
+        goto free_out;
+      }
 
+free_out:
       free (userfile);
     }
 
@@ -276,7 +282,6 @@ authorize_user_token_ldap (struct cfg *cfg,
 			   const char *user,
 			   const char *token_id)
 {
-  DBG(("called"));
   int retval = 0;
   int protocol;
 #ifdef HAVE_LIBLDAP
@@ -291,6 +296,9 @@ authorize_user_token_ldap (struct cfg *cfg,
   int i, rc;
 
   char *find = NULL;
+#endif
+  DBG(("called"));
+#ifdef HAVE_LIBLDAP
 
   if (cfg->user_attr == NULL) {
     DBG (("Trying to look up user to YubiKey mapping in LDAP, but user_attr not set!"));
@@ -368,9 +376,11 @@ authorize_user_token_ldap (struct cfg *cfg,
   if (e == NULL)
     {
       DBG (("No result from LDAP search"));
+      retval = -2;
     }
   else
     {
+      retval = -1;
       /* Iterate through each returned attribute. */
       for (a = ldap_first_attribute (ld, e, &ber);
 	   a != NULL; a = ldap_next_attribute (ld, e, ber))
@@ -424,9 +434,10 @@ authorize_user_token_ldap (struct cfg *cfg,
 
 #if HAVE_CR
 static int
-display_error(pam_handle_t *pamh, char *message) {
+display_error(pam_handle_t *pamh, const char *message) {
   struct pam_conv *conv;
-  struct pam_message *pmsg[1], msg[1];
+  const struct pam_message *pmsg[1];
+  struct pam_message msg[1];
   struct pam_response *resp = NULL;
   int retval;
 
@@ -439,8 +450,7 @@ display_error(pam_handle_t *pamh, char *message) {
   pmsg[0] = &msg[0];
   msg[0].msg = message;
   msg[0].msg_style = PAM_ERROR_MSG;
-  retval = conv->conv(1, (const struct pam_message **) pmsg,
-		      &resp, conv->appdata_ptr);
+  retval = conv->conv(1, pmsg, &resp, conv->appdata_ptr);
 
   if (retval != PAM_SUCCESS) {
     D(("conv returned error: %s", pam_strerror (pamh, retval)));
@@ -461,32 +471,34 @@ do_challenge_response(pam_handle_t *pamh, struct cfg *cfg, const char *username)
   char buf[CR_RESPONSE_SIZE + 16], response_hex[CR_RESPONSE_SIZE * 2 + 1];
   int ret, fd;
 
-  unsigned int flags = 0;
   unsigned int response_len = 0;
   YK_KEY *yk = NULL;
   CR_STATE state;
 
-  char *errstr = NULL;
+  const char *errstr = NULL;
 
   struct passwd *p;
   struct stat st;
 
+  /* we must declare two sepparate privs structures as they can't be reused */
+  PAM_MODUTIL_DEF_PRIVS(privs);
+  PAM_MODUTIL_DEF_PRIVS(privs2);
+
   ret = PAM_AUTH_ERR;
-  flags |= YK_FLAG_MAYBLOCK;
 
   if (! init_yubikey(&yk)) {
-    D(("Failed initializing YubiKey"));
+    DBG(("Failed initializing YubiKey"));
     goto out;
   }
 
   if (! check_firmware_version(yk, false, true)) {
-    D(("YubiKey does not support Challenge-Response (version 2.2 required)"));
+    DBG(("YubiKey does not support Challenge-Response (version 2.2 required)"));
     goto out;
   }
 
 
   if (! get_user_challenge_file (yk, cfg->chalresp_path, username, &userfile)) {
-    D(("Failed getting user challenge file for user %s", username));
+    DBG(("Failed getting user challenge file for user %s", username));
     goto out;
   }
 
@@ -499,54 +511,54 @@ do_challenge_response(pam_handle_t *pamh, struct cfg *cfg, const char *username)
   }
 
   /* Drop privileges before opening user file. */
-  if (drop_privileges(p, pamh) < 0) {
-      D (("could not drop privileges"));
+  if (pam_modutil_drop_priv(pamh, &privs, p)) {
+      DBG (("could not drop privileges"));
       goto out;
   }
 
   fd = open(userfile, O_RDONLY, 0);
   if (fd < 0) {
       DBG (("Cannot open file: %s (%s)", userfile, strerror(errno)));
-      goto out;
+      goto restpriv_out;
   }
 
   if (fstat(fd, &st) < 0) {
       DBG (("Cannot stat file: %s (%s)", userfile, strerror(errno)));
       close(fd);
-      goto out;
+      goto restpriv_out;
   }
 
   if (!S_ISREG(st.st_mode)) {
       DBG (("%s is not a regular file", userfile));
       close(fd);
-      goto out;
+      goto restpriv_out;
   }
 
   f = fdopen(fd, "r");
   if (f == NULL) {
       DBG (("fdopen: %s", strerror(errno)));
       close(fd);
-      goto out;
+      goto restpriv_out;
   }
 
   if (! load_chalresp_state(f, &state, cfg->debug))
-    goto out;
+    goto restpriv_out;
 
   if (fclose(f) < 0) {
     f = NULL;
-    goto out;
+    goto restpriv_out;
   }
   f = NULL;
 
-  if (restore_privileges(pamh) < 0) {
+  if (pam_modutil_regain_priv(pamh, &privs)) {
       DBG (("could not restore privileges"));
       goto out;
   }
 
   if (! challenge_response(yk, state.slot, state.challenge, state.challenge_len,
-			   true, flags, false,
+			   true, true, false,
 			   buf, sizeof(buf), &response_len)) {
-    D(("Challenge-response FAILED"));
+    DBG(("Challenge-response FAILED"));
     goto out;
   }
 
@@ -555,11 +567,16 @@ do_challenge_response(pam_handle_t *pamh, struct cfg *cfg, const char *username)
    */
 
   yubikey_hex_encode(response_hex, buf, response_len);
+  if(state.salt_len > 0) { // the expected response has gone through pbkdf2
+    YK_PRF_METHOD prf_method = {20, yk_hmac_sha1};
+    yk_pbkdf2(response_hex, (unsigned char*)state.salt, state.salt_len, state.iterations,
+        (unsigned char*)buf, response_len, &prf_method);
+  }
 
-  if (memcmp(buf, state.response, response_len) == 0) {
+  if (memcmp(buf, state.response, state.response_len) == 0) {
     ret = PAM_SUCCESS;
   } else {
-    D(("Unexpected C/R response : %s", response_hex));
+    DBG(("Unexpected C/R response : %s", response_hex));
     goto out;
   }
 
@@ -567,21 +584,21 @@ do_challenge_response(pam_handle_t *pamh, struct cfg *cfg, const char *username)
 
   errstr = "Error generating new challenge, please check syslog or contact your system administrator";
   if (generate_random(state.challenge, sizeof(state.challenge))) {
-    D(("Failed generating new challenge!"));
+    DBG(("Failed generating new challenge!"));
     goto out;
   }
 
   errstr = "Error communicating with Yubikey, please check syslog or contact your system administrator";
   if (! challenge_response(yk, state.slot, state.challenge, CR_CHALLENGE_SIZE,
-			   true, flags, false,
+			   true, true, false,
 			   buf, sizeof(buf), &response_len)) {
-    D(("Second challenge-response FAILED"));
+    DBG(("Second challenge-response FAILED"));
     goto out;
   }
 
   /* There is a bug that makes the YubiKey 2.2 send the same response for all challenges
      unless HMAC_LT64 is set, check for that here */
-  if (memcmp(buf, state.response, response_len) == 0) {
+  if (memcmp(buf, state.response, state.response_len) == 0) {
     errstr = "Same response for second challenge, YubiKey should be reconfigured with the option HMAC_LT64";
     goto out;
   }
@@ -593,35 +610,37 @@ do_challenge_response(pam_handle_t *pamh, struct cfg *cfg, const char *username)
    * Write the challenge and response we will expect the next time to the state file.
    */
   if (response_len > sizeof(state.response)) {
-    D(("Got too long response ??? (%u/%lu)", response_len, (unsigned long) sizeof(state.response)));
+    DBG(("Got too long response ??? (%u/%lu)", response_len, (unsigned long) sizeof(state.response)));
     goto out;
   }
   memcpy (state.response, buf, response_len);
   state.response_len = response_len;
 
+  /* point to the fresh privs structure.. */
+  privs = privs2;
   /* Drop privileges before creating new challenge file. */
-  if (drop_privileges(p, pamh) < 0) {
-      D (("could not drop privileges"));
+  if (pam_modutil_drop_priv(pamh, &privs, p)) {
+      DBG (("could not drop privileges"));
       goto out;
   }
 
   /* Write out the new file */
   tmpfile = malloc(strlen(userfile) + 1 + 4);
   if (! tmpfile)
-    goto out;
+    goto restpriv_out;
   strcpy(tmpfile, userfile);
   strcat(tmpfile, ".tmp");
 
   fd = open(tmpfile, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
   if (fd < 0) {
       DBG (("Cannot open file: %s (%s)", tmpfile, strerror(errno)));
-      goto out;
+      goto restpriv_out;
   }
 
   f = fdopen(fd, "w");
   if (! f) {
     close(fd);
-    goto out;
+    goto restpriv_out;
   }
 
   errstr = "Error updating Yubikey challenge, please check syslog or contact your system administrator";
@@ -629,14 +648,14 @@ do_challenge_response(pam_handle_t *pamh, struct cfg *cfg, const char *username)
     goto out;
   if (fclose(f) < 0) {
     f = NULL;
-    goto out;
+    goto restpriv_out;
   }
   f = NULL;
   if (rename(tmpfile, userfile) < 0) {
-    goto out;
+    goto restpriv_out;
   }
 
-  if (restore_privileges(pamh) < 0) {
+  if (pam_modutil_regain_priv(pamh, &privs)) {
       DBG (("could not restore privileges"));
       goto out;
   }
@@ -644,15 +663,21 @@ do_challenge_response(pam_handle_t *pamh, struct cfg *cfg, const char *username)
   DBG(("Challenge-response success!"));
   errstr = NULL;
   errno = 0;
+  goto out;
+
+restpriv_out:
+  if (pam_modutil_regain_priv(pamh, &privs)) {
+      DBG (("could not restore privileges"));
+  }
 
  out:
   if (yk_errno) {
     if (yk_errno == YK_EUSBERR) {
       syslog(LOG_ERR, "USB error: %s", yk_usb_strerror());
-      D(("USB error: %s", yk_usb_strerror()));
+      DBG(("USB error: %s", yk_usb_strerror()));
     } else {
       syslog(LOG_ERR, "Yubikey core error: %s", yk_strerror(yk_errno));
-      D(("Yubikey core error: %s", yk_strerror(yk_errno)));
+      DBG(("Yubikey core error: %s", yk_strerror(yk_errno)));
     }
   }
 
@@ -661,7 +686,7 @@ do_challenge_response(pam_handle_t *pamh, struct cfg *cfg, const char *username)
 
   if (errno) {
     syslog(LOG_ERR, "Challenge response failed: %s", strerror(errno));
-    D(("Challenge response failed: %s", strerror(errno)));
+    DBG(("Challenge response failed: %s", strerror(errno)));
   }
 
   if (yk)
@@ -772,7 +797,8 @@ pam_sm_authenticate (pam_handle_t * pamh,
   int skip_bytes = 0;
   int valid_token = 0;
   struct pam_conv *conv;
-  struct pam_message *pmsg[1], msg[1];
+  const struct pam_message *pmsg[1];
+  struct pam_message msg[1];
   struct pam_response *resp;
   int nargs = 1;
   ykclient_t *ykc = NULL;
@@ -862,8 +888,8 @@ pam_sm_authenticate (pam_handle_t * pamh,
 
       pmsg[0] = &msg[0];
       {
-	const char *query_template = "Yubikey for `%s': ";
-	size_t len = strlen (query_template) + strlen (user);
+#define QUERY_TEMPLATE "YubiKey for `%s': "
+	size_t len = strlen (QUERY_TEMPLATE) + strlen (user);
 	int wrote;
 
 	msg[0].msg = malloc (len);
@@ -873,7 +899,7 @@ pam_sm_authenticate (pam_handle_t * pamh,
 	    goto done;
 	  }
 
-	wrote = snprintf ((char *) msg[0].msg, len, query_template, user);
+	wrote = snprintf ((char *) msg[0].msg, len, QUERY_TEMPLATE, user);
 	if (wrote < 0 || wrote >= len)
 	  {
 	    retval = PAM_BUF_ERR;
@@ -883,8 +909,7 @@ pam_sm_authenticate (pam_handle_t * pamh,
       msg[0].msg_style = cfg->verbose_otp ? PAM_PROMPT_ECHO_ON : PAM_PROMPT_ECHO_OFF;
       resp = NULL;
 
-      retval = conv->conv (nargs, (const struct pam_message **) pmsg,
-			   &resp, conv->appdata_ptr);
+      retval = conv->conv (nargs, pmsg, &resp, conv->appdata_ptr);
 
       free ((char *) msg[0].msg);
 
@@ -980,14 +1005,27 @@ pam_sm_authenticate (pam_handle_t * pamh,
   else
     valid_token = authorize_user_token (cfg, user, otp_id, pamh);
 
-  if (valid_token == 0)
+  switch(valid_token)
     {
-      DBG (("Yubikey not authorized to login as user"));
+    case 1:
+      retval = PAM_SUCCESS;
+      break;
+    case 0:
+      DBG (("Internal error while validating user"));
       retval = PAM_AUTHINFO_UNAVAIL;
-      goto done;
+      break;
+    case -1:
+      DBG (("Unauthorized token for this user"));
+      retval = PAM_AUTH_ERR;
+      break;
+    case -2:
+      DBG (("Unknown user"));
+      retval = PAM_USER_UNKNOWN;
+      break;
+    default:
+      DBG (("Unhandled value for token-user validation"))
+      retval = PAM_AUTHINFO_UNAVAIL;
     }
-
-  retval = PAM_SUCCESS;
 
 done:
   if (ykc)
