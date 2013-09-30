@@ -1,8 +1,9 @@
-yubico-pam (2.13-4) unstable; urgency=low
+yubico-pam (2.14-1) unstable; urgency=low
 
+  * New upstream version.
   * Change maintainer to pkg-auth-maintainers.
 
- -- Simon Josefsson <simon@yubico.com>  Sat, 21 Sep 2013 00:01:10 +0200
+ -- Simon Josefsson <simon@yubico.com>  Mon, 30 Sep 2013 19:41:58 +0200
 
 yubico-pam (2.13-3) unstable; urgency=low
 
