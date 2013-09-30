@@ -21,13 +21,9 @@ later. This has introduced a dependency of libykpers-1 from the
 ykpersonalize package. Pass `--without-cr' to `configure' to avoid
 this dependency.
 
-The development community is co-ordinated via Google Code and GitHub :
+The development community is co-ordinated via GitHub :
 
-http://code.google.com/p/yubico-pam/
 https://github.com/Yubico/yubico-pam/
-
-The split is roughly Google Code hosting the bug tracker and downloads
-with GitHub hosting the Wiki and code repository.
 
 The project is licensed under a BSD license.  See the file COPYING for
 exact wording.  For any copyright year range specified as YYYY-ZZZZ in
@@ -67,17 +63,17 @@ You will need to have libykclient (ykclient.h, libykclient.so) and
 libpam-dev (security/pam_appl.h, libpam.so) installed.  Get the
 ykclient library from:
 
-  http://code.google.com/p/yubico-c-client/
+  http://opensource.yubico.com/yubico-c-client/
 
 It in turn requires Curl, which you need to have installed, and
 libyubikey. Get libyubikey from
 
-  http://code.google.com/p/yubico-c/
+  http://opensource.yubico.com/yubico-c/
 
 The new Challenge-Response offline authentication requires libykpers-1
 from the yubikey-personalization project :
 
-  http://code.google.com/p/yubikey-personalization/
+  http://opensource.yubico.com/yubikey-personalization/
 
 
 The build system uses Autoconf, to set up the build system run:
@@ -287,7 +283,7 @@ Enter your Yubikey OTP and convert it, your Yubikey token ID is 12 characters an
 Not sure what that last bit meant? Here is how to get a copy of your OTP.
 
 Fast way
-========
+--------
 * Open a terminal
 * Press yubikey button
 
@@ -301,7 +297,7 @@ It will output an OTP into the shell:
 This can be pasted into the Modhex_Calculator page.
 
 Harder way
-==========
+----------
 This requires you to have the pam module enabled with 'debug' turned on. When
 prompted for the yubikey press the button. The pam module will print out debug
 information including the OTP and ID of your token to the shell - copy the ID

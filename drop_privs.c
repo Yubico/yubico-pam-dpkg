@@ -1,7 +1,7 @@
 /* Written by Ricky Zhou <ricky@fedoraproject.org>
  * Fredrik Thulin <fredrik@yubico.com> implemented pam_modutil_drop_priv
  *
- * Copyright (c) 2011-2012 Yubico AB
+ * Copyright (c) 2011-2013 Yubico AB
  * Copyright (c) 2011 Ricky Zhou <ricky@fedoraproject.org>
  * All rights reserved.
  *
@@ -30,6 +30,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef HAVE_PAM_MODUTIL_DROP_PRIV
+
 #include <unistd.h>
 #include <pwd.h>
 #include <grp.h>
@@ -37,6 +39,7 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include "drop_privs.h"
 #include "util.h"
 
 #ifdef HAVE_SECURITY_PAM_APPL_H
@@ -46,107 +49,76 @@
 #include <security/pam_modules.h>
 #endif
 
-#ifdef HAVE_PAM_MODUTIL_DROP_PRIV
-#ifdef HAVE_SECURITY_PAM_MODUTIL_H
-#include <security/pam_modutil.h>
-#endif /* HAVE_SECURITY_PAM_MODUTIL_H */
-#else
-static uid_t saved_euid;
-static gid_t saved_egid;
 
-static gid_t *saved_groups;
-static int saved_groups_length;
-#endif /* HAVE_PAM_MODUTIL_DROP_PRIV */
+int pam_modutil_drop_priv(pam_handle_t *pamh, struct _ykpam_privs *privs, struct passwd *pw) {
+    privs->saved_euid = geteuid();
+    privs->saved_egid = getegid();
 
-#ifdef HAVE_PAM_MODUTIL_DROP_PRIV
-struct pam_modutil_privs * _privs_location(int force_init) {
-  static int init = 0;
-  static struct pam_modutil_privs privs;
-  if (init == 0 || force_init) {
-    PAM_MODUTIL_DEF_PRIVS(def_privs);
-    privs = def_privs;
-    init = 1;
-  }
-  return &privs;
-}
-#endif /* HAVE_PAM_MODUTIL_DROP_PRIV */
+    if ((privs->saved_euid == pw->pw_uid) && (privs->saved_egid == pw->pw_gid)) {
+        D (("Privilges already dropped, pretend it is all right"));
+        return 0;
+    }
 
-int drop_privileges(struct passwd *pw, pam_handle_t *pamh) {
-#ifdef HAVE_PAM_MODUTIL_DROP_PRIV
-  int res;
-  res = pam_modutil_drop_priv(pamh, _privs_location(0), pw);
-  if (res)
-    D (("pam_modutil_drop_priv: %i", res));
-  return res;
-#else
-    saved_euid = geteuid();
-    saved_egid = getegid();
-
-    saved_groups_length = getgroups(0, NULL);
-    if (saved_groups_length < 0) {
+    privs->saved_groups_length = getgroups(0, NULL);
+    if (privs->saved_groups_length < 0) {
         D (("getgroups: %s", strerror(errno)));
         return -1;
     }
 
-    if (saved_groups_length > 0) {
-        saved_groups = malloc(saved_groups_length * sizeof(gid_t));
-        if (saved_groups == NULL) {
-            D (("malloc: %s", strerror(errno)));
-            return -1;
-        }
+    if (privs->saved_groups_length > SAVED_GROUPS_MAX_LEN) {
+        D (("to many groups, limiting."));
+        privs->saved_groups_length = SAVED_GROUPS_MAX_LEN;
+    }
 
-        if (getgroups(saved_groups_length, saved_groups) < 0) {
+    if (privs->saved_groups_length > 0) {
+        if (getgroups(privs->saved_groups_length, privs->saved_groups) < 0) {
             D (("getgroups: %s", strerror(errno)));
-            return -1;
+            goto free_out;
         }
     }
 
     if (initgroups(pw->pw_name, pw->pw_gid) < 0) {
         D (("initgroups: %s", strerror(errno)));
-        return -1;
+        goto free_out;
     }
 
     if (setegid(pw->pw_gid) < 0) {
         D (("setegid: %s", strerror(errno)));
-        return -1;
+        goto free_out;
     }
 
     if (seteuid(pw->pw_uid) < 0) {
         D (("seteuid: %s", strerror(errno)));
-        return -1;
+        goto free_out;
     }
 
     return 0;
-#endif /* HAVE_PAM_MODUTIL_DROP_PRIV */
+free_out:
+    return -1;
 }
 
-int restore_privileges(pam_handle_t *pamh) {
-#ifdef HAVE_PAM_MODUTIL_DROP_PRIV
-  int res;
-  res = pam_modutil_regain_priv(pamh, _privs_location(0));
-  if (res)
-    D (("pam_modutil_drop_priv: %i", res));
-  /* re-initialize privs in case we want to drop privs again (sic) */
-  _privs_location(1);
-  return res;
-#else
-    if (seteuid(saved_euid) < 0) {
+int pam_modutil_regain_priv(pam_handle_t *pamh, struct _ykpam_privs *privs) {
+    if ((privs->saved_euid == geteuid()) && (privs->saved_egid == getegid())) {
+        D (("Privilges already as requested, pretend it is all right"));
+        return 0;
+    }
+
+    if (seteuid(privs->saved_euid) < 0) {
         D (("seteuid: %s", strerror(errno)));
         return -1;
     }
 
-    if (setegid(saved_egid) < 0) {
+    if (setegid(privs->saved_egid) < 0) {
         D (("setegid: %s", strerror(errno)));
         return -1;
     }
 
-    if (setgroups(saved_groups_length, saved_groups) < 0) {
+    if (setgroups(privs->saved_groups_length, privs->saved_groups) < 0) {
         D (("setgroups: %s", strerror(errno)));
         return -1;
     }
 
-    free(saved_groups);
-
     return 0;
-#endif /* HAVE_PAM_MODUTIL_DROP_PRIV */
 }
+
+#endif // HAVE_PAM_MODUTIL_DROP_PRIV

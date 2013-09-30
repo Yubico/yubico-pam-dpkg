@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2012 Yubico AB
+ * Copyright (c) 2011-2013 Yubico AB
  * Copyright (c) 2011 Tollef Fog Heen <tfheen@err.no>
  * All rights reserved.
  *
@@ -67,13 +67,19 @@ int get_user_cfgfile_path(const char *common_path, const char *filename, const c
  */
 #define CR_CHALLENGE_SIZE	63
 #define CR_RESPONSE_SIZE	20
+#define CR_SALT_SIZE      32
+
+#define CR_DEFAULT_ITERATIONS 10000
 
 struct chalresp_state {
   char challenge[CR_CHALLENGE_SIZE];
   uint8_t challenge_len;
   char response[CR_RESPONSE_SIZE];
   uint8_t response_len;
+  char salt[CR_SALT_SIZE];
+  uint8_t salt_len;
   uint8_t slot;
+  uint32_t iterations;
 };
 
 typedef struct chalresp_state CR_STATE;
@@ -89,8 +95,8 @@ int init_yubikey(YK_KEY **yk);
 int check_firmware_version(YK_KEY *yk, bool verbose, bool quiet);
 int challenge_response(YK_KEY *yk, int slot,
 		       char *challenge, unsigned int len,
-		       bool hmac, unsigned int flags, bool verbose,
-		       char *response, int res_size, unsigned int *res_len);
+		       bool hmac, bool may_block, bool verbose,
+		       char *response, unsigned int res_size, unsigned int *res_len);
 
 #endif /* HAVE_CR */
 
