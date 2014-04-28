@@ -1,2 +1,2 @@
 version=3
-http://code.google.com/p/yubico-pam/downloads/list?can=1 .*/pam_yubico-(\d[\d.]*)\.tar\.gz
+opts=pgpsigurlmangle=s/$/.sig/ http://opensource.yubico.com/yubico-pam/releases.html .*/pam_yubico-(\d[\d.]*)\.tar\.gz
