@@ -1,6 +1,6 @@
 Source: yubico-pam
 Maintainer: Debian Authentication Maintainers <pkg-auth-maintainers@lists.alioth.debian.org>
-Uploaders: Simon Josefsson <simon@yubico.com>, Klas Lindfors <klas@yubico.com>, Dain Nilsson <dain@yubico.com>
+Uploaders: Simon Josefsson <simon@josefsson.org>, Klas Lindfors <klas@yubico.com>, Dain Nilsson <dain@yubico.com>
 Section: admin
 Priority: optional
 Build-Depends: debhelper (>= 9),
@@ -14,8 +14,10 @@ Build-Depends: debhelper (>= 9),
 	       libldap2-dev,
 	       libykpers-1-dev (>= 1.5.2),
 	       libyubikey-dev
-Standards-Version: 3.9.4
-Homepage: http://code.google.com/p/yubico-pam/
+Standards-Version: 3.9.5
+Homepage: https://github.com/Yubico/yubico-pam
+Vcs-Browser: https://github.com/Yubico/yubico-pam-dpkg
+Vcs-Git: git://github.com/Yubico/yubico-pam-dpkg.git
 
 Package: libpam-yubico
 Architecture: any
