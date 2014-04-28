@@ -1,8 +1,7 @@
 Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: Yubico PAM
 Upstream-Contact: yubico-devel@googlegroups.com
-Source: http://code.google.com/p/yubico-pam/
- https://github.com/Yubico/yubico-pam
+Source: https://github.com/Yubico/yubico-pam
 
 Files: *
 Copyright: Copyright (c) 2006-2013 Yubico AB
