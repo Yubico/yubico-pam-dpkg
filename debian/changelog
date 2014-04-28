@@ -1,3 +1,10 @@
+yubico-pam (2.14-3) unstable; urgency=low
+
+  * Use "," as sed delimiter instead of "/" to deal with base64 strings
+    containing "/".  From Pieter van der Meulen.
+
+ -- Simon Josefsson <simon@josefsson.org>  Mon, 28 Apr 2014 21:12:27 +0200
+
 yubico-pam (2.14-2) unstable; urgency=low
 
   * Bump to Debian Policy from 3.9.4 to 3.9.5.
