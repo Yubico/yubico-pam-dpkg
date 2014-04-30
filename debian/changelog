@@ -1,3 +1,9 @@
+yubico-pam (2.15-1) unstable; urgency=low
+
+  * New upstream version.
+
+ -- Simon Josefsson <simon@josefsson.org>  Wed, 30 Apr 2014 11:23:55 +0200
+
 yubico-pam (2.14-3) unstable; urgency=low
 
   * Use "," as sed delimiter instead of "/" to deal with base64 strings
