@@ -21,7 +21,7 @@ database or LDAP, you need to change the second line above.  But the
 module you use needs to support "use_first_pass" for this to work.
 Most modules support this.
 
-Be sure to uncomment any other 'auth' lines in your PAM configuration,
+Be sure to comment out any other 'auth' lines in your PAM configuration,
 unless you want those.  For example, Debian contains a
 '@include common-auth' which would confuse the configuration.
 

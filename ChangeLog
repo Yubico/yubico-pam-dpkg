@@ -1,3 +1,116 @@
+2014-04-30  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Version 2.15.
+
+2014-04-30  Simon Josefsson <simon@josefsson.org>
+
+	* Makefile.am: Fix doc/ EXTRA_DIST rule.
+
+2014-04-30  Simon Josefsson <simon@josefsson.org>
+
+	* doc/LocalAuthenticationUsingChallengeResponse.txt,
+	doc/MacOSXChallengeResponse.txt, doc/TwoFactorPAMConfiguration.txt,
+	doc/UbuntuFreeRadiusYubiKey.txt,
+	doc/YubiKeyAndFreeRADIUSviaPAM.txt,
+	doc/YubiKeyAndFreeRADIUSwithsinglefactorauthenticationviaPAM.txt,
+	doc/YubiKeyAndOpenVPNviaPAM.txt,
+	doc/Yubikey-and-SELinux-on-Fedora-18-and-up.txt,
+	doc/YubikeyAndRadiusViaPAM.txt, doc/YubikeyAndSSHViaPAM.txt: Add
+	docs from the wiki.
+
+2014-04-30  Simon Josefsson <simon@josefsson.org>
+
+	* doc: Removed submodule doc
+
+2014-04-30  Simon Josefsson <simon@josefsson.org>
+
+	* .gitmodules: Drop submodule.
+
+2014-04-30  Simon Josefsson <simon@josefsson.org>
+
+	* README, configure.ac: Bump yubico-c-client version required.  Fix
+	URLs.
+
+2014-04-30  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2014-03-26  Klas Lindfors <klas@yubico.com>
+
+	* pam_yubico.8: man for urllist feature
+
+2014-03-26  Klas Lindfors <klas@yubico.com>
+
+	* pam_yubico.c: fixup strtok of url templates
+
+2014-03-26  Klas Lindfors <klas@yubico.com>
+
+	* pam_yubico.c: fixup urllist feature (hopefully)
+
+2014-03-26  Klas Lindfors <klas@yubico.com>
+
+	* pam_yubico.c: spelling
+
+2014-03-12  Klas Lindfors <klas@yubico.com>
+
+	* pam_yubico.c: add urllist feature allowing up to 10 urls to be specified in config
+
+2013-12-17  Klas Lindfors <klas@yubico.com>
+
+	* : Merge pull request #34 from c0sco/master Add information on FreeBSD ports.
+
+2013-11-26  Klas Lindfors <klas@yubico.com>
+
+	* BLURB: add BLURB
+
+2013-11-26  Klas Lindfors <klas@yubico.com>
+
+	* : Merge pull request #33 from cicku/patch-1 Update README
+
+2013-11-21  Klas Lindfors <klas@yubico.com>
+
+	* util.c: free() filename before throwing the pointer away avoids a memory-leak pointed out by @crosser
+
+2013-11-18  Klas Lindfors <klas@yubico.com>
+
+	* pam_yubico.8: more text about authfile
+
+2013-11-18  Klas Lindfors <klas@yubico.com>
+
+	* pam_yubico.8: break between authfile and id
+
+2013-10-08  Simon Josefsson <simon@josefsson.org>
+
+	* pam_yubico.8, ykpamcfg.1: More https.
+
+2013-10-08  Simon Josefsson <simon@josefsson.org>
+
+	* README: Use more https.
+
+2013-10-06  Simon Josefsson <simon@josefsson.org>
+
+	* README: Use SSH git URL.
+
+2013-10-06  Simon Josefsson <simon@josefsson.org>
+
+	* README: Fix ModHex calculator URL and section.  Suggested by Linus Nordberg <linus@nordberg.se>.
+
+2013-10-02  Klas Lindfors <klas@yubico.com>
+
+	* pam_yubico.8: client is default mode
+
+2013-10-02  Klas Lindfors <klas@yubico.com>
+
+	* : Merge pull request #30 from eworm-de/man install man page pam_yubico.8
+
+2013-10-02  Klas Lindfors <klas@yubico.com>
+
+	* pam_yubico.8, ykpamcfg.1: add man page for pam_yubico
+
+2013-09-27  Klas Lindfors <klas@yubico.com>
+
+	* NEWS, configure.ac: bump versions
+
 2013-09-27  Klas Lindfors <klas@yubico.com>
 
 	* NEWS: release 2.14
@@ -1315,7 +1428,7 @@
 
 2009-01-13  Simon Josefsson <simon@josefsson.org>
 
-	* configure.in => configure.ac: Rename.
+	* configure.ac, configure.in: Rename.
 
 2009-01-13  Simon Josefsson <simon@josefsson.org>
 
@@ -1415,8 +1528,8 @@
 
 2008-06-25  Simon Josefsson <simon@josefsson.org>
 
-	* Makefile.am, build-aux/config.rpath, configure.in, m4/lib-ld.m4,
-	m4/lib-link.m4, m4/lib-prefix.m4, libcurl.m4 => m4/libcurl.m4: 
+	* Makefile.am, build-aux/config.rpath, configure.in, libcurl.m4,
+	m4/lib-ld.m4, m4/lib-link.m4, m4/lib-prefix.m4, m4/libcurl.m4: 
 	Create m4/ and build-aux/ and use them.
 
 2008-05-03  Simon Josefsson <simon@josefsson.org>

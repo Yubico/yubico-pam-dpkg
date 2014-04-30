@@ -40,7 +40,7 @@ version.
 You may check out the sources using Git with the following command:
 
 ------
-   $ git clone git://github.com/Yubico/yubico-pam.git yubico-pam
+   $ git clone git@github.com:Yubico/yubico-pam.git yubico-pam
 ------
 
 This will create a directory 'yubico-pam'.
@@ -63,17 +63,17 @@ You will need to have libykclient (ykclient.h, libykclient.so) and
 libpam-dev (security/pam_appl.h, libpam.so) installed.  Get the
 ykclient library from:
 
-  http://opensource.yubico.com/yubico-c-client/
+  https://developers.yubico.com/yubico-c-client/
 
 It in turn requires Curl, which you need to have installed, and
 libyubikey. Get libyubikey from
 
-  http://opensource.yubico.com/yubico-c/
+  https://developers.yubico.com/yubico-c/
 
 The new Challenge-Response offline authentication requires libykpers-1
 from the yubikey-personalization project :
 
-  http://opensource.yubico.com/yubikey-personalization/
+  https://developers.yubico.com/yubikey-personalization/
 
 
 The build system uses Autoconf, to set up the build system run:
@@ -90,6 +90,11 @@ Then build the code, run the self-test and install the binaries:
   make check install
 ------
 
+Fedora/EPEL
+----------
+There is already a package in Fedora/EPEL of yubico-pam that can be installed
+by using yum :
+  $ sudo yum install pam_yubico
 
 Ubuntu PPA
 ----------
@@ -103,6 +108,15 @@ Ubuntu platforms :
   $ sudo apt-get install libpam-yubico
 
 See the file /usr/share/doc/libpam-yubico/README.Debian after installing.
+
+FreeBSD ports
+-------------
+yubico-pam and the supporting Yubico packages have corresponding FreeBSD ports. To install:
+
+  $ cd /usr/ports/security/pam_yubico
+  $ make install clean
+
+Advanced configuration notes are available at http://mjslabs.com/yubihow.html
 
 
 Configuration
@@ -160,11 +174,11 @@ Supported PAM module parameters are:
   "url":        specify the URL template to use, this is set by calling
                 yubikey_client_set_url_template, which defaults to:
 
-                http://api.yubico.com/wsapi/verify?id=%d&otp=%s
+                https://api.yubico.com/wsapi/verify?id=%d&otp=%s
 
 		  or
 
-                http://api.yubico.com/wsapi/2.0/verify?id=%d&otp=%s
+                https://api.yubico.com/wsapi/2.0/verify?id=%d&otp=%s
 
 		depending on your version of yubico-c-client.
 
@@ -269,16 +283,18 @@ This is much the same concept as the SSH authorized_keys file.
 
 Obtaining the Yubikey token ID (a.k.a. public ID)
 -------------------------------------------------
-You can obtain the Yubikey token ID in two places. One is by removing the
-last 32 characters of any OTP (One Time Password) generated with your Yubikey, the other
-is by using the modhex calculator located here :
 
-http://radius.yubico.com/demo/Modhex_Calculator.php
+You can obtain the Yubikey token ID in several ways.  One is by
+removing the last 32 characters of any OTP (One Time Password)
+generated with your Yubikey.  Another is by using the modhex
+calculator located here:
 
-Enter your Yubikey OTP and convert it, your Yubikey token ID is 12 characters and listed as:
+http://demo.yubico.com/php-yubico/Modhex_Calculator.php
+
+Enter your Yubikey OTP and convert it, your Yubikey token ID is 12
+characters and listed as:
 
    Modhex encoded: XXXXXXX
-
 
 Not sure what that last bit meant? Here is how to get a copy of your OTP.
 
@@ -322,7 +338,7 @@ including a work around [2] for ssh (Equivalent files could be created for
 other services). Systems in 'permissive' mode will generate AVC warnings but
 authentication will succeed.
 
-[1] http://code.google.com/p/yubico-pam/issues/detail?id=43
+[1] https://code.google.com/p/yubico-pam/issues/detail?id=43
 [2] https://bugzilla.redhat.com/show_bug.cgi?id=841693#c3
 
 To determine if you have SELinux enforcing or not run the 'sestatus' command.
