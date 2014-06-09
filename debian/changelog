@@ -1,8 +1,8 @@
 yubico-pam (2.15-2) unstable; urgency=low
 
-  * Bump required ykclient version to 2.12.
+  * Bump required ykclient version to 2.12.  Closes: #747833.
 
- -- Simon Josefsson <simon@josefsson.org>  Wed, 30 Apr 2014 12:51:33 +0200
+ -- Simon Josefsson <simon@josefsson.org>  Mon, 09 Jun 2014 22:31:44 +0200
 
 yubico-pam (2.15-1) unstable; urgency=low
 
