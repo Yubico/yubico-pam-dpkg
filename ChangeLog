@@ -1,3 +1,51 @@
+2014-06-10  Klas Lindfors <klas@yubico.com>
+
+	* NEWS: version 2.16
+
+2014-06-10  Klas Lindfors <klas@yubico.com>
+
+	* .gitignore: ignore test artifacts
+
+2014-06-10  Klas Lindfors <klas@yubico.com>
+
+	* NEWS: add NEWS for 2.16
+
+2014-06-02  Klas Lindfors <klas@yubico.com>
+
+	* : Merge pull request #38 from alexjfisher/master Fix segfault whilst freeing urls
+
+2014-04-30  Klas Lindfors <klas@yubico.com>
+
+	* README: add urllist to README
+
+2014-04-30  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, configure.ac: Bump NEWS.
+
+2014-04-30  Simon Josefsson <simon@josefsson.org>
+
+	* AUTHORS: Update.
+
+2014-04-30  Simon Josefsson <simon@josefsson.org>
+
+	* COPYING, drop_privs.c, drop_privs.h, pam_yubico.c, test.c,
+	util.c, util.h, ykpamcfg.c: Update copyright years.
+
+2014-04-30  Simon Josefsson <simon@josefsson.org>
+
+	* BLURB, doc/YubiKeyAndFreeRADIUSviaPAM.txt,
+	doc/YubiKeyAndFreeRADIUSwithsinglefactorauthenticationviaPAM.txt,
+	doc/YubiKeyAndOpenVPNviaPAM.txt, doc/YubikeyAndSSHViaPAM.txt,
+	pam_yubico.8, ykpamcfg.1: Fix URLs.
+
+2014-04-30  Simon Josefsson <simon@josefsson.org>
+
+	* doc/MacOSXChallengeResponse.txt: Redo markup.
+
+2014-04-30  Simon Josefsson <simon@josefsson.org>
+
+	* Makefile.am: Allow use of subkeys.
+
 2014-04-30  Simon Josefsson <simon@josefsson.org>
 
 	* NEWS: Version 2.15.
@@ -1428,7 +1476,7 @@
 
 2009-01-13  Simon Josefsson <simon@josefsson.org>
 
-	* configure.ac, configure.in: Rename.
+	* configure.in => configure.ac: Rename.
 
 2009-01-13  Simon Josefsson <simon@josefsson.org>
 
@@ -1528,8 +1576,8 @@
 
 2008-06-25  Simon Josefsson <simon@josefsson.org>
 
-	* Makefile.am, build-aux/config.rpath, configure.in, libcurl.m4,
-	m4/lib-ld.m4, m4/lib-link.m4, m4/lib-prefix.m4, m4/libcurl.m4: 
+	* Makefile.am, build-aux/config.rpath, configure.in, m4/lib-ld.m4,
+	m4/lib-link.m4, m4/lib-prefix.m4, libcurl.m4 => m4/libcurl.m4: 
 	Create m4/ and build-aux/ and use them.
 
 2008-05-03  Simon Josefsson <simon@josefsson.org>
