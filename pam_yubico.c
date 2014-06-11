@@ -1,5 +1,5 @@
 /* Written by Simon Josefsson <simon@yubico.com>.
- * Copyright (c) 2006-2013 Yubico AB
+ * Copyright (c) 2006-2014 Yubico AB
  * Copyright (c) 2011 Tollef Fog Heen <tfheen@err.no>
  * All rights reserved.
  *
@@ -1076,7 +1076,7 @@ done:
       size_t i;
       for(i = 0; i < templates; i++)
         {
-	  free(urls[templates]);
+	  free(urls[i]);
         }
     }
   if (ykc)
