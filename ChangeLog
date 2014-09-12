@@ -1,3 +1,63 @@
+2014-08-26  Klas Lindfors <klas@yubico.com>
+
+	* NEWS: NEWS for 2.17
+
+2014-08-26  Klas Lindfors <klas@yubico.com>
+
+	* Makefile.am: add MANSOURCES to EXTRA_DIST on it's own line to not conflict with make release
+
+2014-07-29  Klas Lindfors <klas@yubico.com>
+
+	* pam_yubico.c: correctly mark strings in cfg struct as const
+
+2014-07-29  Klas Lindfors <klas@yubico.com>
+
+	* pam_yubico.c: fixup so urllist data is kept within it's own memory
+	before strtok fixes #41
+
+2014-06-16  Klas Lindfors <klas@yubico.com>
+
+	* pam_yubico.8.txt: add forgotten :: on mode line
+
+2014-06-11  Klas Lindfors <klas@yubico.com>
+
+	* .travis.yml: let travis install fewer packages asciidoc comes with a bunch of recommends, find out what is needed
+	for a2x manpages and install that
+
+2014-06-11  Klas Lindfors <klas@yubico.com>
+
+	* .travis.yml, README: asciidoc is needed to build from git
+
+2014-06-11  Klas Lindfors <klas@yubico.com>
+
+	* .gitignore, Makefile.am, configure.ac, pam_yubico.8,
+	pam_yubico.8.txt, ykpamcfg.1, ykpamcfg.1.txt: convert manpages to
+	asciidoc
+
+2014-06-10  Klas Lindfors <klas@yubico.com>
+
+	* ykpamcfg.1: add a space after roff comment
+
+2014-06-10  Klas Lindfors <klas@yubico.com>
+
+	* .travis.yml: also build with everything enabled
+
+2014-06-10  Klas Lindfors <klas@yubico.com>
+
+	* BLURB: add travis to blurb
+
+2014-06-10  Klas Lindfors <klas@yubico.com>
+
+	* .travis.yml: add -y to add-apt-repository for travis
+
+2014-06-10  Klas Lindfors <klas@yubico.com>
+
+	* .travis.yml: add travis configuration
+
+2014-06-10  Klas Lindfors <klas@yubico.com>
+
+	* NEWS, configure.ac: bump version after release
+
 2014-06-10  Klas Lindfors <klas@yubico.com>
 
 	* NEWS: version 2.16
