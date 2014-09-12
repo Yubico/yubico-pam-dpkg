@@ -1,122 +1,132 @@
-.\" Copyright (c) 2011-2014 Yubico AB
-.\" All rights reserved.
+'\" t
+.\"     Title: ykpamcfg
+.\"    Author: [FIXME: author] [see http://docbook.sf.net/el/author]
+.\" Generator: DocBook XSL Stylesheets v1.78.1 <http://docbook.sf.net/>
+.\"      Date: Version 2.17
+.\"    Manual: Yubico PAM Module Manual
+.\"    Source: yubico-pam
+.\"  Language: English
 .\"
-.\" Redistribution and use in source and binary forms, with or without
-.\" modification, are permitted provided that the following conditions are
-.\" met:
-.\"
-.\"     * Redistributions of source code must retain the above copyright
-.\"       notice, this list of conditions and the following disclaimer.
-.\"
-.\"     * Redistributions in binary form must reproduce the above
-.\"       copyright notice, this list of conditions and the following
-.\"       disclaimer in the documentation and/or other materials provided
-.\"       with the distribution.
-.\"
-.\" THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-.\" "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-.\" LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-.\" A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-.\" OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-.\" SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-.\" LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-.\" DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-.\" THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-.\" (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-.\" OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-.\"
-.\" The following commands are required for all man pages.
-.de URL
-\\$2 \(laURL: \\$1 \(ra\\$3
-..
-.if \n[.g] .mso www.tmac
-.TH ykpamcfg "1" "March 2011" "yubico-pam"
-.SH NAME
-ykpamcfg - Manage user settings for the Yubico PAM module.
-.SH SYNOPSIS
-.B ykpamcfg
-[\fI-1\fR | \fI-2\fR] [\fI-A\fR] [\fI-p\fR] [\fI-i\fR] [\fI-v\fR] [\fI-h\fR]
-.\".SH DESCRIPTION
-.\" Add any additional description here
-.SH OPTIONS
+.TH "YKPAMCFG" "1" "Version 2\&.17" "yubico\-pam" "Yubico PAM Module Manual"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+ykpamcfg \- Manage user settings for the Yubico PAM module
+.SH "SYNOPSIS"
+.sp
+\fBykmapcfg\fR [\-1 | \-2] [\-A] [\-p] [\-i] [\-v] [\-h]
+.SH "OPTIONS"
 .PP
-.TP
 \fB\-1\fR
-use slot 1.  This is the default.
-.TP
+.RS 4
+use slot 1\&. This is the default\&.
+.RE
+.PP
 \fB\-2\fR
-use slot 2.
-.TP
-\fB\-A \fIaction\fR
-choose action to perform. See ACTIONS below.
-.TP
-\fB\-p \fIpath\fR
-specify output file for, default is ~/.yubico/challenge
-.TP
-\fB\-i \fIiterations\fR
+.RS 4
+use slot 2\&.
+.RE
+.PP
+\fB\-A\fR \fIaction\fR
+.RS 4
+choose action to perform\&. See ACTIONS below\&.
+.RE
+.PP
+\fB\-p\fR \fIpath\fR
+.RS 4
+specify output file for, default is ~/\&.yubico/challenge
+.RE
+.PP
+\fB\-i\fR \fIiterations\fR
+.RS 4
 number of iterations to use for pbkdf2 of expected response
-.TP
+.RE
+.PP
 \fB\-v\fR
-enable verbose mode.
-
-.SH ACTIONS
-.TP
-\fBadd_hmac_chalresp\fR
-The PAM module can utilize the HMAC-SHA1 Challenge-Response mode found in YubiKeys
-starting with version 2.2 for \fBoffline authentication\fR.  This action creates the initial state
-information with the C/R to be issued at the next logon.
-
-The utility currently outputs the state information to a file in the current user's
-home directory (\fI~/.yubico/challenge-123456\fR for a YubiKey with serial number API readout
-enabled, and \fI~/.yubico/challenge\fR for one without).
-
-The PAM module supports a system wide directory for these state files (in case the user's
-home directories are encrypted), but in a system wide directory, the 'challenge' part should
-be replaced with the username. Example : \fI/var/yubico/challenges/alice-123456\fR.
-
-To use the system-wide mode, you currently have to move the generated state files manually and
-configure the PAM module accordingly.
-
-.SH EXAMPLE
+.RS 4
+enable verbose mode\&.
+.RE
+.SH "ACTIONS"
+.SS "add_hmac_chalresp"
+.sp
+The PAM module can utilize the HMAC\-SHA1 Challenge\-Response mode found in YubiKeys starting with version 2\&.2 for \fBoffline authentication\fR\&. This action creates the initial state information with the C/R to be issued at the next logon\&.
+.sp
+The utility currently outputs the state information to a file in the current user\(cqs home directory (\fI~/\&.yubico/challenge\-123456\fR for a YubiKey with serial number API readout enabled, and \fI~/\&.yubico/challenge\fR for one without)\&.
+.sp
+The PAM module supports a system wide directory for these state files (in case the user\(cqs home directories are encrypted), but in a system wide directory, the \fIchallenge\fR part should be replaced with the username\&. Example : \fI/var/yubico/challenges/alice\-123456\fR\&.
+.sp
+To use the system\-wide mode, you currently have to move the generated state files manually and configure the PAM module accordingly\&.
+.SH "EXAMPLES"
+.sp
 First, program a YubiKey for challenge response on Slot 2 :
-.HP
+.sp
+.if n \{\
+.RS 4
+.\}
 .nf
-$ \fBykpersonalize \-2 \-ochal-resp \-ochal-hmac \-ohmac-lt64 \-oserial-api-visible\fR
- ...
+$ ykpersonalize \-2 \-ochal\-resp \-ochal\-hmac \-ohmac\-lt64 \-oserial\-api\-visible
+\&.\&.\&.
 Commit? (y/n) [n]: y
-$
 .fi
-.HP
+.if n \{\
+.RE
+.\}
+.sp
 Now, set the current user to require this YubiKey for logon :
-.HP
+.sp
+.if n \{\
+.RS 4
+.\}
 .nf
-$ \fBykpamcfg \-2 \-v\fR
- ...
-Stored initial challenge and expected response in '/home/alice/.yubico/challenge-123456'.
-$
+$ ykpamcfg \-2 \-v
+\&.\&.\&.
+Stored initial challenge and expected response in \*(Aq/home/alice/\&.yubico/challenge\-123456\*(Aq\&.
 .fi
-.HP
+.if n \{\
+.RE
+.\}
+.sp
 Then, configure authentication with PAM for example like this (\fImake a backup first\fR) :
-.HP
-\fI/etc/pam.d/common-auth\fR (from Ubuntu 10.10) :
-
+.sp
+\fI/etc/pam\&.d/common\-auth\fR (from Ubuntu 10\&.10) :
+.sp
+.if n \{\
+.RS 4
+.\}
 .nf
-auth	required	pam_unix.so nullok_secure try_first_pass
-auth	[success=1 new_authtok_reqd=ok ignore=ignore default=die]	pam_yubico.so mode=challenge-response
-auth	requisite	pam_deny.so
-auth	required	pam_permit.so
-auth	optional	pam_ecryptfs.so unwrap
+auth  required        pam_unix\&.so nullok_secure try_first_pass
+auth  [success=1 new_authtok_reqd=ok ignore=ignore default=die] pam_yubico\&.so mode=challenge\-response
+auth  requisite       pam_deny\&.so
+auth  required        pam_permit\&.so
+auth  optional        pam_ecryptfs\&.so unwrap
 .fi
-
-.SH BUGS
-Report ykpamcfg bugs in
-.URL "https://github.com/Yubico/yubico-pam/issues" "the issue tracker"
+.if n \{\
+.RE
+.\}
+.SH "BUGS"
+.sp
+Report ykpamcfg bugs in the issue tracker: https://github\&.com/Yubico/yubico\-pam/issues
 .SH "SEE ALSO"
-The
-.URL "https://developers.yubico.com/yubico-pam/" "yubico-pam home page"
-.PP
+.sp
 \fBpam_yubico\fR(8)
-.PP
-YubiKeys can be obtained from
-.URL "https://www.yubico.com/" "Yubico" "."
-
+.sp
+The yubico\-pam home page: https://developers\&.yubico\&.com/yubico\-pam/
+.sp
+YubiKeys can be obtained from Yubico: http://www\&.yubico\&.com/

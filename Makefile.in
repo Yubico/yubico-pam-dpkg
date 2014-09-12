@@ -449,6 +449,7 @@ distuninstallcheck_listfiles = find . -type f -print
 am__distuninstallcheck_listfiles = $(distuninstallcheck_listfiles) \
   | sed 's|^\./|$(prefix)/|' | grep -v '$(infodir)/dir$$'
 distcleancheck_listfiles = find . -type f -print
+A2X = @A2X@
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
 AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
@@ -593,17 +594,28 @@ ykpamcfg_LDADD = @LTLIBYKCLIENT@ @YKPERS_LIBS@ @LTLIBYUBIKEY@
 ykpamcfg_CPPFLAGS = @YKPERS_CFLAGS@
 @YKPERS_TRUE@dist_man1_MANS = ykpamcfg.1
 dist_man8_MANS = pam_yubico.8
+DISTCLEANFILES = $(dist_man1_MANS) $(dist_man8_MANS)
 
 # Self tests.
 AM_LDFLAGS = -no-install
 LDADD = ./pam_yubico.la
 TESTS = $(check_PROGRAMS)
-EXTRA_DIST = doc/LocalAuthenticationUsingChallengeResponse.txt doc/MacOSXChallengeResponse.txt doc/TwoFactorPAMConfiguration.txt doc/UbuntuFreeRadiusYubiKey.txt doc/YubiKeyAndFreeRADIUSviaPAM.txt doc/YubiKeyAndFreeRADIUSwithsinglefactorauthenticationviaPAM.txt doc/YubiKeyAndOpenVPNviaPAM.txt doc/YubikeyAndRadiusViaPAM.txt doc/Yubikey-and-SELinux-on-Fedora-18-and-up.txt doc/YubikeyAndSSHViaPAM.txt
+MANSOURCES = pam_yubico.8.txt ykpamcfg.1.txt
+EXTRA_DIST = doc/LocalAuthenticationUsingChallengeResponse.txt \
+	doc/MacOSXChallengeResponse.txt \
+	doc/TwoFactorPAMConfiguration.txt \
+	doc/UbuntuFreeRadiusYubiKey.txt \
+	doc/YubiKeyAndFreeRADIUSviaPAM.txt \
+	doc/YubiKeyAndFreeRADIUSwithsinglefactorauthenticationviaPAM.txt \
+	doc/YubiKeyAndOpenVPNviaPAM.txt doc/YubikeyAndRadiusViaPAM.txt \
+	doc/Yubikey-and-SELinux-on-Fedora-18-and-up.txt \
+	doc/YubikeyAndSSHViaPAM.txt $(MANSOURCES)
+SUFFIXES = .1.txt .1 .8.txt .8
 PROJECT = yubico-pam
 all: all-am
 
 .SUFFIXES:
-.SUFFIXES: .c .lo .log .o .obj .test .test$(EXEEXT) .trs
+.SUFFIXES: .1.txt .1 .8.txt .8 .c .lo .log .o .obj .test .test$(EXEEXT) .trs
 am--refresh: Makefile
 	@:
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
@@ -1342,6 +1354,7 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-test -z "$(DISTCLEANFILES)" || rm -f $(DISTCLEANFILES)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -1446,6 +1459,11 @@ uninstall-man: uninstall-man1 uninstall-man8
 	uninstall-binPROGRAMS uninstall-libLTLIBRARIES uninstall-man \
 	uninstall-man1 uninstall-man8
 
+.1.txt.1:
+	$(A2X) --format=manpage -a revdate="Version $(VERSION)" $<
+
+.8.txt.8:
+	$(A2X) --format=manpage -a revdate="Version $(VERSION)" $<
 
 # Release
 
@@ -1480,6 +1498,7 @@ release:
 	cd $(srcdir) && git push
 	cd $(srcdir) && git tag -u $(KEYID) -m $(VERSION) $(VERSION)
 	cd $(srcdir) && git push --tags
+	$(YUBICO_GITHUB_REPO)/save-mans $(PROJECT) $(MANSOURCES)
 	$(YUBICO_GITHUB_REPO)/publish $(PROJECT) $(VERSION) $(PACKAGE)-$(VERSION).tar.gz*
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
