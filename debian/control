@@ -14,8 +14,8 @@ Build-Depends: debhelper (>= 9),
 	       libldap2-dev,
 	       libykpers-1-dev (>= 1.5.2),
 	       libyubikey-dev
-Standards-Version: 3.9.5
-Homepage: https://developers.yubico.com/yubico-c-client/
+Standards-Version: 3.9.6
+Homepage: https://developers.yubico.com/yubico-pam/
 Vcs-Browser: https://github.com/Yubico/yubico-pam-dpkg
 Vcs-Git: git://github.com/Yubico/yubico-pam-dpkg.git
 
