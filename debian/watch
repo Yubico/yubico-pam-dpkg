@@ -1,2 +1,2 @@
 version=3
-opts=pgpsigurlmangle=s/$/.sig/ https://developers.yubico.com/yubico-pam/releases.html .*/pam_yubico-(\d[\d.]*)\.tar\.gz
+opts=pgpsigurlmangle=s/$/.sig/ https://developers.yubico.com/yubico-pam/Releases/ pam_yubico-(\d[\d.]*)\.tar\.gz
