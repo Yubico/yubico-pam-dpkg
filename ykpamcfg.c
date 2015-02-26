@@ -46,6 +46,7 @@
 #include "util.h"
 
 #define ACTION_ADD_HMAC_CHALRESP	"add_hmac_chalresp"
+#define ACTION_MAX_LEN			1024
 
 const char *usage =
   "Usage: ykpamcfg [options]\n"
@@ -58,8 +59,9 @@ const char *usage =
   "\t-p path      Specify an output path for the challenge file.\n"
   "\t-i iters     Number of iterations to use for pbkdf2 (defaults to 10000)\n"
   "\n"
-  "\t-v           verbose\n"
-  "\t-h           help (this text)\n"
+  "\t-v           Increase verbosity\n"
+  "\t-V           Show version and exit\n"
+  "\t-h           Show help (this text) and exit\n"
   "\n"
   "Actions :\n"
   "\n"
@@ -67,7 +69,7 @@ const char *usage =
   "\n"
   "\n"
   ;
-const char *optstring = "12A:p:i:vh";
+const char *optstring = "12A:p:i:vVh";
 
 static void
 report_yk_error(void)
@@ -90,8 +92,7 @@ static int
 parse_args(int argc, char **argv,
 	   int *slot, bool *verbose,
 	   char **action, char **output_dir,
-     unsigned int *iterations,
-	   int *exit_code)
+     unsigned int *iterations)
 {
   int c;
 
@@ -104,27 +105,31 @@ parse_args(int argc, char **argv,
       *slot = 2;
       break;
     case 'A':
-      *action = optarg;
+      strncpy(*action, optarg, ACTION_MAX_LEN);
       break;
     case 'p':
       *output_dir = optarg;
       break;
     case 'i':
-      *iterations = strtoul(optarg, NULL, 10);
-      if(*iterations == 0) {
-        fprintf(stderr, "iterations must be numeric, %s isn't.\n", optarg);
-        *exit_code = 1;
-        return 0;
+      {
+	char *endptr;
+	*iterations = strtoul(optarg, &endptr, 10);
+	if(*endptr != '\0') {
+	  fprintf(stderr, "iterations must be numeric, %s isn't.\n", optarg);
+	  exit(1);
+	}
       }
       break;
     case 'v':
       *verbose = true;
       break;
+    case 'V':
+      printf("%s\n", VERSION);
+      exit(0);
     case 'h':
     default:
       fputs(usage, stderr);
-    *exit_code = 0;
-    return 0;
+      exit(0);
     }
   }
 
@@ -257,7 +262,8 @@ main(int argc, char **argv)
 
   /* Options */
   bool verbose = false;
-  char *action = ACTION_ADD_HMAC_CHALRESP;
+  char action[ACTION_MAX_LEN];
+  char *ptr = action;
   char *output_dir = NULL;
   int slot = 1;
   unsigned int iterations = CR_DEFAULT_ITERATIONS;
@@ -265,15 +271,17 @@ main(int argc, char **argv)
   ykp_errno = 0;
   yk_errno = 0;
 
+  strcpy (action, ACTION_ADD_HMAC_CHALRESP);
+
   if (! parse_args(argc, argv,
 		   &slot, &verbose,
-		   &action, &output_dir,
-       &iterations, &exit_code))
+		   &ptr, &output_dir,
+       &iterations))
     goto err;
 
   exit_code = 1;
 
-  if (! strcmp(action, ACTION_ADD_HMAC_CHALRESP)) {
+  if (! strncmp(action, ACTION_ADD_HMAC_CHALRESP, ACTION_MAX_LEN)) {
     /*
      * Set up challenge-response login authentication
      */
