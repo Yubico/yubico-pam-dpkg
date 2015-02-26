@@ -45,9 +45,12 @@
 #include "util.h"
 #include "drop_privs.h"
 
+#include <ykclient.h>
+
 #if HAVE_CR
-/* for yubikey_hex_decode and yubikey_hex_p */
+/* for yubikey_hex_encode */
 #include <yubikey.h>
+/* for yubikey pbkdf2*/
 #include <ykpbkdf2.h>
 #endif /* HAVE_CR */
 
@@ -125,84 +128,6 @@ struct cfg
 #define DBG(x) if (cfg->debug) { D(x); }
 
 /*
- * This function will look for users name with valid user token id. It
- * will returns -2 if the user is unknown, -1 if the token do not match the user line, 0 for internal failure and 1 for success.
- *
- * File format is as follows:
- * <user-name>:<token_id>:<token_id>
- * <user-name>:<token_id>
- *
- */
-static int
-check_user_token (struct cfg *cfg,
-		  const char *authfile,
-		  const char *username,
-		  const char *otp_id)
-{
-  char buf[1024];
-  char *s_user, *s_token;
-  int retval = 0;
-  int fd;
-  struct stat st;
-  FILE *opwfile;
-
-  fd = open(authfile, O_RDONLY, 0);
-  if (fd < 0) {
-      DBG (("Cannot open file: %s (%s)", authfile, strerror(errno)));
-      return retval;
-  }
-
-  if (fstat(fd, &st) < 0) {
-      DBG (("Cannot stat file: %s (%s)", authfile, strerror(errno)));
-      close(fd);
-      return retval;
-  }
-
-  if (!S_ISREG(st.st_mode)) {
-      DBG (("%s is not a regular file", authfile));
-      close(fd);
-      return retval;
-  }
-
-  opwfile = fdopen(fd, "r");
-  if (opwfile == NULL) {
-      DBG (("fdopen: %s", strerror(errno)));
-      close(fd);
-      return retval;
-  }
-
-  retval = -2;
-  while (fgets (buf, 1024, opwfile))
-    {
-      if (buf[strlen (buf) - 1] == '\n')
-	buf[strlen (buf) - 1] = '\0';
-      DBG (("Authorization line: %s", buf));
-      s_user = strtok (buf, ":");
-      if (s_user && strcmp (username, s_user) == 0)
-	{
-	  DBG (("Matched user: %s", s_user));
-      retval = -1; //We found at least one line for the user
-	  do
-	    {
-	      s_token = strtok (NULL, ":");
-	      DBG (("Authorization token: %s", s_token));
-	      if (s_token && strcmp (otp_id, s_token) == 0)
-		{
-		  DBG (("Match user/token as %s/%s", username, otp_id));
-		  fclose (opwfile);
-		  return 1;
-		}
-	    }
-	  while (s_token != NULL);
-	}
-    }
-
-  fclose (opwfile);
-
-  return retval;
-}
-
-/*
  * Authorize authenticated OTP_ID for login as USERNAME using
  * AUTHFILE.  Return -2 if the user is unknown, -1 if the OTP_ID does not match,  0 on internal failures, otherwise success.
  */
@@ -220,7 +145,7 @@ authorize_user_token (struct cfg *cfg,
          as an argument for this module.
        */
       DBG (("Using system-wide auth_file %s", cfg->auth_file));
-      retval = check_user_token (cfg, cfg->auth_file, username, otp_id);
+      retval = check_user_token (cfg->auth_file, username, otp_id, cfg->debug);
     }
   else
     {
@@ -249,7 +174,7 @@ authorize_user_token (struct cfg *cfg,
 	goto free_out;
       }
 
-      retval = check_user_token (cfg, userfile, username, otp_id);
+      retval = check_user_token (userfile, username, otp_id, cfg->debug);
 
       if(pam_modutil_regain_priv(pamh, &privs)) {
         DBG (("could not restore privileges"));
@@ -459,6 +384,12 @@ display_error(pam_handle_t *pamh, const char *message) {
   }
 
   D(("conv returned: '%s'", resp->resp));
+  if (resp)
+    {
+      if (resp->resp)
+        free (resp->resp);
+      free (resp);
+    }
   return retval;
 }
 #endif /* HAVE_CR */
@@ -803,7 +734,7 @@ pam_sm_authenticate (pam_handle_t * pamh,
   struct pam_conv *conv;
   const struct pam_message *pmsg[1];
   struct pam_message msg[1];
-  struct pam_response *resp;
+  struct pam_response *resp = NULL;
   int nargs = 1;
   ykclient_t *ykc = NULL;
   struct cfg cfg_st;
@@ -950,7 +881,6 @@ pam_sm_authenticate (pam_handle_t * pamh,
 	  }
       }
       msg[0].msg_style = cfg->verbose_otp ? PAM_PROMPT_ECHO_ON : PAM_PROMPT_ECHO_OFF;
-      resp = NULL;
 
       retval = conv->conv (nargs, pmsg, &resp, conv->appdata_ptr);
 
@@ -1090,6 +1020,13 @@ done:
     }
   DBG (("done. [%s]", pam_strerror (pamh, retval)));
   pam_set_data (pamh, "yubico_setcred_return", (void*) (intptr_t) retval, NULL);
+
+  if (resp)
+    {
+      if (resp->resp)
+        free (resp->resp);
+      free (resp);
+    }
 
   return retval;
 }

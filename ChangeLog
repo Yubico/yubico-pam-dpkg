@@ -1,3 +1,521 @@
+2015-02-12  Klas Lindfors <klas@yubico.com>
+
+	* NEWS: NEWS for 2.18
+
+2015-02-12  Klas Lindfors <klas@yubico.com>
+
+	* tests/Makefile.am, tests/pam_test.c: make sure out-of-tree builds
+	work
+
+2015-02-12  Klas Lindfors <klas@yubico.com>
+
+	* ykpamcfg.1.txt, ykpamcfg.c: add -V for version to ykpamcfg and
+	exit earlier also error on any part of iterations being non-numeric
+
+2015-01-29  Klas Lindfors <klas@yubico.com>
+
+	* util.c: fix format specifiers
+
+2015-01-29  Klas Lindfors <klas@yubico.com>
+
+	* Makefile.am, configure.ac: add --enable-cppcheck
+
+2015-01-21  Klas Lindfors <klas@yubico.com>
+
+	* configure.ac: fixup check for pam_modutil_drop_priv() this was broken in 68d3f5879ec6782742d68d7e74066da739a0b444 fixes
+	#50
+
+2015-01-21  Klas Lindfors <klas@yubico.com>
+
+	* pam_yubico.c: free more unfreed memory in the pam_response
+	structure
+
+2015-01-21  Klas Lindfors <klas@yubico.com>
+
+	* tests/pam_test.c: strdup() the OTP returned
+
+2015-01-20  Klas Lindfors <klas@yubico.com>
+
+	* tests/aux/build-and-test.sh: update build-and-test
+
+2015-01-20  Klas Lindfors <klas@yubico.com>
+
+	* .travis.yml, tests/aux/build-and-test.sh: enable coverage build
+	for travis
+
+2015-01-20  Klas Lindfors <klas@yubico.com>
+
+	* .gitignore, Makefile.am, configure.ac, tests/Makefile.am: add a
+	--enable-coverage switch
+
+2015-01-20  Klas Lindfors <klas@yubico.com>
+
+	* tests/pam_test.c: only run the ldap "server" if we're compiling
+	with ldap
+
+2015-01-20  Klas Lindfors <klas@yubico.com>
+
+	* README: add notice about tests requiring perl and
+	Net::LDAP::Server
+
+2015-01-20  Klas Lindfors <klas@yubico.com>
+
+	* tests/aux/authfile, tests/pam_test.c: add a test for authfile user
+	with two ok public ids
+
+2015-01-20  Klas Lindfors <klas@yubico.com>
+
+	* tests/aux/ldap.pl, tests/aux/ykval.pl, tests/pam_test.c: add a
+	second successful ldap test with two valid yubiKeyId
+
+2015-01-20  Klas Lindfors <klas@yubico.com>
+
+	* tests/pam_test.c: use higher ports and put them in constants
+
+2015-01-19  Klas Lindfors <klas@yubico.com>
+
+	* .travis.yml: add more travis config
+
+2015-01-19  Klas Lindfors <klas@yubico.com>
+
+	* tests/pam_test.c: fixup some warnings in test
+
+2015-01-19  Klas Lindfors <klas@yubico.com>
+
+	* Makefile.am: add EXTRA_DIST for tests/aux
+
+2015-01-19  Klas Lindfors <klas@yubico.com>
+
+	* tests/aux/ldap.pl, tests/pam_test.c: add a mocked ldap server and
+	ldap tests relates #44
+
+2015-01-19  Klas Lindfors <klas@yubico.com>
+
+	* tests/aux/ykval.pl, tests/pam_test.c: add a test for wrong otp and
+	small fixup to mock server
+
+2015-01-19  Klas Lindfors <klas@yubico.com>
+
+	* tests/pam_test.c: drop id from data struct and use index in array
+
+2015-01-19  Klas Lindfors <klas@yubico.com>
+
+	* tests/aux/ykval.pl, tests/pam_test.c: pass port correctly
+
+2015-01-19  Klas Lindfors <klas@yubico.com>
+
+	* tests/aux/ykval.pl, tests/pam_test.c: add test for wrong otp for
+	user
+
+2015-01-19  Klas Lindfors <klas@yubico.com>
+
+	* tests/pam_test.c: add test for failure-case
+
+2015-01-19  Klas Lindfors <klas@yubico.com>
+
+	* tests/pam_test.c: add a second child and mock server
+
+2015-01-19  Klas Lindfors <klas@yubico.com>
+
+	* tests/pam_test.c: fix some warnings
+
+2015-01-19  Klas Lindfors <klas@yubico.com>
+
+	* tests/pam_test.c: restructure the test some
+
+2015-01-19  Klas Lindfors <klas@yubico.com>
+
+	* tests/pam_test.c: make the recent pam_test more modularised and
+	generic
+
+2015-01-19  Klas Lindfors <klas@yubico.com>
+
+	* tests/pam_test.c: calculate size of cfg array
+
+2015-01-16  Klas Lindfors <klas@yubico.com>
+
+	* tests/aux/ykval.pl, tests/aux/ykval.sh, tests/pam_test.c: test a
+	bit more and switch the mock to perl
+
+2015-01-16  Klas Lindfors <klas@yubico.com>
+
+	* tests/aux/authfile, tests/aux/ykval.sh, tests/pam_test.c: test an
+	OK authentication add a simple http server in bash that validates the OTP
+
+2015-01-16  Klas Lindfors <klas@yubico.com>
+
+	* .gitignore: ignore more
+
+2015-01-16  Klas Lindfors <klas@yubico.com>
+
+	* tests/Makefile.am, tests/pam_test.c: add first step of tests
+	calling the actual module
+
+2015-01-16  Klas Lindfors <klas@yubico.com>
+
+	* Makefile.am, configure.ac: prepare by building a temporary library
+	for the module also fix the linking of libpam so we only do that when we want/need
+	it
+
+2015-01-16  Klas Lindfors <klas@yubico.com>
+
+	* pam_yubico.c: fixup a memory leak the caller is responsible for freeing the pam_response from
+	conversations
+
+2014-12-17  Klas Lindfors <klas@yubico.com>
+
+	* Makefile.am: fixup doc inclusion
+
+2014-12-10  Simon Josefsson <simon@josefsson.org>
+
+	* Makefile.am: Fix.
+
+2014-12-01  Henrik Stråth <minisu@users.noreply.github.com>
+
+	* README: Update README
+
+2014-11-27  Klas Lindfors <klas@yubico.com>
+
+	* util.c: change strtok usage to strtok_r
+
+2014-10-31  Henrik Stråth <minisu@users.noreply.github.com>
+
+	* README: Update README
+
+2014-10-31  Henrik Stråth <minisu@users.noreply.github.com>
+
+	* doc/Authentication_Using_Challenge-Response.adoc: Update
+	Authentication_Using_Challenge-Response.adoc
+
+2014-10-31  Henrik Stråth <minisu@users.noreply.github.com>
+
+	* doc/Two_Factor_PAM_Configuration.adoc: Update
+	Two_Factor_PAM_Configuration.adoc
+
+2014-10-31  Henrik Stråth <minisu@users.noreply.github.com>
+
+	* doc/Two_Factor_PAM_Configuration.adoc: Update
+	Two_Factor_PAM_Configuration.adoc
+
+2014-10-31  Henrik Stråth <minisu@users.noreply.github.com>
+
+	* doc/Two_Factor_PAM_Configuration.adoc: Update
+	Two_Factor_PAM_Configuration.adoc
+
+2014-10-31  Henrik Stråth <minisu@users.noreply.github.com>
+
+	* doc/{Yubikey_and_SELinux_on_Fedora_18_and_up.txt =>
+	Yubikey_and_SELinux_on_Fedora_18_and_up.adoc}: Update and rename
+	Yubikey_and_SELinux_on_Fedora_18_and_up.txt to
+	Yubikey_and_SELinux_on_Fedora_18_and_up.adoc
+
+2014-10-31  Henrik Stråth <minisu@users.noreply.github.com>
+
+	* doc/YubiKey_and_FreeRADIUS_via_PAM.adoc: Update
+	YubiKey_and_FreeRADIUS_via_PAM.adoc
+
+2014-10-31  Henrik Stråth <minisu@users.noreply.github.com>
+
+	* doc/YubiKey_and_FreeRADIUS_via_PAM.adoc: Update
+	YubiKey_and_FreeRADIUS_via_PAM.adoc
+
+2014-10-31  Henrik Stråth <minisu@users.noreply.github.com>
+
+	* doc/MacOS_X_Challenge-Response.adoc: Update
+	MacOS_X_Challenge-Response.adoc
+
+2014-10-31  Henrik Stråth <minisu@users.noreply.github.com>
+
+	* doc/MacOS_X_Challenge-Response.adoc: Update
+	MacOS_X_Challenge-Response.adoc
+
+2014-10-31  Henrik Stråth <minisu@users.noreply.github.com>
+
+	* doc/MacOS_X_Challenge-Response.adoc: Update
+	MacOS_X_Challenge-Response.adoc
+
+2014-10-31  Henrik Stråth <minisu@users.noreply.github.com>
+
+	* doc/MacOS_X_Challenge-Response.adoc: Update
+	MacOS_X_Challenge-Response.adoc
+
+2014-10-31  Henrik Stråth <minisu@users.noreply.github.com>
+
+	* doc/MacOS_X_Challenge-Response.adoc: Update
+	MacOS_X_Challenge-Response.adoc
+
+2014-10-31  Klas Lindfors <klas@yubico.com>
+
+	* ykpamcfg.c: don't write to a constant pointer instead allocate action on the stack and copy the data there
+
+2014-10-30  Henrik Stråth <henrik.strath@gmail.com>
+
+	* doc/Yubikey_and_SSH_via_PAM.adoc: Fixed adoc error
+
+2014-10-30  Henrik Stråth <minisu@users.noreply.github.com>
+
+	* doc/YubiKey_and_OpenVPN_via_PAM.adoc: Update
+	YubiKey_and_OpenVPN_via_PAM.adoc
+
+2014-10-29  Henrik Stråth <minisu@users.noreply.github.com>
+
+	* doc/YubiKey_and_FreeRADIUS_via_PAM.adoc: Update
+	YubiKey_and_FreeRADIUS_via_PAM.adoc
+
+2014-10-29  Henrik Stråth <minisu@users.noreply.github.com>
+
+	* doc/YubiKey_and_FreeRADIUS_via_PAM.adoc: Update
+	YubiKey_and_FreeRADIUS_via_PAM.adoc
+
+2014-10-29  Henrik Stråth <minisu@users.noreply.github.com>
+
+	* doc/{Local_Authentication_Using_Challenge-Response.adoc =>
+	Authentication_Using_Challenge-Response.adoc}: Update and rename
+	Local_Authentication_Using_Challenge-Response.adoc to
+	Authentication_Using_Challenge-Response.adoc
+
+2014-10-29  Henrik Stråth <minisu@users.noreply.github.com>
+
+	* doc/YubiKey_and_OpenVPN_via_PAM.adoc: Update
+	YubiKey_and_OpenVPN_via_PAM.adoc
+
+2014-10-29  Henrik Stråth <minisu@users.noreply.github.com>
+
+	* doc/YubiKey_and_OpenVPN_via_PAM.adoc: Update
+	YubiKey_and_OpenVPN_via_PAM.adoc
+
+2014-10-29  Henrik Stråth <minisu@users.noreply.github.com>
+
+	* doc/YubiKey_and_OpenVPN_via_PAM.adoc: Update
+	YubiKey_and_OpenVPN_via_PAM.adoc
+
+2014-10-29  Henrik Stråth <minisu@users.noreply.github.com>
+
+	* doc/YubiKey_and_OpenVPN_via_PAM.adoc: Update
+	YubiKey_and_OpenVPN_via_PAM.adoc
+
+2014-10-29  Henrik Stråth <minisu@users.noreply.github.com>
+
+	* doc/YubiKey_and_OpenVPN_via_PAM.adoc: Update
+	YubiKey_and_OpenVPN_via_PAM.adoc
+
+2014-10-29  Henrik Stråth <minisu@users.noreply.github.com>
+
+	* doc/Yubikey_and_SSH_via_PAM.adoc: Update
+	Yubikey_and_SSH_via_PAM.adoc
+
+2014-10-29  Henrik Stråth <minisu@users.noreply.github.com>
+
+	* doc/Yubikey_and_SSH_via_PAM.adoc: Update
+	Yubikey_and_SSH_via_PAM.adoc
+
+2014-10-29  Henrik Stråth <minisu@users.noreply.github.com>
+
+	* doc/Yubikey_and_SSH_via_PAM.adoc: Update
+	Yubikey_and_SSH_via_PAM.adoc
+
+2014-10-29  Henrik Stråth <minisu@users.noreply.github.com>
+
+	* doc/Yubikey_and_SSH_via_PAM.adoc: Update
+	Yubikey_and_SSH_via_PAM.adoc
+
+2014-10-29  Henrik Stråth <minisu@users.noreply.github.com>
+
+	* doc/Yubikey_and_SSH_via_PAM.adoc: Update
+	Yubikey_and_SSH_via_PAM.adoc
+
+2014-10-29  Henrik Stråth <minisu@users.noreply.github.com>
+
+	* doc/Yubikey_and_SSH_via_PAM.adoc: Update
+	Yubikey_and_SSH_via_PAM.adoc
+
+2014-10-29  Henrik Stråth <minisu@users.noreply.github.com>
+
+	* doc/{YubikeyAndSSHViaPAM.txt => Yubikey_and_SSH_via_PAM.adoc}: 
+	Update and rename YubikeyAndSSHViaPAM.txt to
+	Yubikey_and_SSH_via_PAM.adoc
+
+2014-10-29  Henrik Stråth <minisu@users.noreply.github.com>
+
+	* doc/{YubikeyAndRadiusViaPAM.txt =>
+	Yubikey_and_Radius_via_PAM.adoc}: Update and rename
+	YubikeyAndRadiusViaPAM.txt to Yubikey_and_Radius_via_PAM.adoc
+
+2014-10-29  Henrik Stråth <minisu@users.noreply.github.com>
+
+	* doc/{Yubikey-and-SELinux-on-Fedora-18-and-up.txt =>
+	Yubikey_and_SELinux_on_Fedora_18_and_up.txt}: Rename
+	Yubikey-and-SELinux-on-Fedora-18-and-up.txt to
+	Yubikey_and_SELinux_on_Fedora_18_and_up.txt
+
+2014-10-29  Henrik Stråth <minisu@users.noreply.github.com>
+
+	* doc/{YubiKeyAndOpenVPNviaPAM.txt =>
+	YubiKey_and_OpenVPN_via_PAM.adoc}: Update and rename
+	YubiKeyAndOpenVPNviaPAM.txt to YubiKey_and_OpenVPN_via_PAM.adoc
+
+2014-10-29  Henrik Stråth <minisu@users.noreply.github.com>
+
+	* doc/{YubiKeyAndFreeRADIUSwithsinglefactorauthenticationviaPAM.txt
+	=> YubiKey_and_FreeRADIUS_1FA_via_PAM.adoc}: Rename
+	YubiKeyAndFreeRADIUSwithsinglefactorauthenticationviaPAM.txt to
+	YubiKey_and_FreeRADIUS_1FA_via_PAM.adoc
+
+2014-10-29  Henrik Stråth <minisu@users.noreply.github.com>
+
+	* doc/{YubiKeyAndFreeRADIUSviaPAM.txt =>
+	YubiKey_and_FreeRADIUS_via_PAM.adoc}: Rename
+	YubiKeyAndFreeRADIUSviaPAM.txt to
+	YubiKey_and_FreeRADIUS_via_PAM.adoc
+
+2014-10-29  Henrik Stråth <minisu@users.noreply.github.com>
+
+	* doc/{UbuntuFreeRadiusYubiKey.txt =>
+	Ubuntu_FreeRadius_YubiKey.adoc}: Update and rename
+	UbuntuFreeRadiusYubiKey.txt to Ubuntu_FreeRadius_YubiKey.adoc
+
+2014-10-29  Henrik Stråth <minisu@users.noreply.github.com>
+
+	* doc/{TwoFactorPAMConfiguration.txt =>
+	Two_Factor_PAM_Configuration.adoc}: Rename
+	TwoFactorPAMConfiguration.txt to Two_Factor_PAM_Configuration.adoc
+
+2014-10-29  Henrik Stråth <minisu@users.noreply.github.com>
+
+	* doc/{MacOS_X_Challenge-Response.txt =>
+	MacOS_X_Challenge-Response.adoc}: Rename
+	MacOS_X_Challenge-Response.txt to MacOS_X_Challenge-Response.adoc
+
+2014-10-29  Henrik Stråth <minisu@users.noreply.github.com>
+
+	* doc/{MacOSXChallengeResponse.txt =>
+	MacOS_X_Challenge-Response.txt}: Rename MacOSXChallengeResponse.txt
+	to MacOS_X_Challenge-Response.txt
+
+2014-10-29  Henrik Stråth <minisu@users.noreply.github.com>
+
+	* doc/{Local_Authentication_Using_Challenge-Response.txt =>
+	Local_Authentication_Using_Challenge-Response.adoc}: Rename
+	Local_Authentication_Using_Challenge-Response.txt to
+	Local_Authentication_Using_Challenge-Response.adoc
+
+2014-10-29  Henrik Stråth <minisu@users.noreply.github.com>
+
+	* doc/{LocalAuthenticationUsingChallengeResponse.txt =>
+	Local_Authentication_Using_Challenge-Response.txt}: Rename
+	LocalAuthenticationUsingChallengeResponse.txt to
+	Local_Authentication_Using_Challenge-Response.txt
+
+2014-10-29  Henrik Stråth <minisu@users.noreply.github.com>
+
+	* README: Update README
+
+2014-10-29  Henrik Stråth <minisu@users.noreply.github.com>
+
+	* README: Update README
+
+2014-10-29  Henrik Stråth <minisu@users.noreply.github.com>
+
+	* README: Update README
+
+2014-10-29  Henrik Stråth <minisu@users.noreply.github.com>
+
+	* README: Update README
+
+2014-10-29  Henrik Stråth <minisu@users.noreply.github.com>
+
+	* README: Update README
+
+2014-10-29  Henrik Stråth <minisu@users.noreply.github.com>
+
+	* README: Update README
+
+2014-10-29  Henrik Stråth <minisu@users.noreply.github.com>
+
+	* README: Update README
+
+2014-10-29  Henrik Stråth <henrik@yubico.com>
+
+	* README.adoc: symlinked README
+
+2014-10-24  Henrik Stråth <minisu@users.noreply.github.com>
+
+	* doc/YubiKeyAndOpenVPNviaPAM.txt: Update
+	YubiKeyAndOpenVPNviaPAM.txt
+
+2014-10-24  Henrik Stråth <minisu@users.noreply.github.com>
+
+	* doc/UbuntuFreeRadiusYubiKey.txt: Fixed Asciidoc errors
+
+2014-08-27  Klas Lindfors <klas@yubico.com>
+
+	* tests/util_test.c: add test for check_user_token()
+
+2014-08-27  Klas Lindfors <klas@yubico.com>
+
+	* tests/test.c: make argv const to get rid of warning
+
+2014-08-27  Klas Lindfors <klas@yubico.com>
+
+	* pam_yubico.c, util.c, util.h: move check_user_token() to util for testability..
+
+2014-08-27  Klas Lindfors <klas@yubico.com>
+
+	* tests/util_test.c: use constants
+
+2014-08-27  Klas Lindfors <klas@yubico.com>
+
+	* tests/util_test.c: close the tmpfile when done..
+
+2014-08-27  Klas Lindfors <klas@yubico.com>
+
+	* tests/util_test.c: remove some warnings from the new test.
+
+2014-08-27  Klas Lindfors <klas@yubico.com>
+
+	* Makefile.am, pam_yubico.c: re-add libyubikey, needed.
+
+2014-08-27  Klas Lindfors <klas@yubico.com>
+
+	* tests/util_test.c: add stdlib.h
+
+2014-08-27  Klas Lindfors <klas@yubico.com>
+
+	* tests/util_test.c: some tests of loading chalresp state
+
+2014-08-27  Klas Lindfors <klas@yubico.com>
+
+	* tests/util_test.c: test other case in get_user_cfgfile_path()
+
+2014-08-27  Klas Lindfors <klas@yubico.com>
+
+	* Makefile.am, tests/util_test.c: basic test for
+	get_user_cfgfile_path()
+
+2014-08-27  Klas Lindfors <klas@yubico.com>
+
+	* .gitignore, tests/Makefile.am, tests/util_test.c: add beginnings
+	of a second test
+
+2014-08-27  Klas Lindfors <klas@yubico.com>
+
+	* pam_yubico.c, util.c, util.h: move includes around in an attempt
+	to include less
+
+2014-08-27  Klas Lindfors <klas@yubico.com>
+
+	* .gitignore, Makefile.am, pam_yubico.c: break out util.c into it's
+	own temporary library to make testing easier
+
+2014-08-27  Klas Lindfors <klas@yubico.com>
+
+	* Makefile.am, configure.ac, tests/Makefile.am, test.c =>
+	tests/test.c: move tests to subdir
+
+2014-08-26  Klas Lindfors <klas@yubico.com>
+
+	* NEWS, configure.ac: bump versions after release
+
 2014-08-26  Klas Lindfors <klas@yubico.com>
 
 	* NEWS: NEWS for 2.17

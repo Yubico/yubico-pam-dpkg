@@ -26,19 +26,28 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+SUBDIRS = . tests
+
 ACLOCAL_AMFLAGS = -I m4
 
 AM_CFLAGS = $(WARN_CFLAGS)
+AM_CPPFLAGS = @YKPERS_CFLAGS@
 
 libdir = $(PAMDIR)
 
 lib_LTLIBRARIES = pam_yubico.la
 
-pam_yubico_la_SOURCES = pam_yubico.c util.h util.c drop_privs.h drop_privs.c
+pam_yubico_la_SOURCES = drop_privs.h drop_privs.c
 # XXX add -Wl,-x too?  PAM documentation suggests it.
-pam_yubico_la_LIBADD = @LTLIBYKCLIENT@ @LIBLDAP@ @YKPERS_LIBS@ @LTLIBYUBIKEY@ -lpam
+pam_yubico_la_LIBADD = @LTLIBYUBIKEY@ @LTLIBYKCLIENT@ @LIBLDAP@ @LIBPAM@
+pam_yubico_la_LIBADD += libpam_util.la libpam_real.la
 pam_yubico_la_LDFLAGS = -module -avoid-version
-pam_yubico_la_CPPFLAGS = @YKPERS_CFLAGS@
+
+noinst_LTLIBRARIES = libpam_util.la libpam_real.la
+libpam_util_la_SOURCES = util.c util.h
+libpam_util_la_LIBADD = @LTLIBYUBIKEY@ @YKPERS_LIBS@
+
+libpam_real_la_SOURCES = pam_yubico.c
 
 DEFS = -DDEBUG_PAM -DPAM_DEBUG @DEFS@
 
@@ -48,9 +57,8 @@ if YKPERS
 bin_PROGRAMS = ykpamcfg
 endif
 
-ykpamcfg_SOURCES = ykpamcfg.c util.c
-ykpamcfg_LDADD = @LTLIBYKCLIENT@ @YKPERS_LIBS@ @LTLIBYUBIKEY@
-ykpamcfg_CPPFLAGS = @YKPERS_CFLAGS@
+ykpamcfg_SOURCES = ykpamcfg.c
+ykpamcfg_LDADD = libpam_util.la
 
 if YKPERS
 dist_man1_MANS = ykpamcfg.1
@@ -59,17 +67,10 @@ endif
 dist_man8_MANS = pam_yubico.8
 DISTCLEANFILES = $(dist_man1_MANS) $(dist_man8_MANS)
 
-# Self tests.
-
-AM_LDFLAGS = -no-install
-LDADD = ./pam_yubico.la
-
-check_PROGRAMS = test
-TESTS = $(check_PROGRAMS)
-
 MANSOURCES = pam_yubico.8.txt ykpamcfg.1.txt
-EXTRA_DIST = doc/LocalAuthenticationUsingChallengeResponse.txt doc/MacOSXChallengeResponse.txt doc/TwoFactorPAMConfiguration.txt doc/UbuntuFreeRadiusYubiKey.txt doc/YubiKeyAndFreeRADIUSviaPAM.txt doc/YubiKeyAndFreeRADIUSwithsinglefactorauthenticationviaPAM.txt doc/YubiKeyAndOpenVPNviaPAM.txt doc/YubikeyAndRadiusViaPAM.txt doc/Yubikey-and-SELinux-on-Fedora-18-and-up.txt doc/YubikeyAndSSHViaPAM.txt
+EXTRA_DIST = doc/Authentication_Using_Challenge-Response.adoc doc/MacOS_X_Challenge-Response.adoc doc/Two_Factor_PAM_Configuration.adoc doc/Ubuntu_FreeRadius_YubiKey.adoc doc/YubiKey_and_FreeRADIUS_1FA_via_PAM.adoc doc/YubiKey_and_FreeRADIUS_via_PAM.adoc doc/YubiKey_and_OpenVPN_via_PAM.adoc doc/Yubikey_and_Radius_via_PAM.adoc doc/Yubikey_and_SELinux_on_Fedora_18_and_up.adoc doc/Yubikey_and_SSH_via_PAM.adoc
 EXTRA_DIST += $(MANSOURCES)
+EXTRA_DIST += tests/aux/ykval.pl tests/aux/ldap.pl tests/aux/authfile
 
 SUFFIXES = .1.txt .1 .8.txt .8
 .1.txt.1:
@@ -78,13 +79,44 @@ SUFFIXES = .1.txt .1 .8.txt .8
 .8.txt.8:
 	$(A2X) --format=manpage -a revdate="Version $(VERSION)" $<
 
+
+if ENABLE_COV
+AM_CFLAGS += --coverage
+AM_LDFLAGS = --coverage
+
+cov-reset:
+	rm -fr coverage
+	find . -name "*.gcda" -exec rm {} \;
+	lcov --directory . --zerocounters
+
+cov-report:
+	mkdir -p coverage
+	lcov --compat-libtool --directory . --capture --output-file coverage/app.info
+	lcov --extract coverage/app.info '*.c' --output-file coverage/app2.info
+	genhtml -o coverage/ coverage/app2.info
+
+cov:
+	make cov-report
+
+clean-local:
+	make cov-reset
+
+check:
+	make cov
+endif
+
+if ENABLE_CPPCHECK
+cppcheck:
+	$(CPPCHECK) -q -v -f --enable=all .
+endif
+
 # Release
 
 ChangeLog:
 	cd $(srcdir) && git2cl > ChangeLog
 
 check-doc-dist:
-	perl -pe "s,^EXTRA_DIST = .*,EXTRA_DIST = `cd $(srcdir) && ls doc/*.txt | xargs echo`," < $(srcdir)/Makefile.am > check-doc-dist.tmp
+	perl -pe "s,^EXTRA_DIST = .*,EXTRA_DIST = `cd $(srcdir) && ls doc/*.adoc | xargs echo`," < $(srcdir)/Makefile.am > check-doc-dist.tmp
 	diff -ur $(srcdir)/Makefile.am check-doc-dist.tmp || \
 		(rm -f check-doc-dist.tmp; echo 'error: please update $(srcdir)/Makefile.am to include all docs'; exit 1)
 	rm -f check-doc-dist.tmp
@@ -101,9 +133,9 @@ release:
 	fi
 	@head -3 $(srcdir)/NEWS | grep -q "Version $(VERSION) .released `date -I`" || \
 		(echo 'error: Update date/version in $(srcdir)/NEWS.'; exit 1)
-	@if test ! -d "$(YUBICO_GITHUB_REPO)"; then \
-		echo "yubico.github.com repo not found!"; \
-		echo "Make sure that YUBICO_GITHUB_REPO is set"; \
+	@if test ! -d "$(YUBICO_WWW_REPO)"; then \
+		echo "WWW repo not found!"; \
+		echo "Make sure that YUBICO_WWW_REPO is set"; \
 		exit 1; \
 		fi
 	rm -f ChangeLog
@@ -113,5 +145,5 @@ release:
 	cd $(srcdir) && git push
 	cd $(srcdir) && git tag -u $(KEYID) -m $(VERSION) $(VERSION)
 	cd $(srcdir) && git push --tags
-	$(YUBICO_GITHUB_REPO)/save-mans $(PROJECT) $(MANSOURCES)
-	$(YUBICO_GITHUB_REPO)/publish $(PROJECT) $(VERSION) $(PACKAGE)-$(VERSION).tar.gz*
+	$(YUBICO_WWW_REPO)/save-mans $(PROJECT) $(MANSOURCES)
+	$(YUBICO_WWW_REPO)/publish $(PROJECT) $(VERSION) $(PACKAGE)-$(VERSION).tar.gz*

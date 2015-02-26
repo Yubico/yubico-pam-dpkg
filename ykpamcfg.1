@@ -2,12 +2,12 @@
 .\"     Title: ykpamcfg
 .\"    Author: [FIXME: author] [see http://docbook.sf.net/el/author]
 .\" Generator: DocBook XSL Stylesheets v1.78.1 <http://docbook.sf.net/>
-.\"      Date: Version 2.17
+.\"      Date: Version 2.18
 .\"    Manual: Yubico PAM Module Manual
 .\"    Source: yubico-pam
 .\"  Language: English
 .\"
-.TH "YKPAMCFG" "1" "Version 2\&.17" "yubico\-pam" "Yubico PAM Module Manual"
+.TH "YKPAMCFG" "1" "Version 2\&.18" "yubico\-pam" "Yubico PAM Module Manual"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -31,7 +31,7 @@
 ykpamcfg \- Manage user settings for the Yubico PAM module
 .SH "SYNOPSIS"
 .sp
-\fBykmapcfg\fR [\-1 | \-2] [\-A] [\-p] [\-i] [\-v] [\-h]
+\fBykmapcfg\fR [\-1 | \-2] [\-A] [\-p] [\-i] [\-v] [\-V] [\-h]
 .SH "OPTIONS"
 .PP
 \fB\-1\fR
@@ -62,6 +62,16 @@ number of iterations to use for pbkdf2 of expected response
 \fB\-v\fR
 .RS 4
 enable verbose mode\&.
+.RE
+.PP
+\fB\-V\fR
+.RS 4
+display version and exit
+.RE
+.PP
+\fB\-h\fR
+.RS 4
+display help and exit
 .RE
 .SH "ACTIONS"
 .SS "add_hmac_chalresp"
