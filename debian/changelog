@@ -2,7 +2,11 @@ yubico-pam (2.18-1) unstable; urgency=low
 
   * New upstream version.
 
- -- Simon Josefsson <simon@josefsson.org>  Thu, 26 Feb 2015 13:57:24 +0100
+  [ Klas Lindfors ]
+  * Bump build-dep on libykpers to >= 1.8.0.
+  * Add build-dep libnet-ldap-server-perl for selftests.
+
+ -- Simon Josefsson <simon@josefsson.org>  Mon, 02 Mar 2015 09:26:20 +0100
 
 yubico-pam (2.17-2) unstable; urgency=low
 
