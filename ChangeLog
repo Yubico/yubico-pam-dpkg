@@ -1,3 +1,166 @@
+2015-03-23  Klas Lindfors <klas@yubico.com>
+
+	* NEWS: release 2.19
+
+2015-03-17  Klas Lindfors <klas@yubico.com>
+
+	* README: fix typo
+
+2015-03-13  Klas Lindfors <klas@yubico.com>
+
+	* README: fix the git url again fixes #54
+
+2015-03-10  Henrik Stråth <minisu@users.noreply.github.com>
+
+	* doc/YubiKey_and_OpenVPN_via_PAM.adoc: Fixed broken link
+
+2015-03-10  Henrik Stråth <minisu@users.noreply.github.com>
+
+	* doc/YubiKey_and_OpenVPN_via_PAM.adoc: removed broken link
+
+2015-03-10  Klas Lindfors <klali@avm.se>
+
+	* : Merge pull request #56 from shanx/master Clarified the notion of id when using the pam_yubico module
+
+2015-03-06  Remco Wendt <remco.wendt@gmail.com>
+
+	* README: fixed typo
+
+2015-03-06  Remco Wendt <remco.wendt@gmail.com>
+
+	* README: Clarified the notion of id when using the pam_yubico
+	module
+
+2015-03-04  Klas Lindfors <klas@yubico.com>
+
+	* NEWS: fix formatting of NEWS
+
+2015-03-04  Klas Lindfors <klas@yubico.com>
+
+	* NEWS: prepare news for 2.19
+
+2015-03-04  Klas Lindfors <klas@yubico.com>
+
+	* pam_yubico.c: change datatypes to unsigned avoiding warnings about sign conversion
+
+2015-03-04  Klas Lindfors <klas@yubico.com>
+
+	* : commit 77067004e830724442004c458c0d8f59e18f7272 Author: Klas
+	Lindfors <klas@yubico.com> Date:   Wed Mar 4 13:52:31 2015 +0100
+
+2015-03-04  Klas Lindfors <klas@yubico.com>
+
+	* README: use ldap_bind_user and ldap_bind_password in example
+
+2015-03-04  Klas Lindfors <klas@yubico.com>
+
+	* tests/aux/ldap.pl, tests/pam_test.c: simple ldap filter test
+
+2015-03-04  Klas Lindfors <klas@yubico.com>
+
+	* pam_yubico.c: allow ldap search with no base
+
+2015-03-04  Klas Lindfors <klas@yubico.com>
+
+	* tests/util_test.c, util.c: make sure filter is null terminated and
+	return length including null
+
+2015-03-04  Klas Lindfors <klas@yubico.com>
+
+	* tests/pam_test.c: drop authfile for ldap_cfg
+
+2015-03-04  Klas Lindfors <klas@yubico.com>
+
+	* pam_yubico.c: move debug print (and dereference of resp) inside
+	null check
+
+2015-03-04  Klas Lindfors <klas@yubico.com>
+
+	* Makefile.am: add DEFS to cppcheck
+
+2015-03-04  Klas Lindfors <klas@yubico.com>
+
+	* .travis.yml: try to survive and continue for failure in apt-get
+	update
+
+2015-03-04  Klas Lindfors <klas@yubico.com>
+
+	* pam_yubico.c: move protocol inside HAVE_LIBLDAP to avoid warning of unused variable
+
+2015-03-04  Klas Lindfors <klas@yubico.com>
+
+	* util.c: no need for a temp pointer when writing output of
+	filter_result_len()
+
+2015-03-04  Klas Lindfors <klas@yubico.com>
+
+	* pam_yubico.c: drop password parameter for
+	authorized_user_token_ldap()
+
+2015-03-04  Klas Lindfors <klas@yubico.com>
+
+	* pam_yubico.c: drop the ldap_bind_no_anonymous feature Sending the users password out in another direction is scary and
+	requires more thought. Ideally this should be solved by using ldap
+	GSSAPI or similar instead of sending a cleartext password over the
+	network.
+
+2015-03-04  Klas Lindfors <klas@yubico.com>
+
+	* pam_yubico.c: consider all success as valid session
+
+2015-03-04  Klas Lindfors <klas@yubico.com>
+
+	* pam_yubico.c: don't throw const away in cast
+
+2015-03-04  Klas Lindfors <klas@yubico.com>
+
+	* pam_yubico.c: client_id is supposed to be unsigned
+
+2015-03-04  Klas Lindfors <klas@yubico.com>
+
+	* pam_yubico.c: make sure rc is initialized before using
+
+2015-03-04  Klas Lindfors <klas@yubico.com>
+
+	* pam_yubico.c: don't use c++ style comments
+
+2015-03-04  Klas Lindfors <klas@yubico.com>
+
+	* pam_yubico.c: don't use c++ style comments
+
+2015-03-04  Klas Lindfors <klas@yubico.com>
+
+	* pam_yubico.c: conform to other code
+
+2015-02-20  Klas Lindfors <klas@yubico.com>
+
+	* README: reference github with https, not git@ fixes #54
+
+2015-02-16  Klas Lindfors <klas@yubico.com>
+
+	* util.c, util.h: simplify filter_result_len() and fixup warnings
+
+2015-02-16  Klas Lindfors <klas@yubico.com>
+
+	* pam_yubico.c: drop extra options for bind dn and password
+
+2015-02-16  Klas Lindfors <klas@yubico.com>
+
+	* : Merge commit 'aa87979eb84adb3adef170dac6ff2285ba43cd26' into
+	features/ldap Conflicts: 	README
+
+2015-02-16  Klas Lindfors <klas@yubico.com>
+
+	* .gitignore: ignore
+
+2015-02-13  Klas Lindfors <klas@yubico.com>
+
+	* pam_yubico.c: add debug print with version
+
+2015-02-12  Klas Lindfors <klas@yubico.com>
+
+	* NEWS, configure.ac: bump versions after release
+
 2015-02-12  Klas Lindfors <klas@yubico.com>
 
 	* NEWS: NEWS for 2.18
@@ -177,6 +340,21 @@
 2014-11-27  Klas Lindfors <klas@yubico.com>
 
 	* util.c: change strtok usage to strtok_r
+
+2014-11-20  Meno Abels <meno.abels@adviser.com>
+
+	* README, pam_yubico.c: integrate
+	https://github.com/Yubico/yubico-pam/pull/39/files
+
+2014-10-29  Meno Abels <meno.abels@adviser.com>
+
+	* README, pam_yubico.c, util.c, util.h: enable that openvpn can now
+	run without any local user
+
+2014-10-28  Meno Abels <meno.abels@sinnerschrader.com>
+
+	* pam_yubico.c, tests/util_test.c, util.c, util.h: added a better
+	ldap handling, and to allow query active directory
 
 2014-10-31  Henrik Stråth <minisu@users.noreply.github.com>
 
