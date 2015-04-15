@@ -1217,7 +1217,7 @@ uninstall-man: uninstall-man1 uninstall-man8
 @ENABLE_COV_TRUE@	make cov
 
 @ENABLE_CPPCHECK_TRUE@cppcheck:
-@ENABLE_CPPCHECK_TRUE@	$(CPPCHECK) -q -v -f --enable=all .
+@ENABLE_CPPCHECK_TRUE@	$(CPPCHECK) -q -v -f --enable=all $(DEFS) .
 
 # Release
 
