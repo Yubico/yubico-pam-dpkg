@@ -1,3 +1,9 @@
+yubico-pam (2.20-1) unstable; urgency=low
+
+  * New upstream version.
+
+ -- Klas Lindfors <klas@yubico.com>  Tue, 22 Sep 2015 09:08:10 +0200
+
 yubico-pam (2.19-1) unstable; urgency=low
 
   * New upstream version.
