@@ -40,7 +40,6 @@
 #include <unistd.h>
 #include <errno.h>
 #include <string.h>
-#include <pwd.h>
 
 #include "util.h"
 #include "drop_privs.h"
@@ -89,9 +88,11 @@
 #endif
 #endif
 
-#define TOKEN_OTP_LEN 32
-#define MAX_TOKEN_ID_LEN 16
-#define DEFAULT_TOKEN_ID_LEN 12
+#define TOKEN_OTP_LEN 32u
+#define MAX_TOKEN_ID_LEN 16u
+#define DEFAULT_TOKEN_ID_LEN 12u
+
+#define TMPFILE_SUFFIX ".XXXXXX"
 
 enum key_mode {
   CHRESP,
@@ -109,6 +110,7 @@ struct cfg
   int use_first_pass;
   const char *auth_file;
   const char *capath;
+  const char *cainfo;
   const char *url;
   const char *urllist;
   const char *ldapserver;
@@ -157,7 +159,11 @@ authorize_user_token (struct cfg *cfg,
       struct passwd *p;
       PAM_MODUTIL_DEF_PRIVS(privs);
 
+#ifdef HAVE_PAM_MODUTIL_GETPWNAM
+      p = pam_modutil_getpwnam (pamh, username);
+#else
       p = getpwnam (username);
+#endif
       if (p == NULL) {
 	DBG (("getpwnam: %s", strerror(errno)));
 	return 0;
@@ -166,7 +172,7 @@ authorize_user_token (struct cfg *cfg,
       /* Getting file from user home directory
          ..... i.e. ~/.yubico/authorized_yubikeys
        */
-      if (! get_user_cfgfile_path (NULL, "authorized_yubikeys", username, &userfile)) {
+      if (! get_user_cfgfile_path (NULL, "authorized_yubikeys", p, &userfile)) {
 	D (("Failed figuring out per-user cfgfile"));
 	return 0;
       }
@@ -221,7 +227,7 @@ authorize_user_token_ldap (struct cfg *cfg,
 #ifdef HAVE_LIBLDAP
   /* LDAPv2 is historical -- RFC3494. */
   int protocol = LDAP_VERSION3;
-  int yubi_attr_prefix_len = 0;
+  size_t yubi_attr_prefix_len = 0;
   LDAP *ld = NULL;
   LDAPMessage *result = NULL, *e;
   BerElement *ber;
@@ -229,7 +235,8 @@ authorize_user_token_ldap (struct cfg *cfg,
   char *attrs[2] = {NULL, NULL};
 
   struct berval **vals;
-  int i, rc;
+  int rc;
+  size_t i;
 
   char *filter = NULL;
   char *find = NULL;
@@ -400,7 +407,7 @@ display_error(pam_handle_t *pamh, const char *message) {
   }
 
   pmsg[0] = &msg[0];
-  msg[0].msg = message;
+  msg[0].msg = (char *) message; /* on some systems, pam_message.msg isn't const */
   msg[0].msg_style = PAM_ERROR_MSG;
   retval = conv->conv(1, pmsg, &resp, conv->appdata_ptr);
 
@@ -454,24 +461,29 @@ do_challenge_response(pam_handle_t *pamh, struct cfg *cfg, const char *username)
     goto out;
   }
 
+#ifdef HAVE_PAM_MODUTIL_GETPWNAM
+  p = pam_modutil_getpwnam (pamh, username);
+#else
+  p = getpwnam (username);
+#endif
+  if (p == NULL) {
+      DBG (("getpwnam: %s", strerror(errno)));
+      goto out;
+  }
 
-  if (! get_user_challenge_file (yk, cfg->chalresp_path, username, &userfile)) {
+  if (! get_user_challenge_file (yk, cfg->chalresp_path, p, &userfile)) {
     DBG(("Failed getting user challenge file for user %s", username));
     goto out;
   }
 
   DBG(("Loading challenge from file %s", userfile));
 
-  p = getpwnam (username);
-  if (p == NULL) {
-      DBG (("getpwnam: %s", strerror(errno)));
-      goto out;
-  }
-
-  /* Drop privileges before opening user file. */
-  if (pam_modutil_drop_priv(pamh, &privs, p)) {
+  /* Drop privileges before opening user file (if we're not using system-wide dir). */
+  if (!cfg->chalresp_path) {
+    if (pam_modutil_drop_priv(pamh, &privs, p)) {
       DBG (("could not drop privileges"));
       goto out;
+    }
   }
 
   fd = open(userfile, O_RDONLY, 0);
@@ -508,9 +520,11 @@ do_challenge_response(pam_handle_t *pamh, struct cfg *cfg, const char *username)
   }
   f = NULL;
 
-  if (pam_modutil_regain_priv(pamh, &privs)) {
+  if (!cfg->chalresp_path) {
+    if (pam_modutil_regain_priv(pamh, &privs)) {
       DBG (("could not restore privileges"));
       goto out;
+    }
   }
 
   if (! challenge_response(yk, state.slot, state.challenge, state.challenge_len,
@@ -538,7 +552,7 @@ do_challenge_response(pam_handle_t *pamh, struct cfg *cfg, const char *username)
     goto out;
   }
 
-  DBG(("Got the expected response, generating new challenge (%i bytes).", CR_CHALLENGE_SIZE));
+  DBG(("Got the expected response, generating new challenge (%u bytes).", CR_CHALLENGE_SIZE));
 
   errstr = "Error generating new challenge, please check syslog or contact your system administrator";
   if (generate_random(state.challenge, sizeof(state.challenge))) {
@@ -568,7 +582,7 @@ do_challenge_response(pam_handle_t *pamh, struct cfg *cfg, const char *username)
    * Write the challenge and response we will expect the next time to the state file.
    */
   if (response_len > sizeof(state.response)) {
-    DBG(("Got too long response ??? (%u/%lu)", response_len, (unsigned long) sizeof(state.response)));
+    DBG(("Got too long response ??? (%u/%zu)", response_len, sizeof(state.response)));
     goto out;
   }
   memcpy (state.response, buf, response_len);
@@ -577,21 +591,28 @@ do_challenge_response(pam_handle_t *pamh, struct cfg *cfg, const char *username)
   /* point to the fresh privs structure.. */
   privs = privs2;
   /* Drop privileges before creating new challenge file. */
-  if (pam_modutil_drop_priv(pamh, &privs, p)) {
-      DBG (("could not drop privileges"));
-      goto out;
+  if (!cfg->chalresp_path) {
+    if (pam_modutil_drop_priv(pamh, &privs, p)) {
+        DBG (("could not drop privileges"));
+        goto out;
+    }
   }
 
   /* Write out the new file */
-  tmpfile = malloc(strlen(userfile) + 1 + 4);
+  tmpfile = malloc(strlen(userfile) + 1 + strlen(TMPFILE_SUFFIX));
   if (! tmpfile)
     goto restpriv_out;
   strcpy(tmpfile, userfile);
-  strcat(tmpfile, ".tmp");
+  strcat(tmpfile, TMPFILE_SUFFIX);
 
-  fd = open(tmpfile, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
+  fd = mkstemp(tmpfile);
   if (fd < 0) {
       DBG (("Cannot open file: %s (%s)", tmpfile, strerror(errno)));
+      goto restpriv_out;
+  }
+
+  if (fchmod (fd, S_IRUSR | S_IWUSR) != 0) {
+      DBG (("could not set correct file permissions"));
       goto restpriv_out;
   }
 
@@ -613,19 +634,16 @@ do_challenge_response(pam_handle_t *pamh, struct cfg *cfg, const char *username)
     goto restpriv_out;
   }
 
-  if (pam_modutil_regain_priv(pamh, &privs)) {
-      DBG (("could not restore privileges"));
-      goto out;
-  }
-
   DBG(("Challenge-response success!"));
   errstr = NULL;
   errno = 0;
-  goto out;
+  yk_errno = 0;
 
 restpriv_out:
-  if (pam_modutil_regain_priv(pamh, &privs)) {
-      DBG (("could not restore privileges"));
+  if (!cfg->chalresp_path) {
+    if (pam_modutil_regain_priv(pamh, &privs)) {
+        DBG (("could not restore privileges"));
+    }
   }
 
  out:
@@ -690,6 +708,8 @@ parse_cfg (int flags, int argc, const char **argv, struct cfg *cfg)
 	cfg->auth_file = argv[i] + 9;
       if (strncmp (argv[i], "capath=", 7) == 0)
 	cfg->capath = argv[i] + 7;
+      if (strncmp (argv[i], "cainfo=", 7) == 0)
+        cfg->cainfo = argv[i] + 7;
       if (strncmp (argv[i], "url=", 4) == 0)
 	cfg->url = argv[i] + 4;
       if (strncmp (argv[i], "urllist=", 8) == 0)
@@ -751,6 +771,7 @@ parse_cfg (int flags, int argc, const char **argv, struct cfg *cfg)
       D (("url=%s", cfg->url ? cfg->url : "(null)"));
       D (("urllist=%s", cfg->urllist ? cfg->urllist : "(null)"));
       D (("capath=%s", cfg->capath ? cfg->capath : "(null)"));
+      D (("cainfo=%s", cfg->cainfo ? cfg->cainfo : "(null)"));
       D (("token_id_length=%d", cfg->token_id_length));
       D (("mode=%s", cfg->mode == CLIENT ? "client" : "chresp" ));
       D (("chalresp_path=%s", cfg->chalresp_path ? cfg->chalresp_path : "(null)"));
@@ -771,7 +792,7 @@ pam_sm_authenticate (pam_handle_t * pamh,
   int valid_token = 0;
   struct pam_conv *conv;
   const struct pam_message *pmsg[1];
-  struct pam_message msg[1];
+  struct pam_message msg[1] = {{0}};
   struct pam_response *resp = NULL;
   int nargs = 1;
   ykclient_t *ykc = NULL;
@@ -788,7 +809,7 @@ pam_sm_authenticate (pam_handle_t * pamh,
 
   if (cfg->token_id_length > MAX_TOKEN_ID_LEN)
   {
-    DBG (("configuration error: token_id_length too long. Maximum acceptable value : %d", MAX_TOKEN_ID_LEN));
+    DBG (("configuration error: token_id_length too long. Maximum acceptable value : %u", MAX_TOKEN_ID_LEN));
     retval = PAM_AUTHINFO_UNAVAIL;
     goto done;
   }
@@ -858,6 +879,9 @@ pam_sm_authenticate (pam_handle_t * pamh,
 
   if (cfg->capath)
     ykclient_set_ca_path (ykc, cfg->capath);
+
+  if (cfg->cainfo)
+    ykclient_set_ca_info (ykc, cfg->cainfo);
 
   if (cfg->url)
     {
@@ -931,8 +955,6 @@ pam_sm_authenticate (pam_handle_t * pamh,
 
       retval = conv->conv (nargs, pmsg, &resp, conv->appdata_ptr);
 
-      free ((char *) msg[0].msg);
-
       if (retval != PAM_SUCCESS)
 	{
 	  DBG (("conv returned error: %s", pam_strerror (pamh, retval)));
@@ -946,7 +968,7 @@ pam_sm_authenticate (pam_handle_t * pamh,
 	  goto done;
 	}
 
-      DBG (("conv returned %lu bytes", (unsigned long) strlen(resp->resp)));
+      DBG (("conv returned %zu bytes", strlen(resp->resp)));
 
       password = resp->resp;
     }
@@ -954,7 +976,7 @@ pam_sm_authenticate (pam_handle_t * pamh,
   password_len = strlen (password);
   if (password_len < (cfg->token_id_length + TOKEN_OTP_LEN))
     {
-      DBG (("OTP too short to be considered : %i < %i", password_len, (cfg->token_id_length + TOKEN_OTP_LEN)));
+      DBG (("OTP too short to be considered : %zu < %u", password_len, (cfg->token_id_length + TOKEN_OTP_LEN)));
       retval = PAM_AUTH_ERR;
       goto done;
     }
@@ -963,7 +985,7 @@ pam_sm_authenticate (pam_handle_t * pamh,
      "systempassword" when copying the token_id and OTP to separate buffers */
   skip_bytes = password_len - (cfg->token_id_length + TOKEN_OTP_LEN);
 
-  DBG (("Skipping first %i bytes. Length is %i, token_id set to %i and token OTP always %i.",
+  DBG (("Skipping first %i bytes. Length is %zu, token_id set to %u and token OTP always %u.",
 	skip_bytes, password_len, cfg->token_id_length, TOKEN_OTP_LEN));
 
   /* Copy full YubiKey output (public ID + OTP) into otp */
@@ -1002,6 +1024,7 @@ pam_sm_authenticate (pam_handle_t * pamh,
 
   DBG (("ykclient return value (%d): %s", rc,
 	ykclient_strerror (rc)));
+  DBG (("ykclient url used: %s", ykclient_get_last_url(ykc)));
 
   switch (rc)
     {
@@ -1079,17 +1102,25 @@ done:
       free (resp);
     }
 
+  if(msg[0].msg)
+    {
+      free((char*)msg[0].msg);
+    }
+
   return retval;
 }
 
 PAM_EXTERN int
-pam_sm_setcred (pam_handle_t * pamh, int flags, int argc, const char **argv)
+pam_sm_setcred (
+    pam_handle_t *pamh __attribute__((unused)), int flags __attribute__((unused)),
+    int argc __attribute__((unused)), const char *argv[] __attribute__((unused)))
 {
   return PAM_SUCCESS;
 }
 
 PAM_EXTERN int
-pam_sm_acct_mgmt(pam_handle_t *pamh, int flags, int argc, const char **argv)
+pam_sm_acct_mgmt(pam_handle_t *pamh, int flags __attribute__((unused)),
+    int argc __attribute__((unused)), const char **argv __attribute__((unused)))
 {
   int retval;
   int rc = pam_get_data(pamh, "yubico_setcred_return", (const void**)&retval);
@@ -1102,8 +1133,9 @@ pam_sm_acct_mgmt(pam_handle_t *pamh, int flags, int argc, const char **argv)
 }
 
 PAM_EXTERN int
-pam_sm_open_session(pam_handle_t *pamh, int flags,
-	int argc, const char *argv[])
+pam_sm_open_session(
+    pam_handle_t *pamh __attribute__((unused)), int flags __attribute__((unused)),
+    int argc __attribute__((unused)), const char *argv[] __attribute__((unused)))
 {
 
   D(("pam_sm_open_session"));
@@ -1111,16 +1143,18 @@ pam_sm_open_session(pam_handle_t *pamh, int flags,
 }
 
 PAM_EXTERN int
-pam_sm_close_session(pam_handle_t *pamh, int flags,
-	int argc, const char *argv[])
+pam_sm_close_session(
+    pam_handle_t *pamh __attribute__((unused)), int flags __attribute__((unused)),
+    int argc __attribute__((unused)), const char *argv[] __attribute__((unused)))
 {
   D(("pam_sm_close_session"));
   return (PAM_SUCCESS);
 }
 
 PAM_EXTERN int
-pam_sm_chauthtok(pam_handle_t *pamh, int flags,
-	int argc, const char *argv[])
+pam_sm_chauthtok(
+    pam_handle_t *pamh __attribute__((unused)), int flags __attribute__((unused)),
+    int argc __attribute__((unused)), const char *argv[] __attribute__((unused)))
 {
   D(("pam_sm_chauthtok"));
   return (PAM_SERVICE_ERR);

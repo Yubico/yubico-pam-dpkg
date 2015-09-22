@@ -74,10 +74,10 @@ EXTRA_DIST += tests/aux/ykval.pl tests/aux/ldap.pl tests/aux/authfile
 
 SUFFIXES = .1.txt .1 .8.txt .8
 .1.txt.1:
-	$(A2X) --format=manpage -a revdate="Version $(VERSION)" $<
+	$(A2X) -L --format=manpage -a revdate="Version $(VERSION)" $<
 
 .8.txt.8:
-	$(A2X) --format=manpage -a revdate="Version $(VERSION)" $<
+	$(A2X) -L --format=manpage -a revdate="Version $(VERSION)" $<
 
 
 if ENABLE_COV
@@ -145,5 +145,4 @@ release:
 	cd $(srcdir) && git push
 	cd $(srcdir) && git tag -u $(KEYID) -m $(VERSION) $(VERSION)
 	cd $(srcdir) && git push --tags
-	$(YUBICO_WWW_REPO)/save-mans $(PROJECT) $(MANSOURCES)
 	$(YUBICO_WWW_REPO)/publish $(PROJECT) $(VERSION) $(PACKAGE)-$(VERSION).tar.gz*

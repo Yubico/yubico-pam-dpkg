@@ -36,15 +36,21 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
+#include <pwd.h>
+
 #include "util.h"
 
 static void test_get_user_cfgfile_path(void) {
   char *file;
-  int ret = get_user_cfgfile_path("/foo/bar", "test", "root", &file);
+  struct passwd user;
+  int ret;
+  user.pw_name = "root";
+  user.pw_dir = "/root";
+  ret = get_user_cfgfile_path("/foo/bar", "test", &user, &file);
   assert(ret == 1);
   assert(strcmp(file, "/foo/bar/test") == 0);
   free(file);
-  ret = get_user_cfgfile_path(NULL, "test", "root", &file);
+  ret = get_user_cfgfile_path(NULL, "test", &user, &file);
   assert(ret == 1);
   assert(strcmp(file, "/root/.yubico/test") == 0);
   free(file);
@@ -58,9 +64,14 @@ static void test_check_user_token(void) {
 
   assert(fd != -1);
   handle = fdopen(fd, "w");
+  fprintf(handle, "# This is a comment containing foobar:foobar\n");
   fprintf(handle, "foobar:hhhvhvhdhbid:hnhbhnhbhnhb:\n");
+  fprintf(handle, "# This is a comment in the middle\n");
   fprintf(handle, "kaka:hdhrhbhjhvhu:hihbhdhrhbhj\n");
+  fprintf(handle, "# foo2 is a user showing up twice in the file\n");
+  fprintf(handle, "foo2:vvvvvvvvvvvv\n");
   fprintf(handle, "bar:hnhbhnhbhnhb\n");
+  fprintf(handle, "foo2:cccccccccccc\n");
   fclose(handle);
 
   ret = check_user_token(file, "foobar", "hhhvhvhdhbid", 1);
@@ -75,6 +86,12 @@ static void test_check_user_token(void) {
   assert(ret == 1);
   ret = check_user_token(file, "foo", "hdhrhbhjhvhu", 1);
   assert(ret == -2);
+  ret = check_user_token(file, "foo2", "cccccccccccc", 1);
+  assert(ret == 1);
+  ret = check_user_token(file, "foo2", "vvvvvvvvvvvv", 1);
+  assert(ret == 1);
+  ret = check_user_token(file, "foo2", "vvvvvvvvvvcc", 1);
+  assert(ret == -1);
   remove(file);
 }
 

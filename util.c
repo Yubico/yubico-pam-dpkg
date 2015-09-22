@@ -38,7 +38,6 @@
 #include <sys/stat.h>
 #include <errno.h>
 #include <fcntl.h>
-#include <pwd.h>
 #include <unistd.h>
 
 #include "util.h"
@@ -53,16 +52,15 @@
 #endif /* HAVE_CR */
 
 int
-get_user_cfgfile_path(const char *common_path, const char *filename, const char *username, char **fn)
+get_user_cfgfile_path(const char *common_path, const char *filename, const struct passwd *user, char **fn)
 {
   /* Getting file from user home directory, e.g. ~/.yubico/challenge, or
    * from a system wide directory.
    *
    * Format is hex(challenge):hex(response):slot num
    */
-  struct passwd *p;
   char *userfile;
-  int len;
+  size_t len;
 
   if (common_path != NULL) {
     len = strlen(common_path) + 1 + strlen(filename) + 1;
@@ -76,15 +74,11 @@ get_user_cfgfile_path(const char *common_path, const char *filename, const char 
 
   /* No common path provided. Construct path to user's ~/.yubico/filename */
 
-  p = getpwnam (username);
-  if (!p)
-    return 0;
-
-  len = strlen(p->pw_dir) + 9 + strlen(filename) + 1;
+  len = strlen(user->pw_dir) + 9 + strlen(filename) + 1;
   if ((userfile = malloc(len)) == NULL) {
     return 0;
   }
-  snprintf(userfile, len, "%s/.yubico/%s", p->pw_dir, filename);
+  snprintf(userfile, len, "%s/.yubico/%s", user->pw_dir, filename);
   *fn = userfile;
   return 1;
 }
@@ -147,6 +141,12 @@ check_user_token (const char *authfile,
       char *saveptr = NULL;
       if (buf[strlen (buf) - 1] == '\n')
 	buf[strlen (buf) - 1] = '\0';
+      if (buf[0] == '#') {
+          /* This is a comment and we may skip it. */
+          if(verbose)
+              D (("Skipping comment line: %s", buf));
+          continue;
+      }
       if(verbose)
 	  D (("Authorization line: %s", buf));
       s_user = strtok_r (buf, ":", &saveptr);
@@ -282,7 +282,7 @@ int challenge_response(YK_KEY *yk, int slot,
 }
 
 int
-get_user_challenge_file(YK_KEY *yk, const char *chalresp_path, const char *username, char **fn)
+get_user_challenge_file(YK_KEY *yk, const char *chalresp_path, const struct passwd *user, char **fn)
 {
   /* Getting file from user home directory, i.e. ~/.yubico/challenge, or
    * from a system wide directory.
@@ -293,8 +293,8 @@ get_user_challenge_file(YK_KEY *yk, const char *chalresp_path, const char *usern
    * the option chalresp_path can be used to point to a system-wide directory.
    */
 
-  char *filename; /* not including directory */
-  int filename_malloced = 0;
+  const char *filename = NULL; /* not including directory */
+  char *ptr = NULL;
   unsigned int serial = 0;
   int ret;
 
@@ -303,18 +303,17 @@ get_user_challenge_file(YK_KEY *yk, const char *chalresp_path, const char *usern
     if (! chalresp_path)
       filename = "challenge";
     else
-      filename = (char *) username;
+      filename = user->pw_name;
   } else {
     /* We have serial number */
-    int len;
     /* 0xffffffff == 4294967295 == 10 digits */
-    len = strlen(chalresp_path == NULL ? "challenge" : username) + 1 + 10 + 1;
-    if ((filename = malloc(len)) != NULL) {
-      int res = snprintf(filename, len, "%s-%u", chalresp_path == NULL ? "challenge" : username, serial);
-      filename_malloced = 1;
-      if (res < 0 || res > len) {
+    size_t len = strlen(chalresp_path == NULL ? "challenge" : user->pw_name) + 1 + 10 + 1;
+    if ((ptr = malloc(len)) != NULL) {
+      int res = snprintf(ptr, len, "%s-%u", chalresp_path == NULL ? "challenge" : user->pw_name, serial);
+      filename = ptr;
+      if (res < 0 || (unsigned long)res > len) {
 	/* Not enough space, strangely enough. */
-	free(filename);
+	free(ptr);
 	filename = NULL;
       }
     }
@@ -323,9 +322,9 @@ get_user_challenge_file(YK_KEY *yk, const char *chalresp_path, const char *usern
   if (filename == NULL)
     return 0;
 
-  ret = get_user_cfgfile_path (chalresp_path, filename, username, fn);
-  if(filename_malloced == 1) {
-    free(filename);
+  ret = get_user_cfgfile_path (chalresp_path, filename, user, fn);
+  if(ptr) {
+    free(ptr);
   }
   return ret;
 }
