@@ -67,6 +67,7 @@ sub search {
     $id = $objects{'sub:base=' . $reqData->{'baseObject'} . ':(' . $match->{'attributeDesc'} . '=' . $match->{'assertionValue'} . ')'};
     $base = $id->{'dn'};
   }
+  warn "ldap search with " . $reqData->{'scope'};
   my @entries;
   if($id) {
     my $entry = Net::LDAP::Entry->new;
@@ -95,6 +96,8 @@ $sock->listen();
 
 my $sel = IO::Select->new($sock);
 my %handlers;
+
+warn "LDAP mockup started";
 
 while (my @ready = $sel->can_read) {
   foreach my $fh (@ready) {

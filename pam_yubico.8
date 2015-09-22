@@ -2,12 +2,12 @@
 .\"     Title: pam_yubico
 .\"    Author: [FIXME: author] [see http://docbook.sf.net/el/author]
 .\" Generator: DocBook XSL Stylesheets v1.78.1 <http://docbook.sf.net/>
-.\"      Date: Version 2.19
+.\"      Date: Version 2.20
 .\"    Manual: Yubico PAM Module Manual
 .\"    Source: yubico-pam
 .\"  Language: English
 .\"
-.TH "PAM_YUBICO" "8" "Version 2\&.19" "yubico\-pam" "Yubico PAM Module Manual"
+.TH "PAM_YUBICO" "8" "Version 2\&.20" "yubico\-pam" "Yubico PAM Module Manual"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -165,6 +165,11 @@ An ldap filter to use for attempting to find the correct object in LDAP\&. In th
 .RS 4
 Ca certfile for the LDAP connection\&.
 .RE
+.PP
+\fBchalresp_path\fR=\fIpath\fR
+.RS 4
+Path of a system wide directory where challenge response files can be found for users\&. Default location is $HOME/\&.yubico/
+.RE
 .SH "EXAMPLES"
 .sp
 .if n \{\
@@ -196,6 +201,27 @@ auth required pam_yubico\&.so id=16 ldap_uri=ldaps://ldap\&.example\&.com ldap_f
 .if n \{\
 .RE
 .\}
+.SH "FILES"
+.PP
+\fB$HOME/\&.yubico/authorized_yubikeys\fR
+.RS 4
+If
+\fBauthfile\fR
+is not set this file is used for the mapping between YubiKey public id and in
+\fIclient\fR
+mode\&.
+.RE
+.PP
+\fB$HOME/\&.yubico/challenge\fR, \fB$HOME/\&.yubico/challenge\-\fR\fB\fIserial_number\fR\fR
+.RS 4
+If
+\fBchalresp_path\fR
+is not set these files are used to hold next challenge and expected response for the user in
+\fIchallenge\-response\fR
+mode\&. If
+\fBchalresp_path\fR
+is set the filename will be username instead of challenge\&.
+.RE
 .SH "BUGS"
 .sp
 Report yubico\-pam bugs in the issue tracker: https://github\&.com/Yubico/yubico\-pam/issues

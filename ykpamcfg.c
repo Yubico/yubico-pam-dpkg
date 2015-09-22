@@ -34,7 +34,6 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/types.h>
-#include <pwd.h>
 #include <string.h>
 #include <errno.h>
 #include <sys/stat.h>
@@ -186,7 +185,7 @@ do_add_hmac_chalresp(YK_KEY *yk, uint8_t slot, bool verbose, char *output_dir, u
       }
   }
 
-  if (! get_user_challenge_file(yk, output_dir, p->pw_name, &fn)) {
+  if (! get_user_challenge_file(yk, output_dir, p, &fn)) {
     fprintf (stderr, "Failed getting chalresp state filename\n");
     goto out;
   }

@@ -1,3 +1,141 @@
+2015-09-22  Klas Lindfors <klas@yubico.com>
+
+	* NEWS: NEWS for 2.20
+
+2015-09-15  Klas Lindfors <klas@yubico.com>
+
+	* pam_yubico.8.txt: add information about files used thanks to @madrat- for original suggestions fixes #78
+
+2015-09-14  Klas Lindfors <klas@yubico.com>
+
+	* pam_yubico.c: reset yk_errno when we're happy with the result
+
+2015-09-14  Klas Lindfors <klas@yubico.com>
+
+	* pam_yubico.c: correct fchmod() return check
+
+2015-09-14  Klas Lindfors <klas@yubico.com>
+
+	* pam_yubico.c: switch i to size_t to match usage
+
+2015-09-14  Klas Lindfors <klas@yubico.com>
+
+	* pam_yubico.c: fix initialization of msg to not warn apparently this is gcc bug 53119
+
+2015-09-14  Klas Lindfors <klas@yubico.com>
+
+	* pam_yubico.c: make yubi_attr_prefix_len a size_t
+
+2015-09-14  Klas Lindfors <klas@yubico.com>
+
+	* pam_yubico.c: mark unused parameter with __attribute__((unused))
+
+2015-09-14  Klas Lindfors <klas@yubico.com>
+
+	* pam_yubico.c: use mkstemp() to get the tempfile instead unfortunately means we have to fchmod() it afterwards to be sure
+
+2015-09-14  Klas Lindfors <klali@avm.se>
+
+	* : Merge pull request #79 from madrat-/master do_challenge_response change privileges twice at reading and writing
+
+2015-09-11  Klas Lindfors <klas@yubico.com>
+
+	* pam_yubico.c: in the challenge-response case only drop privileges
+	for user dir This allows the module to work in a case where the directory is only
+	writable to root.  fixes #77
+
+2015-09-11  Klas Lindfors <klas@yubico.com>
+
+	* configure.ac: don't warn about to long strings
+
+2015-09-09  Klas Lindfors <klas@yubico.com>
+
+	* pam_yubico.c, util.c, util.h, ykpamcfg.c: include pwd.h in util.h
+
+2015-09-08  Klas Lindfors <klas@yubico.com>
+
+	* Makefile.am: disable xmllint for a2x since it seems to cause
+	problems
+
+2015-09-08  Klas Lindfors <klas@yubico.com>
+
+	* configure.ac, pam_yubico.c, tests/util_test.c, util.c, util.h,
+	ykpamcfg.c: use pam_modutil_getpwnam() if it's available also refactor to pass in a passwd struct to the util functions
+
+2015-08-18  Klas Lindfors <klas@yubico.com>
+
+	* tests/util_test.c: add a test for a user showing up twice in the
+	file
+
+2015-08-11  Klas Lindfors <klas@yubico.com>
+
+	* pam_yubico.8.txt: add documentation for chalresp_path parameter
+
+2015-08-11  Klas Lindfors <klali@avm.se>
+
+	* : Merge pull request #71 from afeinberg/comments Support comments in authfile
+
+2015-07-08  Klas Lindfors <klas@yubico.com>
+
+	* pam_yubico.c: free message at end of function it was possible message was never freed if the sprintf() call failed
+
+2015-06-15  Klas Lindfors <klas@yubico.com>
+
+	* pam_yubico.c: add cainfo option to allow usage of a cabundle
+	instead of path path submitted by github user @Mrten reportedly this is needed if
+	curl is linked with gnutls fixes #6
+
+2015-04-27  Klas Lindfors <klas@yubico.com>
+
+	* pam_yubico.c: add debug print for last url used
+
+2015-04-07  Klas Lindfors <klas@yubico.com>
+
+	* tests/Makefile.am: export LDAPNOINIT=1 for tests so we don't run
+	with systems ldap config fixes #61
+
+2015-04-07  Klas Lindfors <klas@yubico.com>
+
+	* tests/aux/ldap.pl, tests/aux/ykval.pl: more debugging on mocks
+
+2015-04-07  Klas Lindfors <klas@yubico.com>
+
+	* tests/aux/ldap.pl, tests/aux/ykval.pl: add some debug logging to
+	ldap and ykval mocks
+
+2015-03-30  Klas Lindfors <klas@yubico.com>
+
+	* util.c: change int to size_t
+
+2015-03-30  Klas Lindfors <klas@yubico.com>
+
+	* util.c: fixup warnings with sign
+
+2015-03-30  Klas Lindfors <klas@yubico.com>
+
+	* util.c: fixup warnings related to constness of filename
+
+2015-03-30  Klas Lindfors <klali@avm.se>
+
+	* : Merge pull request #60 from neverpanic/master Fix warnings on OS X with clang
+
+2015-03-28  Clemens Lang <neverpanic@gmail.com>
+
+	* pam_yubico.c: Fix warning if pam_message.msg isn't constant On OS X and FreeBSD, struct pam_message does not declare its msg
+	member as constant. This causes a warning when assigning a constant
+	string to it: pam_yubico.c:403:14: warning: assigning to 'char *' from 'const char
+	  *' discards qualifiers
+	  [-Wincompatible-pointer-types-discards-qualifiers] msg[0].msg =
+	             message; ^ ~~~~~~~
+
+2015-03-23  Klas Lindfors <klas@yubico.com>
+
+	* Makefile.am: drop save-mans
+
+2015-03-23  Klas Lindfors <klas@yubico.com>
+
+	* NEWS, configure.ac: bump versions
+
 2015-03-23  Klas Lindfors <klas@yubico.com>
 
 	* NEWS: release 2.19
