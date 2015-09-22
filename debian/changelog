@@ -4,6 +4,7 @@ yubico-pam (2.20-1) unstable; urgency=low
 
   [ Simon Josefsson ]
   * Update README.source.
+  * Update upstream-signing-key.pgp.
 
  -- Klas Lindfors <klas@yubico.com>  Tue, 22 Sep 2015 09:08:10 +0200
 
