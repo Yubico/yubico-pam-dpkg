@@ -2,12 +2,12 @@
 .\"     Title: pam_yubico
 .\"    Author: [FIXME: author] [see http://docbook.sf.net/el/author]
 .\" Generator: DocBook XSL Stylesheets v1.78.1 <http://docbook.sf.net/>
-.\"      Date: Version 2.20
+.\"      Date: Version 2.22
 .\"    Manual: Yubico PAM Module Manual
 .\"    Source: yubico-pam
 .\"  Language: English
 .\"
-.TH "PAM_YUBICO" "8" "Version 2\&.20" "yubico\-pam" "Yubico PAM Module Manual"
+.TH "PAM_YUBICO" "8" "Version 2\&.22" "yubico\-pam" "Yubico PAM Module Manual"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -103,9 +103,14 @@ and
 respectively\&.
 .RE
 .PP
+\fBproxy\fR=\fIproxy\fR
+.RS 4
+Specify a proxy to connect to the validation server\&. Valid schemes are socks4://, socks4a://, socks5:// or socks5h://\&. Socks5h asks the proxy to do the dns resolving\&. If no scheme or port is specified HTTP proxy port 1080 will be used\&. E\&.g\&. socks5h://user:pass@10\&.10\&.0\&.1:1080
+.RE
+.PP
 \fBverbose_otp\fR
 .RS 4
-This argument is used to show the OTP (One Time Password) when it is entered, i\&.e\&. to enable terminal echo of entered characters\&. You are advised to not use this, if you are using two factor authentication because that will display your password on the screen\&. This requires the service using the PAM module to display custom fields\&. For example, OpenSSH requires you to configure "ChallengeResponseAuthentication no"\&.
+This argument is used to show the OTP (One Time Password) when it is entered, i\&.e\&. to enable terminal echo of entered characters\&. You are advised to not use this, if you are using two factor authentication because that will display your password on the screen\&. This requires the service using the PAM module to display custom fields\&. This option can not be used with OpenSSH\&.
 .RE
 .PP
 \fBldap_uri\fR=\fIuri\fR

@@ -1,3 +1,151 @@
+2016-06-15  Klas Lindfors <klas@yubico.com>
+
+	* NEWS: NEWS for 2.23
+
+2016-06-13  Klas Lindfors <klas@yubico.com>
+
+	* tests/util_test.c: add tests for empty otp part to
+	check_user_token()
+
+2016-06-13  Klas Lindfors <klas@yubico.com>
+
+	* tests/aux/build-and-test.sh: install docbook-xsl instead of
+	docbook-xml for travis seems to help with a2x hangs
+
+2016-06-03  Klas Lindfors <klas@yubico.com>
+
+	* ykpamcfg.c: use umask instead of chmod to set file permissions
+
+2016-05-23  Klas Lindfors <klas@yubico.com>
+
+	* NEWS, configure.ac: bump versions
+
+2016-05-23  Klas Lindfors <klas@yubico.com>
+
+	* NEWS: NEWS for 2.22
+
+2016-04-18  Klas Lindfors <klas@yubico.com>
+
+	* configure.ac: let configure script check for ykclient_set_proxy() since it's the last symbol added to ykclient that we need, from
+	2.15.
+
+2016-04-01  Klas Lindfors <klas@yubico.com>
+
+	* : commit 0a1051f6dfd8c13d47614eaf9f38f4ee70bb109a Author: Klas
+	Lindfors <klas@yubico.com> Date:   Thu Mar 31 10:12:18 2016 +0200
+
+2016-03-31  Klas Lindfors <klas@yubico.com>
+
+	* ykpamcfg.c: set file permissions when creating a new challenge
+	file
+
+2016-03-31  Klas Lindfors <klas@yubico.com>
+
+	* configure.ac, pam_yubico.c: switch
+	pam_modutils_getpwnam()/getpwnam() to always use getpwnam_r()
+
+2016-03-30  Klas Lindfors <klas@yubico.com>
+
+	* pam_yubico.c: copy ownership and modes of old challenge file when
+	creating a new one fixes #92
+
+2016-03-29  Klas Lindfors <klas@yubico.com>
+
+	* README, pam_yubico.8.txt: verbose_otp can not be used with OpenSSH fixes #25
+
+2016-02-26  Klas Lindfors <klas@yubico.com>
+
+	* doc/Authentication_Using_Challenge-Response.adoc: typo.
+
+2016-02-26  Klas Lindfors <klas@yubico.com>
+
+	* doc/Authentication_Using_Challenge-Response.adoc: document how to
+	use ykpamcfg with path instead of moving file
+
+2016-02-26  Klas Lindfors <klali@avm.se>
+
+	* : Merge pull request #89 from AmShaegar13/improve_cr_auth_docu Changed /etc/yubico to /var/yubico
+
+2016-02-19  Klas Lindfors <klas@yubico.com>
+
+	* .gitignore: ignore pkg files
+
+2016-02-19  Klas Lindfors <klas@yubico.com>
+
+	* NEWS, configure.ac: bump versions after release
+
+2016-02-19  Klas Lindfors <klas@yubico.com>
+
+	* NEWS: NEWS for 2.21
+
+2016-02-17  Klas Lindfors <klas@yubico.com>
+
+	* mac.mk: add first stab at makefile for mac installer fixes #76
+
+2016-02-17  Klas Lindfors <klas@yubico.com>
+
+	* pam_yubico.c, util.c: pass cfg->debug to check_firmware_version()
+	and let it use D macro
+
+2016-02-16  Klas Lindfors <klali@avm.se>
+
+	* : Merge pull request #88 from
+	shankerwangmiao/bug-fix-for-null-conv add check for NULL conv
+
+2015-11-16  Klas Lindfors <klas@yubico.com>
+
+	* : commit e231b8217cdfc25bffc7181a1270dfd840a3aebf Author: mikemn
+	<mikemn@users.noreply.github.com> Date:   Thu Nov 12 15:02:49 2015
+	-0600
+
+2015-11-11  mikemn <mikemn@users.noreply.github.com>
+
+	* pam_yubico.8.txt, pam_yubico.c: Add proxy support via Curl
+
+2015-11-13  Klas Lindfors <klas@yubico.com>
+
+	* tests/aux/build-and-test.sh: set -e later for travis and hope for
+	the best
+
+2015-11-13  Klas Lindfors <klas@yubico.com>
+
+	* tests/aux/build-and-test.sh: add brew update for travis
+
+2015-10-08  Klas Lindfors <klas@yubico.com>
+
+	* configure.ac, m4/valgrind-tests.m4: with more thought: remove
+	valgrind for tests since curl+gnutls seems to leave gnutls inited data around
+
+2015-10-08  Klas Lindfors <klas@yubico.com>
+
+	* configure.ac, m4/valgrind-tests.m4: add valgrind-tests
+
+2015-10-08  Klas Lindfors <klas@yubico.com>
+
+	* pam_yubico.c: use correct modifier for size_t print
+
+2015-10-08  Klas Lindfors <klas@yubico.com>
+
+	* .travis.yml, tests/aux/build-and-test.sh, tests/pam_test.c: setup
+	travis to do multi-os builds
+
+2015-10-08  Klas Lindfors <klas@yubico.com>
+
+	* tests/Makefile.am, tests/test.c: drop the non-portable test test it linked with the module and didn't really do anything, making the
+	test suite more fragile than necessary
+
+2015-10-05  Klas Lindfors <klas@yubico.com>
+
+	* README, doc/YubiKey_and_FreeRADIUS_1FA_via_PAM.adoc,
+	doc/YubiKey_and_FreeRADIUS_via_PAM.adoc: remove forgotten references
+	to wiki There is no wiki for this project, that information is either in the
+	doc folder or in the project manpages. Both of which accessible from
+	https://developers.yubico.com/yubico-pam/ fixes #81
+
+2015-09-22  Klas Lindfors <klas@yubico.com>
+
+	* NEWS, configure.ac: bump versions
+
 2015-09-22  Klas Lindfors <klas@yubico.com>
 
 	* NEWS: NEWS for 2.20
