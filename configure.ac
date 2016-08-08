@@ -26,7 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-AC_INIT([pam_yubico], [2.20], [yubico-devel@googlegroups.com])
+AC_INIT([pam_yubico], [2.23], [yubico-devel@googlegroups.com])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE([1.11 foreign -Wall -Werror])
@@ -49,7 +49,6 @@ AC_CHECK_HEADERS([security/pam_modules.h security/_pam_macros.h security/pam_mod
 AC_CHECK_LIB([pam], [pam_start], [AC_SUBST([LIBPAM], ["-lpam"])])
 
 AC_SEARCH_LIBS([pam_modutil_drop_priv], ["pam"], [AC_DEFINE([HAVE_PAM_MODUTIL_DROP_PRIV], [1])])
-AC_SEARCH_LIBS([pam_modutil_getpwnam], ["pam"], [AC_DEFINE([HAVE_PAM_MODUTIL_GETPWNAM], [1])])
 
 AC_ARG_WITH([ldap],
             [AS_HELP_STRING([--without-ldap],
@@ -70,9 +69,9 @@ AC_ARG_WITH([ldap],
 
 
 AC_LIB_HAVE_LINKFLAGS([ykclient],, [#include <ykclient.h>],
-                      [ykclient_set_url_bases(0, 0, 0)])
+                      [ykclient_set_proxy(0, 0)])
 if test "$ac_cv_libykclient" != yes; then
-   AC_MSG_ERROR([[Libykclient v2.12+ required, see https://developers.yubico.com/yubico-c-client/]])
+   AC_MSG_ERROR([[Libykclient v2.15+ required, see https://developers.yubico.com/yubico-c-client/]])
 fi
 
 AC_LIB_HAVE_LINKFLAGS(yubikey,, [#include <yubikey.h>],
@@ -159,7 +158,6 @@ if test "$gl_gcc_warnings" = yes; then
 
   gl_WARN_ADD([-fdiagnostics-show-option])
 fi
-
 
 AC_CONFIG_FILES(Makefile)
 AC_CONFIG_FILES(tests/Makefile)

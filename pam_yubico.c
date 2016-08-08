@@ -111,6 +111,7 @@ struct cfg
   const char *auth_file;
   const char *capath;
   const char *cainfo;
+  const char *proxy;
   const char *url;
   const char *urllist;
   const char *ldapserver;
@@ -156,16 +157,15 @@ authorize_user_token (struct cfg *cfg,
   else
     {
       char *userfile = NULL;
-      struct passwd *p;
+      struct passwd pass, *p;
+      char buf[1024];
+      size_t buflen = sizeof(buf);
+      int pwres;
       PAM_MODUTIL_DEF_PRIVS(privs);
 
-#ifdef HAVE_PAM_MODUTIL_GETPWNAM
-      p = pam_modutil_getpwnam (pamh, username);
-#else
-      p = getpwnam (username);
-#endif
+      pwres = getpwnam_r (username, &pass, buf, buflen, &p);
       if (p == NULL) {
-	DBG (("getpwnam: %s", strerror(errno)));
+	DBG (("getpwnam_r: %s", strerror(pwres)));
 	return 0;
       }
 
@@ -300,7 +300,7 @@ authorize_user_token_ldap (struct cfg *cfg,
   if (cfg->user_attr && cfg->yubi_attr && cfg->ldapdn) {
     i = (strlen(cfg->user_attr) + strlen(cfg->ldapdn) + strlen(user) + 3) * sizeof(char);
     if ((find = malloc(i)) == NULL) {
-      DBG (("Failed allocating %i bytes", i));
+      DBG (("Failed allocating %zu bytes", i));
       retval = 0;
       goto done;
     }
@@ -406,11 +406,15 @@ display_error(pam_handle_t *pamh, const char *message) {
     return retval;
   }
 
+  if(!conv || !conv->conv){
+    D(("conv() function invalid"));
+    return PAM_CONV_ERR;
+  }
   pmsg[0] = &msg[0];
   msg[0].msg = (char *) message; /* on some systems, pam_message.msg isn't const */
   msg[0].msg_style = PAM_ERROR_MSG;
   retval = conv->conv(1, pmsg, &resp, conv->appdata_ptr);
-
+  
   if (retval != PAM_SUCCESS) {
     D(("conv returned error: %s", pam_strerror (pamh, retval)));
     return retval;
@@ -442,7 +446,11 @@ do_challenge_response(pam_handle_t *pamh, struct cfg *cfg, const char *username)
 
   const char *errstr = NULL;
 
-  struct passwd *p;
+  struct passwd pass, *p;
+  char pwbuf[1024];
+  size_t pwbuflen = sizeof(pwbuf);
+  int pwres;
+
   struct stat st;
 
   /* we must declare two sepparate privs structures as they can't be reused */
@@ -456,18 +464,14 @@ do_challenge_response(pam_handle_t *pamh, struct cfg *cfg, const char *username)
     goto out;
   }
 
-  if (! check_firmware_version(yk, false, true)) {
+  if (! check_firmware_version(yk, cfg->debug, true)) {
     DBG(("YubiKey does not support Challenge-Response (version 2.2 required)"));
     goto out;
   }
 
-#ifdef HAVE_PAM_MODUTIL_GETPWNAM
-  p = pam_modutil_getpwnam (pamh, username);
-#else
-  p = getpwnam (username);
-#endif
+  pwres = getpwnam_r (username, &pass, pwbuf, pwbuflen, &p);
   if (p == NULL) {
-      DBG (("getpwnam: %s", strerror(errno)));
+      DBG (("getpwnam_r: %s", strerror(pwres)));
       goto out;
   }
 
@@ -611,8 +615,12 @@ do_challenge_response(pam_handle_t *pamh, struct cfg *cfg, const char *username)
       goto restpriv_out;
   }
 
-  if (fchmod (fd, S_IRUSR | S_IWUSR) != 0) {
+  if (fchmod (fd, st.st_mode) != 0) {
       DBG (("could not set correct file permissions"));
+      goto restpriv_out;
+  }
+  if (fchown (fd, st.st_uid, st.st_gid) != 0) {
+      DBG (("could not set correct file ownership"));
       goto restpriv_out;
   }
 
@@ -710,6 +718,8 @@ parse_cfg (int flags, int argc, const char **argv, struct cfg *cfg)
 	cfg->capath = argv[i] + 7;
       if (strncmp (argv[i], "cainfo=", 7) == 0)
         cfg->cainfo = argv[i] + 7;
+      if (strncmp (argv[i], "proxy=", 6) == 0)
+	cfg->proxy = argv[i] + 6;
       if (strncmp (argv[i], "url=", 4) == 0)
 	cfg->url = argv[i] + 4;
       if (strncmp (argv[i], "urllist=", 8) == 0)
@@ -772,6 +782,7 @@ parse_cfg (int flags, int argc, const char **argv, struct cfg *cfg)
       D (("urllist=%s", cfg->urllist ? cfg->urllist : "(null)"));
       D (("capath=%s", cfg->capath ? cfg->capath : "(null)"));
       D (("cainfo=%s", cfg->cainfo ? cfg->cainfo : "(null)"));
+      D (("proxy=%s", cfg->proxy ? cfg->proxy : "(null)"));
       D (("token_id_length=%d", cfg->token_id_length));
       D (("mode=%s", cfg->mode == CLIENT ? "client" : "chresp" ));
       D (("chalresp_path=%s", cfg->chalresp_path ? cfg->chalresp_path : "(null)"));
@@ -882,6 +893,9 @@ pam_sm_authenticate (pam_handle_t * pamh,
 
   if (cfg->cainfo)
     ykclient_set_ca_info (ykc, cfg->cainfo);
+
+  if (cfg->proxy)
+    ykclient_set_proxy (ykc, cfg->proxy);
 
   if (cfg->url)
     {

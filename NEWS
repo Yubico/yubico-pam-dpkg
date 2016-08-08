@@ -1,5 +1,26 @@
 pam_yubico NEWS -- History of user-visible changes.             -*- outline -*-
 
+* Version 2.23 (released 2016-06-15)
+
+** Fix an issue where a failure to set permissions was wrongly outputted.
+
+* Version 2.22 (released 2016-05-23)
+
+** Documentation improvements.
+
+** Retain ownership and permission of challenge files (issue #92).
+
+** Make dependency on yubico-c-client 2.15 clearer.
+
+* Version 2.21 (released 2016-02-19)
+
+** Add proxy support for yubico-c-client.
+
+** Check that conv is set before trying to use it
+fixes a crash bug with the osx loginwindow.
+
+** Add building of a mac installer.
+
 * Version 2.20 (released 2015-09-22)
 
 ** Add cainfo option to allow usage of a cabundle instead of path.
