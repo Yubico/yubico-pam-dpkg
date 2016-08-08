@@ -1,3 +1,9 @@
+yubico-pam (2.23-1) unstable; urgency=low
+
+  * New upstream version.
+
+ -- Simon Josefsson <simon@josefsson.org>  Mon, 08 Aug 2016 10:38:20 +0200
+
 yubico-pam (2.20-1) unstable; urgency=low
 
   * New upstream version.
