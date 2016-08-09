@@ -1,0 +1,60 @@
+# Debconf translations for yubico-pam.
+# Copyright (C) 2016 THE yubico-pam'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the yubico-pam package.
+# Adriano Rafael Gomes <adrianorg@arg.eti.br>, 2016.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: yubico-pam\n"
+"Report-Msgid-Bugs-To: yubico-pam@packages.debian.org\n"
+"POT-Creation-Date: 2012-01-18 07:24+0100\n"
+"PO-Revision-Date: 2016-01-07 13:17-0200\n"
+"Last-Translator: Adriano Rafael Gomes <adrianorg@arg.eti.br>\n"
+"Language-Team: Brazilian Portuguese <debian-l10n-portuguese@lists.debian."
+"org>\n"
+"Language: pt_BR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. Type: string
+#. Description
+#: ../libpam-yubico.templates:2001
+msgid "Parameters for Yubico PAM:"
+msgstr "Parâmetros para o Yubico PAM:"
+
+#. Type: string
+#. Description
+#: ../libpam-yubico.templates:2001
+msgid ""
+"The Yubico PAM module supports two modes of operation: online validation of "
+"YubiKey OTPs or offline validation of YubiKey HMAC-SHA-1 responses to "
+"challenges."
+msgstr ""
+"O módulo Yubico PAM suporta dois modos de operação: validação online de "
+"YubiKey OTPs ou validação offline de respostas YubiKey HMAC-SHA-1 a desafios."
+
+#. Type: string
+#. Description
+#: ../libpam-yubico.templates:2001
+msgid ""
+"The default is online validation, and for that to work you need to get a "
+"free API key at https://upgrade.yubico.com/getapikey/ and enter the key id "
+"as \"id=NNNN\" and the base64 secret as \"key=...\"."
+msgstr ""
+"O padrão é a validação online, e para isso funcionar, você precisa obter uma "
+"chave de API gratuita em https://upgrade.yubico.com/getapikey/ e informar a "
+"identificação da chave como \"id=NNNN\" e o segredo base64 como \"key=...\"."
+
+#. Type: string
+#. Description
+#: ../libpam-yubico.templates:2001
+msgid ""
+"All the available parameters for the Yubico PAM module are described in /usr/"
+"share/doc/libpam-yubico/README.gz. To avoid accidental lock-outs the module "
+"will not be active until it is enabled with the \"pam-auth-update\" command."
+msgstr ""
+"Todos os parâmetros disponíveis para o módulo Yubico PAM estão descritos em /"
+"usr/share/doc/libpam-yubico/README.gz. Para evitar bloqueios de acesso "
+"acidentais, o módulo não será ativado até que seja habilitado com o comando "
+"\"pam-auth-update\"."

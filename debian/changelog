@@ -6,6 +6,7 @@ yubico-pam (2.23-1) unstable; urgency=low
   * Bump required libykclient version to >= 2.15.
   * Build with hardening=+all.
   * Ship upstream README as docs.  Closes: #793207.
+  * Update Brazilian Portuguese translation.  Closes: #811538.
 
  -- Simon Josefsson <simon@josefsson.org>  Mon, 08 Aug 2016 10:38:20 +0200
 
